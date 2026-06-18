@@ -356,10 +356,20 @@ if (!useMock && isVercel && !fs.existsSync(dbPath)) {
   }
 }
 
-const db = new DatabaseSyncClass(dbPath);
-if (!useMock) {
-  db.exec("PRAGMA journal_mode = WAL");
-  db.exec("PRAGMA foreign_keys = ON");
+let db;
+try {
+  if (!useMock) {
+    db = new DatabaseSyncClass(dbPath);
+    db.exec("PRAGMA journal_mode = WAL");
+    db.exec("PRAGMA foreign_keys = ON");
+  } else {
+    db = new MockDatabaseSync(dbPath);
+  }
+} catch (dbInitErr) {
+  console.warn("Failed to initialize SQLite, falling back to in-memory mock database:", dbInitErr.message);
+  useMock = true;
+  DatabaseSyncClass = MockDatabaseSync;
+  db = new MockDatabaseSync(dbPath);
 }
 
 const ALLOWED_CITIES = ["Bengaluru", "Delhi", "Mumbai", "Kolkata"];
