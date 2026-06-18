@@ -16,17 +16,17 @@ export function createApp() {
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-  app.use("/api/documents", documentVerificationRouter);
+  app.use(["/api/documents", "/documents"], documentVerificationRouter);
 
-  app.get("/api/health", (_req, res) => {
+  app.get(["/api/health", "/health"], (_req, res) => {
     res.json({ ok: true });
   });
 
-  app.get("/api/cities", (_req, res) => {
+  app.get(["/api/cities", "/cities"], (_req, res) => {
     res.json(getCities());
   });
 
-  app.get("/api/stores", (req, res) => {
+  app.get(["/api/stores", "/stores"], (req, res) => {
     const { city } = req.query;
     if (!city || typeof city !== "string") {
       return res.status(400).json({ error: "city query parameter is required" });
@@ -40,7 +40,7 @@ export function createApp() {
     res.json(stores);
   });
 
-  app.post("/api/applications", async (req, res) => {
+  app.post(["/api/applications", "/applications"], async (req, res) => {
     try {
       const data = req.body;
       const { cart = [], brandName } = data;
@@ -97,7 +97,7 @@ export function createApp() {
     }
   });
 
-  app.post("/api/payments/verify", (req, res) => {
+  app.post(["/api/payments/verify", "/payments/verify"], (req, res) => {
     try {
       const {
         razorpay_order_id,
@@ -143,7 +143,7 @@ export function createApp() {
     }
   });
 
-  app.put("/api/applications/:id", (req, res) => {
+  app.put(["/api/applications/:id", "/applications/:id"], (req, res) => {
     try {
       const { id } = req.params;
       const data = req.body;
@@ -180,7 +180,7 @@ http://localhost:3001/api/admin/applications
     }
   });
 
-  app.get("/api/admin/applications", (_req, res) => {
+  app.get(["/api/admin/applications", "/admin/applications"], (_req, res) => {
     try {
       const apps = db.prepare("SELECT * FROM applications ORDER BY created_at DESC").all();
       const formattedApps = apps.map(app => {
@@ -207,7 +207,7 @@ http://localhost:3001/api/admin/applications
     }
   });
 
-  app.get("/api/admin/applications/:id/document/:docId", (req, res) => {
+  app.get(["/api/admin/applications/:id/document/:docId", "/admin/applications/:id/document/:docId"], (req, res) => {
     try {
       const { id, docId } = req.params;
       const app = db.prepare("SELECT payload FROM applications WHERE id = ?").get(id);
@@ -238,7 +238,7 @@ http://localhost:3001/api/admin/applications
     }
   });
 
-  app.get("/api/applications/:id/shelves", (req, res) => {
+  app.get(["/api/applications/:id/shelves", "/applications/:id/shelves"], (req, res) => {
     try {
       const { id } = req.params;
       const shelves = db.prepare(`

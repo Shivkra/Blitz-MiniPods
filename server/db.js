@@ -336,13 +336,18 @@ class MockDatabaseSync {
 let DatabaseSyncClass;
 let useMock = false;
 
-try {
-  const sqliteModule = await import("node:sqlite");
-  DatabaseSyncClass = sqliteModule.DatabaseSync;
-} catch (e) {
-  console.warn("Failed to load node:sqlite, falling back to in-memory mock database:", e.message);
+if (isVercel) {
   useMock = true;
   DatabaseSyncClass = MockDatabaseSync;
+} else {
+  try {
+    const sqliteModule = await import("node:sqlite");
+    DatabaseSyncClass = sqliteModule.DatabaseSync;
+  } catch (e) {
+    console.warn("Failed to load node:sqlite, falling back to in-memory mock database:", e.message);
+    useMock = true;
+    DatabaseSyncClass = MockDatabaseSync;
+  }
 }
 
 if (!useMock && isVercel && !fs.existsSync(dbPath)) {
