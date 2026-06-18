@@ -4656,7 +4656,7 @@ export default function DarkStoreOnboarding() {
   ]);
   const [nextItemId, setNextItemId] = useState(4);
   const [vizItemId, setVizItemId] = useState(1);
-  const [isPeekOpen, setIsPeekOpen] = useState(true);
+  const [isPeekOpen, setIsPeekOpen] = useState(false);
 
   const [brandName, setBrandName] = useState("");
   const [poc, setPoc] = useState("");
