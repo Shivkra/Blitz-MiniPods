@@ -6,8 +6,11 @@ import { extractTextFromPDF, extractTextFromImage } from "./textExtraction.js";
 import { validateDocumentText } from "./patternValidators.js";
 import { classifyDocumentWithAI } from "./aiVisionFallback.js";
 
+const isVercel = process.env.VERCEL || process.env.NOW_BUILDER;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const MANUAL_REVIEW_DIR = path.join(__dirname, "..", "uploads", "manual_review");
+const MANUAL_REVIEW_DIR = isVercel
+  ? "/tmp/uploads/manual_review"
+  : path.join(__dirname, "..", "uploads", "manual_review");
 
 /**
  * Orchestrates the layered document verification check.
