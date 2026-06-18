@@ -5171,7 +5171,7 @@ export default function DarkStoreOnboarding() {
     : city || "—";
 
   const pageMeta = [
-    { eyebrow: "Step 1", title: "Tell us about your brand", desc: "Share your company details and operations profile so we can recommend the right stores, racks, and fulfillment setup." },
+    { eyebrow: "Step 1", title: "Tell us about your brand", desc: "Share your company details & operations profile so we can recommend the right stores, racks & fulfillment setup." },
     { eyebrow: "Step 2", title: "Choose your stores", desc: "Browse cities, pick dark stores, and add racks to your booking." },
     { eyebrow: "Step 3", title: "Verify and submit", desc: "Upload required documents and review your application before sending it to our team." },
   ][step - 1];
@@ -5953,7 +5953,7 @@ export default function DarkStoreOnboarding() {
               title={!highlightedStore ? "Please select a store to apply the recommendation" : ""}
               style={{ opacity: highlightedStore ? 1 : 0.6 }}
             >
-              {highlightedStore 
+              {highlightedStore
                 ? `Apply ${Math.min(totalShelves, highlightedStore.shelvesAvailable)} Shelf/Shelves to ${highlightedStore.name}`
                 : `Select Store to Apply (${totalShelves} Shelves)`}
             </button>
