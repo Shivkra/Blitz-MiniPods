@@ -128,7 +128,7 @@ export async function safeFetch(url, options = {}) {
           applicationId: appId,
           orderId: mockOrderId,
           amount: (body.cart || []).reduce((sum, item) => sum + (item.racks || 0), 0) * 1600 * 100,
-          keyId: "rzp_test_mockkey123",
+          keyId: "rzp_test_T1tdYBm2zgboHi",
           isMock: true
         };
         status = 201;

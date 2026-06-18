@@ -5021,33 +5021,33 @@ export default function DarkStoreOnboarding() {
 
       const orderDetails = await safeJsonFromResponse(response);
 
-      if (orderDetails.isMock) {
-        setSimulationData(orderDetails);
-      } else {
-        const isScriptLoaded = await loadRazorpayScript();
-        if (!isScriptLoaded) {
+      const isScriptLoaded = await loadRazorpayScript();
+      if (!isScriptLoaded) {
+        if (orderDetails.isMock) {
+          // If script fails (e.g. offline/blocked), fall back to the offline simulation modal
+          setSimulationData(orderDetails);
+        } else {
           alert("Failed to load Razorpay SDK. Check your internet connection.");
           return;
         }
-
+      } else {
         const options = {
           key: orderDetails.keyId,
           amount: orderDetails.amount,
           currency: "INR",
           name: "Blitz MiniPods",
           description: `Shelf Booking for ${brandName}`,
-          order_id: orderDetails.orderId,
           handler: async function (res) {
             try {
               const verifyRes = await fetch("/api/payments/verify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                  razorpay_order_id: res.razorpay_order_id,
+                  razorpay_order_id: res.razorpay_order_id || orderDetails.orderId || "",
                   razorpay_payment_id: res.razorpay_payment_id,
-                  razorpay_signature: res.razorpay_signature,
+                  razorpay_signature: res.razorpay_signature || "mock_sig_12345",
                   applicationId: orderDetails.applicationId,
-                  isMock: false,
+                  isMock: orderDetails.isMock,
                 }),
               });
 
@@ -5073,6 +5073,10 @@ export default function DarkStoreOnboarding() {
             color: "#6366f1",
           },
         };
+
+        if (!orderDetails.isMock && orderDetails.orderId) {
+          options.order_id = orderDetails.orderId;
+        }
 
         const paymentObject = new window.Razorpay(options);
         paymentObject.open();
