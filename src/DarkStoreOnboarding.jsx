@@ -4749,6 +4749,14 @@ const STYLES = `
     backdrop-filter: blur(10px);
   }
 
+  .btn-talk-icon {
+    display: none;
+  }
+
+  .btn-talk-text {
+    display: inline;
+  }
+
   .btn-talk:hover {
     border-color: rgba(255, 255, 255, 0.15);
     background: rgba(255,255,255,0.06);
@@ -6307,6 +6315,25 @@ const STYLES = `
 
   /* World-Class Mobile-First Landing Page Restructuring */
   @media (max-width: 768px) {
+    .btn-talk-text {
+      display: none !important;
+    }
+    .btn-talk-icon {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-talk {
+      width: 36px !important;
+      height: 36px !important;
+      padding: 0 !important;
+      border-radius: 50% !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      min-width: 36px !important;
+    }
+
     .lp-body {
       display: flex !important;
       flex-direction: column !important;
@@ -7952,7 +7979,6 @@ export default function DarkStoreOnboarding() {
 
   const renderHeaderActions = (originClass = "") => {
     if (step === 4) return null;
-    const isMobile = originClass.includes("mobile");
     return (
       <div className={`header-actions ${originClass}`}>
         {renderThemeToggle()}
@@ -7966,19 +7992,10 @@ export default function DarkStoreOnboarding() {
               setSpecialistOrigin(step);
               setStep(1);
             }}
-            title={isMobile ? "Talk to a specialist" : undefined}
-            style={isMobile ? {
-              width: "36px",
-              height: "36px",
-              padding: "0",
-              borderRadius: "50%",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              minWidth: "36px"
-            } : undefined}
+            title="Talk to a specialist"
           >
-            {isMobile ? <Icon.Support /> : "Talk to a specialist"}
+            <span className="btn-talk-text">Talk to a specialist</span>
+            <span className="btn-talk-icon"><Icon.Support /></span>
           </button>
         )}
         {step === 1 && (
