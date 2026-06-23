@@ -6734,6 +6734,12 @@ const Icon = {
       <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
     </svg>
   ),
+  Home: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <polyline points="9 22 9 12 15 12 15 22" />
+    </svg>
+  ),
   Send: () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
@@ -7712,7 +7718,7 @@ export default function DarkStoreOnboarding() {
               </div>
             </div>
             <button className="btn btn-primary btn-success-home" onClick={() => { setStep(specialistOrigin); setLeadSubmitted(false); resetLeadForm(); }}>
-              {specialistOrigin === 2 ? "Back to Store Selection" : specialistOrigin === 3 ? "Back to Verification" : "Back to Home"}
+              {specialistOrigin === 2 ? "Back to Store Selection" : specialistOrigin === 3 ? "Back to Verification" : <span style={{ display: "inline-flex", alignItems: "center", gap: "8px", justifyContent: "center" }}><Icon.Home /> Back to Home</span>}
             </button>
           </div>
         </div>
@@ -8003,8 +8009,19 @@ export default function DarkStoreOnboarding() {
             type="button"
             className="btn-standalone-back"
             onClick={() => setStep(specialistOrigin)}
+            title={specialistOrigin === 0 ? "Back to Home" : undefined}
+            style={specialistOrigin === 0 ? {
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "36px",
+              height: "36px",
+              padding: "0",
+              borderRadius: "50%",
+              minWidth: "36px"
+            } : undefined}
           >
-            {specialistOrigin === 2 ? "Back to Store Selection" : specialistOrigin === 3 ? "Back to Verification" : "Back to Home"}
+            {specialistOrigin === 2 ? "Back to Store Selection" : specialistOrigin === 3 ? "Back to Verification" : <Icon.Home />}
           </button>
         )}
       </div>
