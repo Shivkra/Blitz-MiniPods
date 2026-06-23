@@ -8311,7 +8311,7 @@ export default function DarkStoreOnboarding() {
                 <div className="cred-step-icon">●</div>
                 <div className="cred-step-content">
                   <h5>Document Verification</h5>
-                  <p>Our audit team is reviewing your uploaded PAN, GST, and Catalog sheets</p>
+                  <p>Our audit team is reviewing your uploaded PAN, GST & Catalog sheets</p>
                 </div>
               </div>
               <div className="cred-timeline-step upcoming">
