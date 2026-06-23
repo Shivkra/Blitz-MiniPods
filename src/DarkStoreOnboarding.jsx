@@ -3649,6 +3649,9 @@ const STYLES = `
       padding: 20px 16px calc(88px + env(safe-area-inset-bottom, 0px));
       max-width: none;
     }
+    .main-inner.step-store {
+      padding-bottom: calc(180px + env(safe-area-inset-bottom, 0px)) !important;
+    }
 
     .page-head {
       margin-bottom: 28px;
