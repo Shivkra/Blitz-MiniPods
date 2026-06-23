@@ -5380,6 +5380,17 @@ const STYLES = `
     color: var(--text);
   }
 
+  .header-actions .btn-standalone-back.btn-home-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 36px !important;
+    height: 36px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    min-width: 36px !important;
+  }
+
   .standalone-main {
     flex: 1;
     display: flex;
@@ -8007,19 +8018,9 @@ export default function DarkStoreOnboarding() {
         {step === 1 && (
           <button
             type="button"
-            className="btn-standalone-back"
+            className={`btn-standalone-back${specialistOrigin === 0 ? " btn-home-icon" : ""}`}
             onClick={() => setStep(specialistOrigin)}
             title={specialistOrigin === 0 ? "Back to Home" : undefined}
-            style={specialistOrigin === 0 ? {
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "36px",
-              height: "36px",
-              padding: "0",
-              borderRadius: "50%",
-              minWidth: "36px"
-            } : undefined}
           >
             {specialistOrigin === 2 ? "Back to Store Selection" : specialistOrigin === 3 ? "Back to Verification" : <Icon.Home />}
           </button>
