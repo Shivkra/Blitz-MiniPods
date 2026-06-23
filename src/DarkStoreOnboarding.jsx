@@ -5380,6 +5380,7 @@ const STYLES = `
     color: var(--text);
   }
 
+  .btn-standalone-back.btn-home-icon,
   .header-actions .btn-standalone-back.btn-home-icon {
     display: inline-flex !important;
     align-items: center !important;
@@ -5389,6 +5390,14 @@ const STYLES = `
     padding: 0 !important;
     border-radius: 50% !important;
     min-width: 36px !important;
+  }
+
+  .btn-home-icon svg {
+    display: inline-block !important;
+    width: 18px !important;
+    height: 18px !important;
+    stroke: currentColor !important;
+    stroke-width: 2 !important;
   }
 
   .standalone-main {
@@ -8024,9 +8033,7 @@ export default function DarkStoreOnboarding() {
             className={`btn-standalone-back${specialistOrigin === 0 ? " btn-home-icon" : ""}`}
             onClick={() => setStep(specialistOrigin)}
             title={specialistOrigin === 0 ? "Back to Home" : undefined}
-          >
-            {specialistOrigin === 2 ? "Back to Store Selection" : specialistOrigin === 3 ? "Back to Verification" : <Icon.Home />}
-          </button>
+          >{specialistOrigin === 2 ? "Back to Store Selection" : specialistOrigin === 3 ? "Back to Verification" : <Icon.Home />}</button>
         )}
       </div>
     );
