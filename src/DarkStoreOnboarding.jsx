@@ -6326,6 +6326,9 @@ const STYLES = `
 
   /* World-Class Mobile-First Landing Page Restructuring */
   @media (max-width: 768px) {
+    .standalone-header {
+      padding: 16px 20px 8px 20px !important;
+    }
     .btn-talk-text {
       display: none !important;
     }
