@@ -6701,6 +6701,12 @@ const Icon = {
       <line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" />
     </svg>
   ),
+  Support: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
+      <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z" />
+    </svg>
+  ),
   Send: () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
@@ -7946,6 +7952,7 @@ export default function DarkStoreOnboarding() {
 
   const renderHeaderActions = (originClass = "") => {
     if (step === 4) return null;
+    const isMobile = originClass.includes("mobile");
     return (
       <div className={`header-actions ${originClass}`}>
         {renderThemeToggle()}
@@ -7959,8 +7966,19 @@ export default function DarkStoreOnboarding() {
               setSpecialistOrigin(step);
               setStep(1);
             }}
+            title={isMobile ? "Talk to a specialist" : undefined}
+            style={isMobile ? {
+              width: "36px",
+              height: "36px",
+              padding: "0",
+              borderRadius: "50%",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              minWidth: "36px"
+            } : undefined}
           >
-            Talk to a specialist
+            {isMobile ? <Icon.Support /> : "Talk to a specialist"}
           </button>
         )}
         {step === 1 && (
