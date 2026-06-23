@@ -203,7 +203,7 @@ export default function DocumentUpload({
           disabled={hasUpload || loading}
           onChange={handleFileChange}
         />
-        
+
         <div className="doc-icon">
           {loading ? (
             <Icon.Spinner />

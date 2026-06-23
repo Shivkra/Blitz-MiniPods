@@ -183,11 +183,21 @@ function mockAIVisionFallback(text, expectedType) {
   let detectedType = "OTHER";
   let reason = "AI fallback simulation triggered (no credentials provided).";
   
-  if (clean.includes("gst") || clean.includes("goods and services")) {
+  // Require multiple core terms to reduce false positives for mock AI classification
+  const hasGstKeywords = (clean.includes("gst") || clean.includes("goods and services")) && 
+                         (clean.includes("certificate") || clean.includes("registration") || clean.includes("government"));
+                         
+  const hasPanKeywords = (clean.includes("permanent account") || clean.includes("income tax")) && 
+                         (clean.includes("card") || clean.includes("number"));
+                         
+  const hasRegKeywords = (clean.includes("incorporation") || clean.includes("registrar") || clean.includes("corporate identity")) && 
+                         (clean.includes("certificate") || clean.includes("company") || clean.includes("cin"));
+
+  if (hasGstKeywords) {
     detectedType = "GST_CERTIFICATE";
-  } else if (clean.includes("permanent account") || clean.includes("income tax")) {
+  } else if (hasPanKeywords) {
     detectedType = "PAN_CARD";
-  } else if (clean.includes("incorporation") || clean.includes("registrar of companies") || clean.includes("corporate identity")) {
+  } else if (hasRegKeywords) {
     detectedType = "COMPANY_REGISTRATION";
   }
 

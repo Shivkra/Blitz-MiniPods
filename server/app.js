@@ -4,6 +4,7 @@ import crypto from "crypto";
 import Razorpay from "razorpay";
 import db, { getCities, getStoresByCityName, saveApplication, updateApplicationPayment, recalculateStoreShelves, allocateShelves } from "./db.js";
 import documentVerificationRouter from "./routes/documentVerification.js";
+import { sendSubmissionEmail } from "./services/mail.js";
 
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || "rzp_test_T1tdYBm2zgboHi";
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || "C9b4ssZbsUzQ910Opy4rmeav";
@@ -54,6 +55,11 @@ export function createApp() {
       const appResult = saveApplication(data);
       const appId = appResult.id;
 
+      // Trigger asynchronous email notification for application start
+      sendSubmissionEmail("application_started", data).catch(err => {
+        console.error("Failed to send application_started email:", err);
+      });
+
       if (RAZORPAY_KEY_ID && RAZORPAY_KEY_SECRET) {
         // Real Razorpay integration
         const razorpay = new Razorpay({
@@ -97,6 +103,25 @@ export function createApp() {
     }
   });
 
+  app.post(["/api/specialist-calls", "/specialist-calls"], (req, res) => {
+    try {
+      const data = req.body;
+      const appResult = saveApplication(data);
+      const appId = appResult.id;
+      // Set payment status as 'lead' to differentiate from onboarding bookings
+      updateApplicationPayment(appId, "lead_call", "lead", 0);
+
+      // Send email notification for specialist call request
+      sendSubmissionEmail("specialist_call", data).catch(err => {
+        console.error("Failed to send specialist_call email:", err);
+      });
+
+      res.status(201).json({ success: true, applicationId: appId });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  });
+
   app.post(["/api/payments/verify", "/payments/verify"], (req, res) => {
     try {
       const {
@@ -108,16 +133,33 @@ export function createApp() {
       } = req.body;
 
       // Guard against double payment verification
-      const appRecord = db.prepare("SELECT payment_status FROM applications WHERE id = ?").get(applicationId);
+      const appRecord = db.prepare("SELECT payment_status, payload, amount FROM applications WHERE id = ?").get(applicationId);
       if (appRecord && appRecord.payment_status === "paid") {
         return res.json({ success: true, message: "Payment already verified and shelves deducted" });
       }
+
+      const verifyAndSendEmail = () => {
+        try {
+          const appData = JSON.parse(appRecord.payload);
+          sendSubmissionEmail("payment_verified", {
+            ...appData,
+            paymentId: razorpay_payment_id || razorpay_order_id,
+            amount: appRecord.amount || (appData.cart || []).reduce((sum, item) => sum + (item.racks || 0), 0) * 1600 * 100,
+            isMock: !!isMock
+          }).catch(err => {
+            console.error("Failed to send payment_verified email:", err);
+          });
+        } catch (e) {
+          console.error("Failed to parse application payload for verification email:", e);
+        }
+      };
 
       if (isMock) {
         // Simple verification for mock checkout
         updateApplicationPayment(applicationId, razorpay_payment_id, "paid", undefined);
         recalculateStoreShelves();
         allocateShelves(applicationId);
+        verifyAndSendEmail();
         return res.json({ success: true, message: "Mock payment verified successfully" });
       }
 
@@ -134,6 +176,7 @@ export function createApp() {
         updateApplicationPayment(applicationId, razorpay_payment_id, "paid", undefined);
         recalculateStoreShelves();
         allocateShelves(applicationId);
+        verifyAndSendEmail();
         res.json({ success: true, message: "Payment verified successfully" });
       } else {
         res.status(400).json({ error: "Signature verification failed" });
@@ -149,30 +192,10 @@ export function createApp() {
       const data = req.body;
       db.prepare("UPDATE applications SET payload = ? WHERE id = ?").run(JSON.stringify(data), id);
 
-      // Simulate sending email notification to the team
-      const docsCount = Object.keys(data.uploads || {}).length;
-      console.log(`
-=========================================
-[MAIL SIMULATION] Sending notification...
-To: team@blitzminipods.com
-From: system@blitzminipods.com
-Subject: New Partner Application Submitted - ${data.brandName || "Unknown Brand"}
-
-A partner brand has submitted their onboarding details and verification documents!
-
-Brand Info:
-- Brand Name: ${data.brandName || "—"}
-- Point of Contact: ${data.poc || "—"}
-- Mobile Number: ${data.phone || "—"}
-- Email Address: ${data.email || "—"}
-
-Documents Uploaded (${docsCount}):
-${Object.entries(data.uploads || {}).map(([key, file]) => `* ${key.toUpperCase()}: ${file.name} (${parseFloat((file.size / 1024).toFixed(1))} KB)`).join("\n")}
-
-Review application & download documents here:
-http://localhost:3001/api/admin/applications
-=========================================
-      `);
+      // Send email notification for onboarding document submission
+      sendSubmissionEmail("documents_uploaded", data).catch(err => {
+        console.error("Failed to send documents_uploaded email:", err);
+      });
 
       res.json({ success: true });
     } catch (err) {

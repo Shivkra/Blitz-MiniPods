@@ -25,7 +25,7 @@ export async function extractTextFromPDF(pdfBuffer) {
 export async function extractTextFromImage(imageBuffer) {
   let worker = null;
   try {
-    worker = await createWorker("eng");
+    worker = await createWorker("eng", 1, { cachePath: "/tmp" });
     const { data: { text } } = await worker.recognize(imageBuffer);
     return text || "";
   } catch (err) {

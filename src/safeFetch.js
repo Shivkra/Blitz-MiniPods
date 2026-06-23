@@ -162,19 +162,58 @@ export async function safeFetch(url, options = {}) {
         responseData = { success: true };
       }
     } else if (path.endsWith("/api/documents/verify") || path.endsWith("/documents/verify")) {
-      const expectedType = parsedUrl.searchParams.get("expectedType") || "GST";
+      let expectedType = "GST";
+      let fileName = "";
       
-      responseData = {
-        status: "accepted",
-        detectedType: expectedType,
-        confidence: 0.98,
-        reason: "Document matches the required layout criteria.",
-        extractedFields: {
-          gstin: expectedType === "GST" ? "29GGGGG1234F1Z5" : undefined,
-          pan: expectedType === "PAN" ? "ABCDE1234F" : undefined,
-          companyName: "Blitz MiniPods Client"
+      if (options.body && options.body instanceof FormData) {
+        expectedType = options.body.get("expectedType") || "GST";
+        const file = options.body.get("file");
+        if (file) {
+          fileName = file.name || "";
         }
-      };
+      } else {
+        expectedType = parsedUrl.searchParams.get("expectedType") || "GST";
+      }
+      
+      let isAccepted = false;
+      const lowerName = fileName.toLowerCase();
+      
+      if (expectedType === "GST" && lowerName.includes("gst")) {
+        isAccepted = true;
+      } else if (expectedType === "PAN" && lowerName.includes("pan")) {
+        isAccepted = true;
+      } else if (expectedType === "COMPANY_REG" && (lowerName.includes("reg") || lowerName.includes("cin") || lowerName.includes("corp") || lowerName.includes("incorporation"))) {
+        isAccepted = true;
+      }
+      
+      if (isAccepted) {
+        responseData = {
+          status: "accepted",
+          detectedType: expectedType,
+          confidence: 0.98,
+          reason: "Document matches the required layout criteria.",
+          extractedFields: {
+            gstin: expectedType === "GST" ? "29GGGGG1234F1Z5" : undefined,
+            pan: expectedType === "PAN" ? "ABCDE1234F" : undefined,
+            companyName: "Blitz MiniPods Client"
+          }
+        };
+      } else {
+        const docTypeNameMap = {
+          GST: "GST registration certificate",
+          PAN: "PAN card",
+          COMPANY_REG: "Company registration certificate (CIN)"
+        };
+        const expectedName = docTypeNameMap[expectedType] || expectedType;
+        
+        responseData = {
+          status: "rejected",
+          detectedType: "UNKNOWN",
+          confidence: 0.15,
+          reason: `Verification was inconclusive. The file name and content patterns do not strongly identify this document as a ${expectedName}.`,
+          extractedFields: {}
+        };
+      }
     } else {
       responseData = { success: true };
     }

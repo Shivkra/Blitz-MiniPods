@@ -1,14 +1,17 @@
-import { useEffect, useMemo, useState, Fragment, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Polygon, Polyline, Circle, useMap } from "react-leaflet";
+import { useEffect, useMemo, Fragment, useRef } from "react";
+import { MapContainer, TileLayer, Marker, Popup, Polygon, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-const OSM_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
-const COVERAGE_COLOR = "#f59e0b"; // Premium orange/gold color from reference design
 
+const STATUS_COLORS = {
+  green: "#10b981", // Emerald
+  amber: "#f59e0b", // Amber
+  red: "#ef4444",   // Red
+};
 
-function areaCode(name) {
-  return name.replace(/\s*DS$/i, "").split(" ")[0].slice(0, 3).toUpperCase();
+function getStatusColor(avail) {
+  return STATUS_COLORS[avail] || "#6366f1";
 }
 
 function createStoreIcon(store, inCart) {
@@ -119,31 +122,7 @@ function adjustForLandOnly(lat, lng, store) {
   return [lat, lng];
 }
 
-function getDestinationPoint(lat, lng, distanceMeters, bearingDegrees) {
-  const nLat = parseFloat(lat);
-  const nLng = parseFloat(lng);
-  const R = 6378137; // Earth's radius in meters
-  const dDivR = distanceMeters / R;
-  const rLat = (nLat * Math.PI) / 180;
-  const rLng = (nLng * Math.PI) / 180;
-  const rBearing = (bearingDegrees * Math.PI) / 180;
 
-  const sinRLat = Math.sin(rLat);
-  const cosRLat = Math.cos(rLat);
-  const cosDDivR = Math.cos(dDivR);
-  const sinDDivR = Math.sin(dDivR);
-
-  const destLatRad = Math.asin(sinRLat * cosDDivR + cosRLat * sinDDivR * Math.cos(rBearing));
-  const destLngRad = rLng + Math.atan2(
-    Math.sin(rBearing) * sinDDivR * cosRLat,
-    cosDDivR - sinRLat * Math.sin(destLatRad)
-  );
-
-  return [
-    (destLatRad * 180) / Math.PI,
-    (destLngRad * 180) / Math.PI
-  ];
-}
 
 const STORE_CUSTOM_OFFSETS = {
   "Rohini DS": [
@@ -293,19 +272,19 @@ function generateIrregularPolygon(store, allStores) {
       const x = Math.sin(hash + offset) * 10000;
       return x - Math.floor(x);
     };
-    
+
     // Scale factor to convert meters to approximate lat/lng degrees (approx 5km = 0.045 degrees)
     const baseDegree = 0.045;
-    
+
     for (let i = 0; i < numPoints; i++) {
       const angle = (i * 360) / numPoints;
       const angleRad = (angle * Math.PI) / 180;
-      
+
       const dev1 = Math.sin(angleRad) * 0.005 * random(1);
       const dev2 = Math.cos(angleRad * 2) * 0.008 * random(2);
       const dev3 = Math.sin(angleRad * 3) * 0.004 * random(3);
       const distDegree = baseDegree + dev1 + dev2 + dev3;
-      
+
       offsets.push([
         Math.cos(angleRad) * distDegree,
         Math.sin(angleRad) * distDegree * 1.15 // compensate for longitude scaling
@@ -372,17 +351,9 @@ function generateIrregularPolygon(store, allStores) {
   });
 }
 
-function getStoreBaseRadius(store) {
-  const seedString = String(store.id || store.name || "");
-  const hash = seedString.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const random = (offset) => {
-    const x = Math.sin(hash + offset) * 10000;
-    return x - Math.floor(x);
-  };
-  return 4700 + random(1) * 600;
-}
 
-function PulsingRadarCircle({ store, polygonCoords }) {
+
+function PulsingRadarCircle({ store, polygonCoords, color }) {
   const polygonRef = useRef(null);
   const sLat = parseFloat(store.lat);
   const sLng = parseFloat(store.lng);
@@ -397,12 +368,12 @@ function PulsingRadarCircle({ store, polygonCoords }) {
     const tick = (now) => {
       const elapsed = now - lastTime + seedOffset;
       const cycleTime = elapsed % cycleDuration;
-      
+
       const polygon = polygonRef.current;
       if (polygon && polygonCoords) {
         if (cycleTime < pulseDuration) {
           const progress = cycleTime / pulseDuration;
-          
+
           const scaledCoords = polygonCoords.map(([lat, lng]) => {
             const dLat = lat - sLat;
             const dLng = lng - sLng;
@@ -414,6 +385,8 @@ function PulsingRadarCircle({ store, polygonCoords }) {
 
           polygon.setLatLngs(scaledCoords);
           polygon.setStyle({
+            fillColor: color,
+            color: color,
             fillOpacity: 0.15 * (1 - progress),
             weight: 3.5 * (1 - progress) + 0.5,
             opacity: 0.95 * (1 - progress),
@@ -434,9 +407,7 @@ function PulsingRadarCircle({ store, polygonCoords }) {
 
     animId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(animId);
-  }, [polygonCoords, sLat, sLng, store.id]);
-
-  const color = COVERAGE_COLOR;
+  }, [polygonCoords, sLat, sLng, store.id, color]);
 
   return (
     <Polygon
@@ -473,15 +444,15 @@ function FitBounds({ stores }) {
 
   useEffect(() => {
     if (!stores.length) return;
-    
+
     const lat = stores.reduce((sum, s) => sum + s.lat, 0) / stores.length;
     const lng = stores.reduce((sum, s) => sum + s.lng, 0) / stores.length;
-    
+
     const isDelhi = stores.some((s) => s.lat > 28.0 && s.lat < 29.0 && s.lng > 76.5 && s.lng < 77.5);
     const isKolkata = stores.some((s) => s.lng > 88.0 && s.lng < 89.0 && s.lat > 22.0 && s.lat < 23.0);
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    
-    let targetZoom = 11;
+
+    let targetZoom;
     if (isKolkata) {
       targetZoom = isMobile ? 11 : 12;
     } else if (isDelhi) {
@@ -489,7 +460,7 @@ function FitBounds({ stores }) {
     } else {
       targetZoom = isMobile ? 10 : 11;
     }
-    
+
     map.invalidateSize();
     map.setView([lat, lng], targetZoom, { animate: true });
   }, [map, stores]);
@@ -504,12 +475,12 @@ function FocusStore({ storeId, stores }) {
     if (!storeId) return;
     const store = stores.find((s) => s.id === storeId);
     if (!store) return;
-    
+
     const isDelhi = store.lat > 28.0 && store.lat < 29.0 && store.lng > 76.5 && store.lng < 77.5;
     const isKolkata = store.lng > 88.0 && store.lng < 89.0 && store.lat > 22.0 && store.lat < 23.0;
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
-    
-    let targetZoom = 14;
+
+    let targetZoom;
     if (isKolkata) {
       targetZoom = isMobile ? 11 : 12;
     } else if (isDelhi) {
@@ -517,7 +488,7 @@ function FocusStore({ storeId, stores }) {
     } else {
       targetZoom = isMobile ? 12 : 14;
     }
-    
+
     map.flyTo([store.lat, store.lng], targetZoom, { duration: 0.6 });
   }, [map, storeId, stores]);
 
@@ -525,6 +496,7 @@ function FocusStore({ storeId, stores }) {
 }
 
 export default function StoreMap({
+  theme,
   stores,
   cartMap,
   browseCity,
@@ -558,10 +530,10 @@ export default function StoreMap({
         zoom={12}
         scrollWheelZoom
         className="ss-leaflet-container"
+        attributionControl={false}
       >
         <TileLayer
-          attribution={OSM_ATTRIBUTION}
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
         <InvalidateSize />
         <FitBounds stores={mapStores} />
@@ -571,6 +543,10 @@ export default function StoreMap({
         {mapStores.map((store) => {
           const isHighlighted = store.id === highlightedStoreId;
           const polygonCoords = generateIrregularPolygon(store, mapStores);
+          const statusColor = getStatusColor(store.avail);
+          const fillOpacity = isHighlighted
+            ? (theme === "light" ? 0.18 : 0.22)
+            : (theme === "light" ? 0.05 : 0.08);
 
           return (
             <Fragment key={`zone-group-${store.id}`}>
@@ -578,6 +554,7 @@ export default function StoreMap({
               <PulsingRadarCircle
                 store={store}
                 polygonCoords={polygonCoords}
+                color={statusColor}
               />
 
               {/* Clean reference-style polygon with premium outline and semi-transparent fill */}
@@ -586,10 +563,11 @@ export default function StoreMap({
                 interactive={false}
                 pathOptions={{
                   className: `store-radius-polygon-base${isHighlighted ? " store-radius-polygon-base-highlighted" : ""}`,
-                  color: isHighlighted ? COVERAGE_COLOR : "rgba(245, 158, 11, 0.65)",
-                  fillColor: "#2d2510",
-                  fillOpacity: isHighlighted ? 0.55 : 0.35,
-                  weight: isHighlighted ? 4.5 : 2.5,
+                  color: statusColor,
+                  opacity: isHighlighted ? 0.95 : 0.65,
+                  fillColor: statusColor,
+                  fillOpacity: fillOpacity,
+                  weight: isHighlighted ? 3.5 : 2.0,
                   strokeLinejoin: "round",
                   strokeLinecap: "round"
                 }}

@@ -8,29 +8,51 @@ const STYLES = `
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg:           #08080a;
-    --bg-elevated:  #0f0f12;
-    --surface:      #141419;
-    --surface-2:    #1a1a22;
-    --surface-3:    #22222c;
-    --border:       rgba(255,255,255,0.06);
-    --border-focus: rgba(99,102,241,0.5);
+    --bg:           #0a0a0f;
+    --bg-elevated:  #12121c;
+    --surface:      #191926;
+    --surface-2:    #222235;
+    --surface-3:    #2c2c44;
+    --border:       rgba(255,255,255,0.09);
+    --border-focus: rgba(99,102,241,0.6);
     --accent:       #6366f1;
-    --accent-soft:  rgba(99,102,241,0.12);
-    --accent-glow:  rgba(99,102,241,0.25);
+    --accent-soft:  rgba(99,102,241,0.16);
+    --accent-glow:  rgba(99,102,241,0.3);
     --green:        #10b981;
-    --green-soft:   rgba(16,185,129,0.12);
+    --green-soft:   rgba(16,185,129,0.16);
     --amber:        #f59e0b;
-    --amber-soft:   rgba(245,158,11,0.12);
-    --red:          #ef4444;
-    --red-soft:     rgba(239,68,68,0.12);
-    --text:         #f4f4f5;
-    --text-2:       #a1a1aa;
-    --text-3:       #71717a;
+    --amber-soft:   rgba(245,158,11,0.16);
+    --red:          #f87171;
+    --red-soft:     rgba(248, 113, 113, 0.1);
+    --text:         #ffffff;
+    --text-2:       #c7c7d2;
+    --text-3:       #9494a8;
     --sans:         'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     --radius:       12px;
     --radius-lg:    16px;
     --radius-xl:    24px;
+  }
+
+  html.light {
+    --bg:           #f8f9fa;
+    --bg-elevated:  #ffffff;
+    --surface:      #f1f3f5;
+    --surface-2:    #e9ecef;
+    --surface-3:    #dee2e6;
+    --border:       rgba(0,0,0,0.08);
+    --border-focus: rgba(99,102,241,0.65);
+    --accent:       #4f46e5;
+    --accent-soft:  rgba(99,102,241,0.08);
+    --accent-glow:  rgba(99,102,241,0.2);
+    --green:        #059669;
+    --green-soft:   rgba(5,150,105,0.08);
+    --amber:        #d97706;
+    --amber-soft:   rgba(217,119,6,0.08);
+    --red:          #dc2626;
+    --red-soft:     rgba(220,38,38,0.06);
+    --text:         #111827;
+    --text-2:       #4b5563;
+    --text-3:       #6b7280;
   }
 
   html {
@@ -45,15 +67,20 @@ const STYLES = `
     -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
     overscroll-behavior-y: none;
+    transition: background 0.3s ease, color 0.3s ease;
   }
 
   .shell {
     min-height: 100vh;
     display: grid;
     grid-template-columns: 340px 1fr;
-    background: var(--bg);
+    background: radial-gradient(circle at 15% 0%, #15131f 0%, var(--bg) 45%) fixed;
     position: relative;
     overflow: hidden;
+  }
+
+  html.light .shell {
+    background: radial-gradient(circle at 15% 0%, #eef2ff 0%, var(--bg) 55%) fixed;
   }
 
   .shell::before {
@@ -61,30 +88,59 @@ const STYLES = `
     position: fixed;
     inset: 0;
     background:
-      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(99,102,241,0.08) 0%, transparent 55%),
-      radial-gradient(ellipse 60% 50% at 90% 80%, rgba(16,185,129,0.05) 0%, transparent 50%);
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(99,102,241,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 50% at 90% 80%, rgba(16,185,129,0.10) 0%, transparent 50%);
     pointer-events: none;
     z-index: 0;
   }
 
+  html.light .shell::before {
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(99,102,241,0.05) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 50% at 90% 80%, rgba(16,185,129,0.03) 0%, transparent 50%);
+  }
+
   /* ── SIDEBAR ── */
   .sidebar {
-    position: relative;
-    z-index: 1;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 340px;
+    z-index: 10;
     border-right: 1px solid var(--border);
-    padding: 40px 32px;
+    padding: 24px 24px 0 24px;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    overflow: hidden;
     background: rgba(15,15,18,0.6);
     backdrop-filter: blur(20px);
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+
+  .sidebar-body {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding-bottom: 20px;
+    scrollbar-width: none;
+  }
+  
+  .sidebar-body::-webkit-scrollbar {
+    display: none;
+  }
+
+  html.light .sidebar {
+    background: rgba(255, 255, 255, 0.45);
   }
 
   .brand {
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-bottom: 48px;
+    margin-bottom: 24px;
   }
 
   .brand-mark {
@@ -187,8 +243,14 @@ const STYLES = `
 
   .sidebar-foot {
     margin-top: auto;
-    padding-top: 32px;
     border-top: 1px solid var(--border);
+    padding: 20px 0;
+    height: 110px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-shrink: 0;
   }
 
   .progress-label {
@@ -196,7 +258,7 @@ const STYLES = `
     justify-content: space-between;
     font-size: 12px;
     color: var(--text-3);
-    margin-bottom: 10px;
+    margin-bottom: 6px;
   }
 
   .progress-label span:last-child { color: var(--text-2); font-weight: 500; }
@@ -216,12 +278,12 @@ const STYLES = `
   }
 
   .trust-note {
-    margin-top: 20px;
-    font-size: 12px;
+    margin-top: 0;
+    font-size: 11px;
     color: var(--text-3);
-    line-height: 1.55;
+    line-height: 1.4;
     display: flex;
-    gap: 10px;
+    gap: 8px;
     align-items: flex-start;
   }
 
@@ -349,23 +411,36 @@ const STYLES = `
     box-shadow: 0 6px 18px var(--accent-glow);
   }
 
-  /* Sidebar Recommender / Optimizer Placement */
+  /* Sidebar Recommender / Optimizer Placement - Premium Eye-Catching Card */
   .sidebar-recommender {
-    margin-top: 32px;
-    padding-top: 32px;
-    border-top: 1px solid var(--border);
+    margin-top: 24px;
+    padding: 16px;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(129, 140, 248, 0.02) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.16);
+    border-radius: 14px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.03);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .sidebar-recommender:hover {
+    border-color: rgba(99, 102, 241, 0.32);
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(129, 140, 248, 0.04) 100%);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.08);
+    transform: translateY(-1px);
   }
 
   .sidebar-recommender-title {
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     color: #a5b4fc;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     text-transform: none;
   }
 
@@ -374,6 +449,44 @@ const STYLES = `
     color: var(--text-3);
     line-height: 1.6;
     margin: 0;
+  }
+
+  /* Pulse Glowing Beacon Dot */
+  .pulse-glowing-beacon {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    animation: beaconPulse 1.8s infinite;
+  }
+
+  @keyframes beaconPulse {
+    0% {
+      transform: scale(0.9);
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+      transform: scale(1);
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+    100% {
+      transform: scale(0.9);
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+  }
+
+  @keyframes buttonShineAnimation {
+    0% {
+      left: -150%;
+    }
+    40% {
+      left: 150%;
+    }
+    100% {
+      left: 150%;
+    }
   }
 
   .btn-sidebar-recommender {
@@ -408,11 +521,11 @@ const STYLES = `
     background: linear-gradient(
       to right,
       rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.35) 50%,
       rgba(255, 255, 255, 0) 100%
     );
     transform: skewX(-25deg);
-    transition: all 0.75s ease;
+    animation: buttonShineAnimation 4.5s infinite ease-in-out;
   }
 
   .btn-sidebar-recommender:hover {
@@ -437,17 +550,18 @@ const STYLES = `
     background: rgba(0, 0, 0, 0.82);
     backdrop-filter: blur(10px);
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 20px;
+    padding: 20px 10px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     animation: fadeIn 0.25s ease-out;
   }
 
   .recommender-modal {
     width: 100%;
-    max-width: 1100px;
-    height: 90vh;
-    max-height: 800px;
+    max-width: 600px;
+    margin: 40px auto;
     background: var(--bg-elevated);
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
@@ -497,22 +611,10 @@ const STYLES = `
   }
 
   .recommender-modal-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 28px;
-    display: grid;
-    grid-template-columns: 1.4fr 1fr;
-    gap: 28px;
-  }
-
-  @media (max-width: 992px) {
-    .recommender-modal-body {
-      grid-template-columns: 1fr;
-    }
-    .recommender-modal {
-      height: 95vh;
-      max-height: none;
-    }
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
   }
 
   .recommender-modal-foot {
@@ -1315,6 +1417,7 @@ const STYLES = `
 
   /* ── MAIN ── */
   .main {
+    grid-column: 2;
     position: relative;
     z-index: 1;
     display: flex;
@@ -1328,11 +1431,11 @@ const STYLES = `
     max-width: 720px;
     width: 100%;
     margin: 0 auto;
-    padding: 56px 48px 32px;
+    padding: 20px 32px 20px;
   }
 
   .page-head {
-    margin-bottom: 40px;
+    margin-bottom: 16px;
   }
 
   .page-eyebrow {
@@ -1341,16 +1444,16 @@ const STYLES = `
     color: var(--accent);
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    margin-bottom: 12px;
+    margin-bottom: 6px;
   }
 
   .page-title {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 700;
     letter-spacing: -0.03em;
     color: var(--text);
     line-height: 1.15;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
   }
 
   .page-desc {
@@ -1362,14 +1465,14 @@ const STYLES = `
 
   /* ── SECTIONS ── */
   .section {
-    margin-bottom: 32px;
+    margin-bottom: 16px;
   }
 
   .section-label {
     font-size: 13px;
     font-weight: 600;
     color: var(--text);
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -1385,7 +1488,7 @@ const STYLES = `
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 24px;
+    padding: 20px;
   }
 
   .panel + .panel { margin-top: 16px; }
@@ -1393,7 +1496,7 @@ const STYLES = `
   .field-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 16px;
   }
 
   .field-grid-3 {
@@ -1474,7 +1577,7 @@ const STYLES = `
 
   .field.has-error input,
   .field.has-error select {
-    border-color: rgba(239,68,68,0.5);
+    border-color: rgba(248, 113, 113, 0.35);
     box-shadow: 0 0 0 3px var(--red-soft);
   }
 
@@ -1485,7 +1588,7 @@ const STYLES = `
     padding: 12px 16px;
     margin-bottom: 24px;
     background: var(--red-soft);
-    border: 1px solid rgba(239,68,68,0.25);
+    border: 1px solid rgba(248, 113, 113, 0.15);
     border-radius: var(--radius);
     font-size: 13px;
     color: var(--red);
@@ -1964,8 +2067,8 @@ const STYLES = `
     transition: width 0.3s ease;
   }
   .ss-progress-segment.blocked {
-    background: var(--red);
-    box-shadow: 0 0 6px rgba(239, 68, 68, 0.45);
+    background: #f87171 !important;
+    box-shadow: none !important;
   }
 
   .ss-progress-segment.selected {
@@ -2296,6 +2399,7 @@ const STYLES = `
     font-family: var(--sans);
   }
 
+
   .ss-leaflet-container path {
     transition: stroke 0.25s ease, stroke-width 0.25s ease, fill-opacity 0.25s ease, fill 0.25s ease;
   }
@@ -2342,6 +2446,8 @@ const STYLES = `
     border-radius: 50%;
     border: 2px solid #fff;
     box-shadow: 0 2px 12px rgba(0,0,0,0.45);
+    z-index: 2;
+    position: relative;
   }
 
   .ss-marker-green .ss-marker-dot,
@@ -2367,18 +2473,20 @@ const STYLES = `
     letter-spacing: 0.04em;
     white-space: nowrap;
   }
-
   .ss-marker-label {
     font-size: 10px;
     color: var(--text);
-    background: rgba(8,8,10,0.85);
-    padding: 1px 6px;
-    border-radius: 4px;
+    background: rgba(18, 18, 28, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 2px 8px;
+    border-radius: 6px;
     max-width: 90px;
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(99, 102, 241, 0.15);
+    font-weight: 500;
   }
 
   .ss-leaflet-popup .leaflet-popup-content-wrapper {
@@ -2430,14 +2538,64 @@ const STYLES = `
     line-height: 1.45;
   }
 
+  .leaflet-bar {
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+  }
+
   .leaflet-control-zoom a {
-    background: rgba(20,20,25,0.95) !important;
-    color: var(--text) !important;
-    border-color: var(--border) !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 15px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .leaflet-control-zoom a:last-child {
+    border-bottom: none !important;
   }
 
   .leaflet-control-zoom a:hover {
-    background: var(--surface-3) !important;
+    background: #f1f5f9 !important;
+    color: #000000 !important;
+  }
+
+  html.dark .leaflet-bar {
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+  }
+
+  html.dark .leaflet-control-zoom a {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: none !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 15px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  html.dark .leaflet-control-zoom a:last-child {
+    border-bottom: none !important;
+  }
+
+  html.dark .leaflet-control-zoom a:hover {
+    background: #f1f5f9 !important;
+    color: #000000 !important;
   }
 
   .leaflet-control-attribution {
@@ -2471,6 +2629,34 @@ const STYLES = `
   }
 
   .ss-popup-link:hover { text-decoration: underline; }
+
+  html.dark .ss-popup-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent) 0%, #818cf8 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    font-family: var(--sans) !important;
+    cursor: pointer !important;
+    text-align: center !important;
+    margin-top: 10px !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25) !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+  }
+
+  html.dark .ss-popup-link:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4) !important;
+    text-decoration: none !important;
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+  }
 
   .ss-map-legend {
     display: flex;
@@ -2531,7 +2717,7 @@ const STYLES = `
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 18px;
+    padding: 10px 22px;
     border-radius: 100px;
     border: 1px solid var(--border);
     background: var(--surface-2);
@@ -2540,19 +2726,37 @@ const STYLES = `
     font-weight: 600;
     font-family: var(--sans);
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s ease;
   }
 
   .ss-city-pill:hover {
-    border-color: rgba(255,255,255,0.12);
+    border-color: var(--accent);
     color: var(--text);
   }
 
   .ss-city-pill.active {
-    background: var(--accent-soft);
-    border-color: rgba(99,102,241,0.4);
-    color: #c7d2fe;
-    box-shadow: 0 0 0 1px rgba(99,102,241,0.15);
+    background: linear-gradient(135deg, var(--accent) 0%, #818cf8 100%) !important;
+    border-color: var(--accent) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 16px var(--accent-glow) !important;
+  }
+
+  html.light .ss-city-pill {
+    background: #ffffff !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01) !important;
+  }
+
+  html.light .ss-city-pill:hover {
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
+  }
+
+  html.light .ss-city-pill.active {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+    border-color: #4f46e5 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 16px rgba(79, 70, 229, 0.25) !important;
   }
 
   .ss-city-pill-badge {
@@ -3103,7 +3307,11 @@ const STYLES = `
     border-top: 1px solid var(--border);
     background: rgba(8,8,10,0.85);
     backdrop-filter: blur(16px);
-    padding: 20px 48px;
+    padding: 0 48px;
+    height: 110px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
   }
 
   .action-bar-inner {
@@ -3112,6 +3320,7 @@ const STYLES = `
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
   }
 
   .btn {
@@ -3433,6 +3642,7 @@ const STYLES = `
 
     .main {
       min-height: 100dvh;
+      grid-column: 1 !important;
     }
 
     .main-inner {
@@ -3668,6 +3878,7 @@ const STYLES = `
       -webkit-backdrop-filter: blur(20px);
       border-top: 1px solid var(--border);
       box-shadow: 0 -8px 32px rgba(0,0,0,0.35);
+      height: auto !important;
     }
 
     .action-bar-inner {
@@ -4324,13 +4535,2110 @@ const STYLES = `
     letter-spacing: 0.05em;
     text-shadow: 0 0 8px rgba(99,102,241,0.3);
   }
+
+  /* ── CUSTOM DROPDOWN MULTI-SELECT ── */
+  .custom-select-trigger {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 14px;
+    font-family: var(--sans);
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+  }
+
+  .custom-select-trigger:hover {
+    border-color: rgba(255,255,255,0.1);
+    background: var(--surface-3);
+  }
+
+  .custom-select-trigger.open {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  .selected-cities-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 8px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .custom-select-trigger:not(.open) .selected-cities-text:empty::before {
+    content: "Select cities";
+    color: var(--text-3);
+  }
+
+  .select-arrow-icon {
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s ease, color 0.15s;
+    color: var(--text-3);
+  }
+
+  .custom-select-trigger.open .select-arrow-icon {
+    transform: rotate(180deg);
+    color: var(--text);
+  }
+
+  .custom-select-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+    z-index: 100;
+    padding: 6px;
+    animation: selectDropdownFade 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes selectDropdownFade {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .city-checkbox-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .city-checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    color: var(--text-2);
+    user-select: none;
+  }
+
+  .city-checkbox-item:hover {
+    background: var(--surface-3);
+    color: var(--text);
+  }
+
+  .city-checkbox-item.active {
+    color: var(--text);
+  }
+
+  .city-custom-checkbox {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    border: 1.5px solid var(--text-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    background: transparent;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .city-checkbox-item.active .city-custom-checkbox {
+    border-color: var(--accent);
+    background: var(--accent);
+  }
+
+  .city-custom-checkbox svg {
+    width: 9px;
+    height: 9px;
+    stroke-width: 4px;
+  }
+
+  .city-checkbox-label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* ── LANDING PAGE MAIN ── */
+  .lp-wrap {
+    min-height: 100vh;
+    background: radial-gradient(circle at 15% 0%, #15131f 0%, var(--bg) 45%) fixed;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  html.light .lp-wrap {
+    background: radial-gradient(circle at 15% 0%, #eef2ff 0%, var(--bg) 55%) fixed;
+  }
+
+  .lp-wrap::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(99,102,241,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 50% at 90% 80%, rgba(16,185,129,0.10) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  html.light .lp-wrap::before {
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(99,102,241,0.05) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 50% at 90% 80%, rgba(16,185,129,0.03) 0%, transparent 50%);
+  }
+
+  .lp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 44px 96px 8px 96px;
+    position: relative;
+    z-index: 10;
+  }
+
+  .lp-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .lp-brand-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+  }
+
+  .lp-brand-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .lp-brand-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .lp-brand-tag {
+    font-size: 11px;
+    color: var(--text-3);
+    margin-top: 1px;
+  }
+
+  .btn-talk {
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+    color: var(--text-2);
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .btn-talk:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+    transform: translateY(-1px);
+  }
+
+  .lp-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 40px;
+    align-items: center;
+    padding: 8px 96px 48px 96px;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    transform: translateY(-20px);
+  }
+
+  @media (max-width: 1024px) {
+    .lp-body {
+      grid-template-columns: 1fr;
+      gap: 60px;
+      padding: 0 40px 60px 40px;
+      text-align: center;
+    }
+    .lp-header {
+      padding: 24px 40px;
+    }
+    .lp-content-left {
+      align-items: center !important;
+    }
+    .lp-actions {
+      justify-content: center;
+    }
+    .lp-brands-list {
+      justify-content: center;
+    }
+    .lp-metrics {
+      max-width: 600px;
+      margin: 0 auto 32px auto;
+    }
+  }
+
+  .lp-content-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .lp-badge {
+    color: #10b981;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .lp-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+    animation: lp-pulse-dot 2s infinite;
+  }
+
+  @keyframes lp-pulse-dot {
+    0% {
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45);
+    }
+    70% {
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+  }
+
+  /* Concentric Radar Pulsing Rings Styling */
+  .lp-radar-pulse {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .lp-pulse-ring {
+    stroke: #818cf8;
+    stroke-width: 2.8;
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    filter: drop-shadow(0 0 8px rgba(124, 108, 255, 0.75)) drop-shadow(0 0 20px rgba(124, 108, 255, 0.35));
+    animation: lp-ring-glow 6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+
+  .lp-ring-2 {
+    animation-delay: 1.38s;
+  }
+
+  .lp-ring-3 {
+    animation-delay: 2.86s;
+  }
+
+  @keyframes lp-ring-glow {
+    0% {
+      transform: scale(0.15);
+      opacity: 0.1;
+      stroke-width: 4px;
+    }
+    12% {
+      opacity: 0.95;
+      stroke-width: 3.5px;
+    }
+    80% {
+      opacity: 0.35;
+      stroke-width: 1.8px;
+    }
+    100% {
+      transform: scale(1.35);
+      opacity: 0;
+      stroke-width: 1px;
+    }
+  }
+
+  .lp-pulse-center {
+    fill: #a5b4fc;
+    filter: drop-shadow(0 0 10px #7c6cff) drop-shadow(0 0 20px #7c6cff);
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: lp-center-pulse 2s infinite ease-in-out;
+  }
+
+  @keyframes lp-center-pulse {
+    0%, 100% {
+      transform: scale(0.85);
+      opacity: 0.8;
+      fill: #818cf8;
+    }
+    50% {
+      transform: scale(1.2);
+      opacity: 1;
+      fill: #c084fc;
+      filter: drop-shadow(0 0 14px #a5b4fc) drop-shadow(0 0 25px #7c6cff);
+    }
+  }
+
+  .lp-title {
+    font-size: 46px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+
+  .lp-title span.accent {
+    color: #818cf8;
+    background: linear-gradient(135deg, #818cf8 0%, #a5b4fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  html.light .lp-title span.accent {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .lp-subtitle {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 16px;
+    color: var(--text-2);
+    line-height: 1.4;
+  }
+
+  .lp-subtitle em {
+    font-style: italic;
+    color: var(--text-3);
+    font-weight: 400;
+  }
+
+  .lp-subtitle strong {
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .lp-desc {
+    font-size: 15px;
+    color: var(--text-3);
+    line-height: 1.6;
+    margin-bottom: 24px;
+    max-width: 540px;
+  }
+
+  .lp-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    width: 100%;
+    margin-bottom: 28px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+
+  .lp-metric-item {
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 12px 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  html.light .lp-metric-item {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .lp-metric-item:hover {
+    transform: translateY(-2px);
+    border-color: rgba(99, 102, 241, 0.35);
+    background: rgba(99, 102, 241, 0.05);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.08);
+  }
+
+  .lp-metric-val {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #fff 0%, #c7d2fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+  }
+
+  html.light .lp-metric-val {
+    background: linear-gradient(135deg, #111827 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .lp-metric-lbl {
+    font-size: 9.5px;
+    color: var(--text-3);
+    margin-top: 4px;
+    line-height: 1.35;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .lp-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    width: 100%;
+  }
+
+  @media (max-width: 640px) {
+    .lp-actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .lp-metrics {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+  }
+
+  .btn-check-availability {
+    background: linear-gradient(135deg, var(--accent) 0%, #818cf8 100%);
+    color: #fff;
+    border: none;
+    border-radius: 100px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 8px 30px var(--accent-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-check-availability:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 12px 36px var(--accent-glow);
+  }
+
+  .btn-talk-specialist {
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+    color: var(--text-2);
+    border-radius: 100px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-talk-specialist:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+    transform: translateY(-1.5px);
+  }
+
+  .lp-brands-section {
+    width: 100%;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+  }
+
+  .lp-brands-title {
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+
+  .lp-brands-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .lp-brand-chip {
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 12px;
+    color: var(--text-2);
+    font-weight: 500;
+  }
+
+  /* ── RIGHT ILLUSTRATION GRAPHIC ── */
+  .lp-graphic-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 400px;
+  }
+
+  .lp-glow-background {
+    position: absolute;
+    width: 340px;
+    height: 340px;
+    background: radial-gradient(circle at center, rgba(124, 108, 255, 0.28) 0%, rgba(99, 102, 241, 0.15) 45%, rgba(192, 132, 252, 0.05) 75%, transparent 100%);
+    border-radius: 50%;
+    z-index: 0;
+    animation: pulse-glow 6s infinite ease-in-out;
+  }
+
+  .lp-graphic-scene {
+    position: relative;
+    width: 380px;
+    height: 380px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lp-shelf-panel {
+    background: rgba(15, 15, 20, 0.7);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    backdrop-filter: blur(20px);
+    width: 260px;
+    height: 200px;
+    padding: 16px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    animation: float 5s infinite ease-in-out;
+  }
+
+  .lp-shelf-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .lp-shelf-row {
+    display: flex;
+    gap: 12px;
+    border-bottom: 1.5px dashed rgba(255,255,255,0.04);
+    padding-bottom: 12px;
+  }
+
+  .lp-shelf-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .lp-shelf-slot {
+    height: 28px;
+    border-radius: 6px;
+    flex: 1;
+    background: rgba(255,255,255,0.03);
+    transition: background 0.3s;
+  }
+
+  .lp-shelf-slot.purple {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.4) 0%, rgba(99, 102, 241, 0.15) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+  }
+
+  .lp-shelf-slot.green {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.4) 0%, rgba(16, 185, 129, 0.15) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  }
+
+  .lp-shelf-slot.yellow {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.4) 0%, rgba(245, 158, 11, 0.15) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+  }
+
+  /* Floating tags */
+  .lp-floating-tag {
+    position: absolute;
+    background: rgba(15, 15, 20, 0.85);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.4);
+    backdrop-filter: blur(10px);
+    user-select: none;
+    z-index: 10;
+  }
+
+  .lp-floating-tag.tag-booked {
+    top: 60px;
+    right: -20px;
+    animation: float 4.5s infinite ease-in-out 0.5s;
+  }
+
+  .lp-floating-tag.tag-free {
+    bottom: 60px;
+    left: -40px;
+    animation: float-reverse 5.2s infinite ease-in-out;
+  }
+
+  .lp-floating-tag.tag-orders {
+    bottom: 20px;
+    right: -30px;
+    animation: float 4.8s infinite ease-in-out 1s;
+  }
+
+  .lp-tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .lp-tag-dot.green { background: #10b981; box-shadow: 0 0 8px #10b981; }
+  .lp-tag-dot.orange { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+  .lp-tag-arrow { color: #10b981; font-weight: 800; font-size: 11px; }
+
+  /* Floating Plus gradient block */
+  .lp-floating-plus {
+    position: absolute;
+    top: 50px;
+    left: 40px;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #6366f1 0%, #818cf8 100%);
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 300;
+    z-index: 10;
+    animation: float-reverse 4s infinite ease-in-out 0.3s;
+    user-select: none;
+  }
+
+  /* Animated connection line path */
+  .lp-svg-overlay {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .lp-connection-path {
+    stroke: rgba(99, 102, 241, 0.25);
+    stroke-width: 1.5;
+    stroke-dasharray: 6, 6;
+    fill: none;
+    animation: dash 3s infinite linear;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  @keyframes float-reverse {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { transform: scale(0.9); opacity: 0.85; }
+    50% { transform: scale(1.15); opacity: 1; }
+  }
+
+  @keyframes dash {
+    to {
+      stroke-dashoffset: -12;
+    }
+  }
+
+  /* Standalone Specialist Booking Page */
+  .standalone-wrap {
+    min-height: 100vh;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .standalone-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 96px 8px 96px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    background: rgba(8, 8, 10, 0.4);
+    z-index: 10;
+  }
+
+  .standalone-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .standalone-logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+  }
+
+  .standalone-brand-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .standalone-brand-tag {
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-standalone-back {
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.02);
+    color: var(--text-2);
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-standalone-back:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+  }
+
+  .standalone-main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 24px;
+    z-index: 1;
+  }
+
+  .standalone-form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 680px;
+    padding: 32px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+  }
+
+  .standalone-form-head {
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+  }
+
+  .standalone-form-head h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .standalone-form-head p {
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.5;
+  }
+
+  .standalone-form-foot {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+
+  /* Success Screen styles */
+  .lead-success-wrap {
+    min-height: 100vh;
+    background: var(--bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+  }
+
+  .lead-success-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 500px;
+    padding: 40px 32px;
+    text-align: center;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .lead-success-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--green-soft);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+  }
+
+  .lead-success-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .lead-success-card h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .lead-success-desc {
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .lead-success-details {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 28px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .lead-detail-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+  }
+
+  .lead-detail-row span {
+    color: var(--text-3);
+  }
+
+  .lead-detail-row strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .btn-success-home {
+    width: 100%;
+    padding: 12px 24px;
+  }
+
+  /* ── THEME SWITCHER ── */
+  .btn-theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--text-2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+    z-index: 10;
+  }
+
+  .btn-theme-toggle:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+    transform: rotate(15deg) scale(1.05);
+  }
+
+  html.light .btn-theme-toggle {
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  html.light .btn-theme-toggle:hover {
+    border-color: rgba(0, 0, 0, 0.15);
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  /* ── LIGHT THEME ADAPTIONS ── */
+  html.light .ss-leaflet-container {
+    background: #eef2ff;
+  }
+  html.light .ss-marker-label {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  html.light .ss-leaflet-popup .leaflet-popup-content-wrapper {
+    background: rgba(255, 255, 255, 0.98);
+    border-color: rgba(99, 102, 241, 0.25);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  }
+  html.light .ss-leaflet-popup .leaflet-popup-tip {
+    background: rgba(255, 255, 255, 0.98);
+    border-color: rgba(99, 102, 241, 0.15);
+  }
+
+  html.light .ss-shelf-visualizer {
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  html.light .ss-shelf-visualizer:hover {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  }
+  html.light .ss-shelf-progress-bar {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.06);
+  }
+
+  html.light .recommender-modal-foot {
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  /* ── ELITE LIGHT THEME DEFINITIONS ── */
+  html.light {
+    /* Main Design Variables */
+    --bg:           #fafafb; /* High-end studio off-white background */
+    --bg-elevated:  #ffffff; /* Clean white card surfaces */
+    --surface:      #f4f5f8; /* Soft light grey background */
+    --surface-2:    #ffffff; /* Make form inputs & store cards crisp white */
+    --surface-3:    #eef0f4; /* Clean hover backdrop states */
+    --border:       rgba(15, 23, 42, 0.05); /* Incredibly fine dark-opacity borders */
+    --border-focus: rgba(79, 70, 229, 0.4);
+    --accent:       #4f46e5; /* Deep, vivid signature indigo */
+    --accent-soft:  rgba(79, 70, 229, 0.06);
+    --accent-glow:  rgba(79, 70, 229, 0.12);
+    --green:        #059669; /* Balanced forest green */
+    --green-soft:   rgba(5, 150, 105, 0.06);
+    --amber:        #d97706; /* High-end warm amber */
+    --amber-soft:   rgba(217, 119, 6, 0.06);
+    --red:          #dc2626; /* Crimson validation red */
+    --red-soft:     rgba(220, 38, 38, 0.05);
+    --text:         #0f172a; /* Slate-900 (elite typography color) */
+    --text-2:       #475569; /* Slate-600 */
+    --text-3:       #64748b; /* Slate-500 */
+  }
+
+  /* Global light mode visual polish overrides */
+  html.light .shell {
+    background: radial-gradient(circle at 5% 5%, rgba(99, 102, 241, 0.04) 0%, var(--bg) 60%) fixed !important;
+  }
+  html.light .lp-wrap {
+    background: radial-gradient(circle at 5% 5%, rgba(99, 102, 241, 0.04) 0%, var(--bg) 60%) fixed !important;
+  }
+
+  html.light .sidebar {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border-right: 1px solid rgba(15, 23, 42, 0.05) !important;
+  }
+
+  html.light .panel {
+    background: #ffffff !important;
+    border-color: rgba(15, 23, 42, 0.05) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.02) !important;
+  }
+
+  /* Navigation steps on light mode */
+  html.light .nav-step.clickable:hover {
+    background: rgba(15, 23, 42, 0.02) !important;
+  }
+  html.light .nav-step.active {
+    background: rgba(79, 70, 229, 0.06) !important;
+    border-color: rgba(79, 70, 229, 0.15) !important;
+  }
+
+  /* Landing page visual polish */
+  html.light .lp-metric-item {
+    background: #ffffff !important;
+    border: 1px solid rgba(15, 23, 42, 0.04) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+  }
+  html.light .lp-metric-item:hover {
+    border-color: rgba(79, 70, 229, 0.25) !important;
+    background: rgba(79, 70, 229, 0.02) !important;
+    box-shadow: 0 12px 30px rgba(79, 70, 229, 0.06) !important;
+  }
+  html.light .lp-metric-val {
+    background: linear-gradient(135deg, #0f172a 0%, #4f46e5 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+  html.light .lp-title span.accent {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+
+  /* Forms & Input Elements */
+  html.light .field input,
+  html.light .field select,
+  html.light .field textarea {
+    background: #ffffff !important;
+    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+    color: #0f172a !important;
+  }
+  html.light .field input:hover,
+  html.light .field select:hover,
+  html.light .field textarea:hover {
+    border-color: rgba(79, 70, 229, 0.3) !important;
+    background: #ffffff !important;
+  }
+  html.light .field input:focus,
+  html.light .field select:focus,
+  html.light .field textarea:focus {
+    border-color: var(--accent) !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+  }
+
+  /* Checkout Agreement & Disclaimer */
+  html.light .ss-disclaimer-agreement {
+    background: #ffffff !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  }
+  html.light .ss-disclaimer-agreement:hover {
+    border-color: rgba(79, 70, 229, 0.3) !important;
+    background: rgba(79, 70, 229, 0.02) !important;
+  }
+  html.light .ss-progress-segment.blocked {
+    background: #fca5a5 !important;
+    box-shadow: none !important;
+  }
+  html.light .ss-qty-input {
+    color: #0f172a !important;
+  }
+  html.light .ss-qty-label {
+    color: #475569 !important;
+  }
+  html.light .ss-qty button {
+    color: #334155 !important;
+  }
+  html.light .ss-selection-disclaimer {
+    border-top: 1px solid rgba(15, 23, 42, 0.08) !important;
+  }
+  html.light .ss-disclaimer-text {
+    color: #334155 !important;
+  }
+  html.light .ss-disclaimer-text strong {
+    color: #0f172a !important;
+  }
+  html.light .ss-disclaimer-agreement span {
+    color: #1e293b !important;
+  }
+
+  /* Selection Panel & Badges Light Theme Overrides */
+  html.light .ss-selection-panel {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+    border: 1px solid rgba(79, 70, 229, 0.1) !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05) !important;
+  }
+  html.light .ss-selection-head {
+    background: rgba(79, 70, 229, 0.04) !important;
+    border-bottom: 1px solid rgba(79, 70, 229, 0.1) !important;
+  }
+  html.light .ss-selection-head h4 {
+    color: #0f172a !important;
+  }
+  html.light .ss-selection-head p {
+    color: #475569 !important;
+  }
+  html.light .ss-selection-total {
+    color: var(--accent) !important;
+    background: rgba(79, 70, 229, 0.08) !important;
+    border-color: rgba(79, 70, 229, 0.2) !important;
+  }
+  html.light .ss-selection-city-label {
+    color: #475569 !important;
+  }
+  html.light .ss-selection-city-label em {
+    color: #64748b !important;
+  }
+  html.light .ss-selection-item {
+    background: #ffffff !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+  }
+  html.light .ss-selection-item:hover {
+    border-color: rgba(79, 70, 229, 0.2) !important;
+  }
+  html.light .ss-selection-item-top strong {
+    color: #0f172a !important;
+  }
+  html.light .ss-selection-area {
+    color: #475569 !important;
+  }
+  html.light .ss-selection-address {
+    color: #64748b !important;
+  }
+  html.light .ss-selection-view {
+    background: #f8fafc !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+    color: #475569 !important;
+  }
+  html.light .ss-selection-view:hover {
+    color: var(--accent) !important;
+    border-color: rgba(79, 70, 229, 0.2) !important;
+    background: rgba(79, 70, 229, 0.04) !important;
+  }
+  html.light .ss-in-cart-badge {
+    color: var(--accent) !important;
+    background: rgba(79, 70, 229, 0.08) !important;
+    border-color: rgba(79, 70, 229, 0.25) !important;
+  }
+
+
+  /* Footer Action Bar */
+  html.light .action-bar {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border-top: 1px solid rgba(15, 23, 42, 0.05) !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.03) !important;
+  }
+  html.light .btn-ghost {
+    color: #475569 !important;
+  }
+  html.light .btn-ghost:hover {
+    background: rgba(15, 23, 42, 0.04) !important;
+    color: #0f172a !important;
+  }
+
+  /* Vibrant Buttons in Light Mode */
+  html.light .btn-primary {
+    background: linear-gradient(135deg, var(--accent) 0%, #6366f1 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 4px 18px rgba(79, 70, 229, 0.25) !important;
+    opacity: 1 !important;
+  }
+  html.light .btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%) !important;
+    box-shadow: 0 6px 24px rgba(79, 70, 229, 0.4) !important;
+    transform: translateY(-1px) !important;
+  }
+  html.light .btn-primary:disabled {
+    background: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    border: 1px solid rgba(15, 23, 42, 0.05) !important;
+    box-shadow: none !important;
+    opacity: 0.85 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+  }
+
+  html.light .ss-add-btn {
+    background: linear-gradient(135deg, var(--accent) 0%, #6366f1 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25) !important;
+  }
+  html.light .ss-add-btn:hover {
+    background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%) !important;
+    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35) !important;
+    transform: translateY(-1px) !important;
+  }
+
+
+  /* Recommender Modal & Capacity Simulator adaptations */
+  html.light .recommender-modal-overlay {
+    background: rgba(15, 23, 42, 0.45) !important;
+    backdrop-filter: blur(8px) !important;
+  }
+  html.light .recommender-modal {
+    background: #ffffff !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+    box-shadow: 0 30px 100px rgba(15, 23, 42, 0.15), 0 0 40px rgba(79, 70, 229, 0.05) !important;
+  }
+  html.light .recommender-modal-head {
+    background: #ffffff !important;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06) !important;
+  }
+  html.light .recommender-modal-head h3 {
+    color: #0f172a !important;
+  }
+  html.light .btn-close-modal {
+    background: #f1f5f9 !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+    color: #475569 !important;
+  }
+  html.light .btn-close-modal:hover {
+    background: #fee2e2 !important;
+    color: #ef4444 !important;
+    border-color: rgba(239, 68, 68, 0.2) !important;
+  }
+  html.light .recommender-modal-foot {
+    background: #f8fafc !important;
+    border-top: 1px solid rgba(15, 23, 42, 0.05) !important;
+  }
+  html.light .spec-strip {
+    background: #f8fafc !important;
+    border-color: rgba(15, 23, 42, 0.06) !important;
+  }
+  html.light .spec-chip {
+    border-right-color: rgba(15, 23, 42, 0.06) !important;
+  }
+  html.light .spec-chip .lbl {
+    color: #64748b !important;
+  }
+  html.light .spec-chip .val {
+    color: var(--accent) !important;
+  }
+  html.light .bin-preview-panel {
+    background: linear-gradient(160deg, #f8fafc, #f1f5f9) !important;
+    border-color: rgba(79, 70, 229, 0.15) !important;
+  }
+  html.light .preview-topbar {
+    background: rgba(79, 70, 229, 0.03) !important;
+    border-bottom: 1px solid rgba(79, 70, 229, 0.08) !important;
+  }
+  html.light .preview-topbar-left .ptb-title {
+    color: #475569 !important;
+  }
+  html.light .ptb-item-label {
+    color: #0f172a !important;
+  }
+  html.light .bin-peek-inner {
+    background: #ffffff !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+  }
+  html.light .bin-peek-trigger:hover .bin-peek-inner {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.12), 0 6px 20px rgba(79, 70, 229, 0.08) !important;
+  }
+  html.light .bin-peek-icon {
+    background: linear-gradient(160deg, #e0e7ff, #c7d2fe) !important;
+  }
+  
+  /* Mini 3D bin light mode adjustments */
+  html.light .mini-front {
+    background: linear-gradient(160deg, #4f46e5, #4338ca) !important;
+    border-color: rgba(79, 70, 229, 0.4) !important;
+  }
+  html.light .mini-top {
+    background: linear-gradient(135deg, #818cf8, #6366f1) !important;
+    border-color: rgba(99, 102, 241, 0.5) !important;
+  }
+  html.light .mini-side {
+    background: linear-gradient(180deg, #4338ca, #312e81) !important;
+    border-color: rgba(79, 70, 229, 0.3) !important;
+  }
+  html.light .mini-d {
+    background: rgba(255, 255, 255, 0.95) !important;
+  }
+  html.light .mini-d:nth-child(4),
+  html.light .mini-d:nth-child(5) {
+    background: #10b981 !important;
+  }
+
+  html.light .item-hero {
+    background: rgba(79, 70, 229, 0.05) !important;
+    border-color: rgba(79, 70, 229, 0.12) !important;
+  }
+  html.light .tag-violet {
+    background: rgba(79, 70, 229, 0.08) !important;
+    color: #4f46e5 !important;
+    border-color: rgba(79, 70, 229, 0.18) !important;
+  }
+  html.light .tag-green {
+    background: rgba(5, 150, 105, 0.08) !important;
+    color: #059669 !important;
+    border-color: rgba(5, 150, 105, 0.18) !important;
+  }
+  html.light .tag-amber {
+    background: rgba(217, 119, 6, 0.08) !important;
+    color: #b45309 !important;
+    border-color: rgba(217, 119, 6, 0.18) !important;
+  }
+
+  /* Capacity Simulator & Visualizer Light theme styling */
+  html.light .item-card {
+    background: #ffffff !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+  }
+  html.light .item-card:hover {
+    border-color: rgba(79, 70, 229, 0.4) !important;
+    box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.1), 0 6px 18px rgba(79, 70, 229, 0.08) !important;
+  }
+  html.light .item-card.active {
+    border-color: var(--accent) !important;
+    background: linear-gradient(160deg, rgba(79, 70, 229, 0.05), #ffffff) !important;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15), 0 8px 24px rgba(79, 70, 229, 0.12) !important;
+  }
+  html.light .item-card .item-name {
+    color: #0f172a !important;
+  }
+  html.light .item-card .item-dim {
+    color: #64748b !important;
+  }
+  html.light .viz-panel {
+    background: #ffffff !important;
+    border-color: rgba(15, 23, 42, 0.06) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01) !important;
+  }
+  html.light .viz-panel-head .t {
+    color: #475569 !important;
+  }
+  html.light .viz-panel-head .d {
+    color: #64748b !important;
+  }
+  html.light .viz-panel-foot {
+    color: #64748b !important;
+  }
+  html.light .viz-legend span {
+    color: #475569 !important;
+  }
+  html.light .sw-empty {
+    background-image: repeating-linear-gradient(45deg, rgba(15, 23, 42, 0.12) 0 2px, transparent 2px 5px) !important;
+    background-color: rgba(0, 0, 0, 0.02) !important;
+    border-color: rgba(15, 23, 42, 0.18) !important;
+  }
+  html.light .viz-buffer {
+    background: rgba(15, 23, 42, 0.02) !important;
+    border-color: rgba(15, 23, 42, 0.05) !important;
+  }
+  html.light .viz-buffer-note {
+    color: #475569 !important;
+  }
+  html.light .viz-buffer-note b {
+    color: #0f172a !important;
+  }
+  
+  /* Dots buffer light mode alignment */
+  html.light .viz-dot.muted {
+    background: rgba(15, 23, 42, 0.05) !important;
+    border: 1px dashed rgba(15, 23, 42, 0.25) !important;
+  }
+  html.light .viz-dot.weight-cut {
+    background: rgba(217, 119, 6, 0.04) !important;
+    border: 1px dashed rgba(217, 119, 6, 0.45) !important;
+  }
+
+  html.light .viz-flow-stat {
+    background: #ffffff !important;
+    border-color: rgba(15, 23, 42, 0.08) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.01) !important;
+  }
+  html.light .viz-flow-stat .n {
+    color: #0f172a !important;
+  }
+  html.light .viz-flow-stat .l {
+    color: #64748b !important;
+  }
+  html.light .viz-flow-stat.hi {
+    background: rgba(79, 70, 229, 0.06) !important;
+    border-color: rgba(79, 70, 229, 0.18) !important;
+  }
+  html.light .viz-flow-stat.hi .n {
+    color: var(--accent) !important;
+  }
+  html.light .viz-flow-stat.hi .l {
+    color: rgba(79, 70, 229, 0.8) !important;
+  }
+  html.light .viz-flow-arrow {
+    color: #94a3b8 !important;
+  }
+  html.light .viz-sentence {
+    background: rgba(79, 70, 229, 0.04) !important;
+    border-color: rgba(79, 70, 229, 0.1) !important;
+    color: #3730a3 !important;
+  }
+  html.light .viz-sentence b {
+    color: #1e1b4b !important;
+  }
+  html.light .bin-peek-label {
+    color: #0f172a !important;
+  }
+  html.light .bin-peek-sub {
+    color: #64748b !important;
+  }
+  html.light .bin-peek-arrow {
+    color: #64748b !important;
+  }
+  html.light .bin-peek-trigger:hover .bin-peek-arrow,
+  html.light .bin-peek-trigger[aria-expanded="true"] .bin-peek-arrow {
+    color: var(--accent) !important;
+  }
+  html.light .item-hero-name {
+    color: #0f172a !important;
+  }
+  html.light .item-hero-dims {
+    color: #64748b !important;
+  }
+  html.light .preview-topbar-left .ptb-title {
+    color: #475569 !important;
+  }
+  html.light .ptb-item-label {
+    color: #0f172a !important;
+  }
+  
+  html.light .item-block {
+    background: #f8fafc !important;
+    border-color: rgba(15, 23, 42, 0.05) !important;
+  }
+  html.light .item-row input {
+    background: #ffffff !important;
+    border-color: rgba(15, 23, 42, 0.12) !important;
+  }
+  html.light .item-row input:focus {
+    border-color: var(--accent) !important;
+  }
+  html.light .add-row-btn {
+    border-color: rgba(79, 70, 229, 0.25) !important;
+    color: var(--accent) !important;
+  }
+  html.light .add-row-btn:hover {
+    background: rgba(79, 70, 229, 0.04) !important;
+  }
+  html.light .big-stat {
+    background: rgba(79, 70, 229, 0.04) !important;
+    border-color: rgba(79, 70, 229, 0.1) !important;
+  }
+  html.light .big-stat .num {
+    color: var(--accent) !important;
+  }
+  html.light .big-stat .lbl {
+    color: #475569 !important;
+  }
+
+  /* Map and Legend styles in Light mode */
+  html.light .ss-leaflet-container {
+    background: #eef2ff !important;
+  }
+  html.light .ss-marker-label {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid rgba(15, 23, 42, 0.08) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+  }
+  html.light .ss-leaflet-popup .leaflet-popup-content-wrapper {
+    background: #ffffff !important;
+    border: 1px solid rgba(79, 70, 229, 0.2) !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
+    color: #0f172a !important;
+  }
+  html.light .ss-leaflet-popup .leaflet-popup-tip {
+    background: #ffffff !important;
+    border: 1px solid rgba(79, 70, 229, 0.1) !important;
+  }
+  html.light .ss-leaflet-popup-inner h4 {
+    color: #0f172a !important;
+  }
+  html.light .ss-leaflet-popup-inner p {
+    color: #475569 !important;
+  }
+  html.light .ss-leaflet-popup .leaflet-popup-close-button {
+    color: #64748b !important;
+  }
+
+  /* Grid visualizer and legends in Store Selection */
+  html.light .ss-card {
+    background: #ffffff !important;
+    border-color: rgba(15, 23, 42, 0.05) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01) !important;
+  }
+  html.light .ss-card:hover {
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04) !important;
+    border-color: rgba(79, 70, 229, 0.2) !important;
+  }
+  html.light .ss-card.in-cart {
+    background: rgba(79, 70, 229, 0.02) !important;
+    border-color: rgba(79, 70, 229, 0.2) !important;
+  }
+  html.light .ss-shelf-visualizer {
+    background: #f8fafc !important;
+    border-color: rgba(15, 23, 42, 0.05) !important;
+  }
+  html.light .ss-shelf-visualizer:hover {
+    background: #ffffff !important;
+    border-color: rgba(79, 70, 229, 0.15) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+  }
+  html.light .ss-shelf-progress-bar {
+    background: rgba(15, 23, 42, 0.03) !important;
+    border-color: rgba(15, 23, 42, 0.05) !important;
+  }
+  html.light .ss-shelf-rack {
+    background: #f8fafc !important;
+    border-color: rgba(15, 23, 42, 0.06) !important;
+  }
+  html.light .ss-shelf-rack.filled {
+    background: rgba(79, 70, 229, 0.04) !important;
+    border-color: rgba(79, 70, 229, 0.25) !important;
+  }
+  html.light .ss-shelf-allocating strong {
+    color: var(--accent) !important;
+    text-shadow: none !important;
+  }
+  html.light .ss-shelf-pending strong {
+    text-shadow: none !important;
+  }
+  html.light .ss-rack-unit {
+    background: #ffffff !important;
+    border-color: rgba(15, 23, 42, 0.1) !important;
+    color: #475569 !important;
+  }
+  html.light .ss-rack-unit:hover {
+    background: rgba(79, 70, 229, 0.04) !important;
+    border-color: var(--accent) !important;
+    color: var(--accent) !important;
+  }
+  html.light .ss-rack-unit.selected {
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3) !important;
+  }
+
+  html.light .standalone-header {
+    background: rgba(255, 255, 255, 0.4) !important;
+  }
+  html.light .btn-standalone-back {
+    background: rgba(0, 0, 0, 0.02) !important;
+  }
+  html.light .btn-standalone-back:hover {
+    border-color: rgba(0, 0, 0, 0.15) !important;
+    background: rgba(0, 0, 0, 0.05) !important;
+  }
+
+  html.light .lead-success-card {
+    background: #ffffff !important;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.05) !important;
+  }
+
+  html.light .lp-shelf-panel {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border-color: rgba(15, 23, 42, 0.05) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03) !important;
+  }
+  html.light .lp-shelf-row {
+    border-bottom-color: rgba(0, 0, 0, 0.06) !important;
+  }
+  html.light .lp-shelf-slot {
+    background: rgba(0, 0, 0, 0.02) !important;
+  }
+
+  html.light .lp-floating-tag {
+    background: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(15, 23, 42, 0.05) !important;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.03) !important;
+  }
+
+  html.light [style*="color: #a5b4fc"],
+  html.light [style*="color: rgb(165, 180, 252)"],
+  html.light .recommender-highlight-title,
+  html.light .sidebar-recommender-title,
+  html.light .ss-shelf-allocating strong,
+  html.light .spec-chip .val,
+  html.light .promo-tag {
+    color: var(--accent) !important;
+  }
+
+  html.light .sidebar-recommender {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.04) 0%, rgba(79, 70, 229, 0.01) 100%) !important;
+    border: 1px solid rgba(79, 70, 229, 0.12) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02) !important;
+  }
+  html.light .sidebar-recommender:hover {
+    border-color: rgba(79, 70, 229, 0.22) !important;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.07) 0%, rgba(79, 70, 229, 0.02) 100%) !important;
+  }
+  html.light .sidebar-foot {
+    border-top-color: rgba(15, 23, 42, 0.05) !important;
+  }
+  html.light .progress-track {
+    background: rgba(15, 23, 42, 0.05) !important;
+  }
+
+  html.light .btn-sidebar-recommender,
+  html.light .btn-recommender,
+  html.light .btn-recommender-highlight {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+  }
+
+  html.light .recommender-highlight-banner {
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(79, 70, 229, 0.02) 100%) !important;
+    border-color: rgba(79, 70, 229, 0.15) !important;
+    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.02) !important;
+  }
+
+  html.light .recommender-sidebar-promo {
+    background: rgba(79, 70, 229, 0.04) !important;
+    border-color: rgba(79, 70, 229, 0.2) !important;
+  }
+
+  /* Unified Header Actions */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 100;
+  }
+
+  .header-actions .btn-theme-toggle {
+    margin: 0 !important;
+  }
+
+  .header-actions .btn-talk,
+  .header-actions .btn-standalone-back {
+    margin: 0 !important;
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
+    height: 38px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Desktop layout: position absolutely inside relative parents */
+  .desktop-actions-wrap-outer {
+    position: absolute;
+    top: 44px;
+    right: 96px;
+    z-index: 100;
+  }
+
+  @media (max-width: 960px) {
+    .desktop-actions-wrap-outer {
+      display: none;
+    }
+  }
+
+  /* Mobile actions styling inside mobile header */
+  .mobile-actions-wrap {
+    margin-left: auto;
+  }
+
+  @media (max-width: 480px) {
+    .mobile-actions-wrap .btn-talk,
+    .mobile-actions-wrap .btn-standalone-back {
+      padding: 6px 12px !important;
+      font-size: 11px !important;
+      height: 32px !important;
+    }
+    .mobile-actions-wrap {
+      gap: 6px;
+    }
+  }
+
+  /* World-Class Mobile-First Landing Page Restructuring */
+  @media (max-width: 768px) {
+    .lp-body {
+      display: flex !important;
+      flex-direction: column !important;
+      padding: 32px 20px 48px 20px !important;
+      gap: 24px !important;
+      transform: none !important;
+      text-align: center !important;
+    }
+
+    .lp-content-left {
+      display: contents !important;
+    }
+
+    .lp-badge {
+      order: 1 !important;
+      margin: 0 auto 8px auto !important;
+    }
+
+    .lp-title {
+      order: 2 !important;
+      font-size: 32px !important;
+      line-height: 1.25 !important;
+      margin-bottom: 8px !important;
+      letter-spacing: -0.02em !important;
+    }
+
+    .lp-subtitle {
+      order: 3 !important;
+      font-size: 15px !important;
+      line-height: 1.4 !important;
+      margin-bottom: 8px !important;
+      color: var(--text-2) !important;
+    }
+
+    .lp-desc {
+      order: 4 !important;
+      font-size: 13.5px !important;
+      line-height: 1.5 !important;
+      margin-bottom: 12px !important;
+      max-width: 480px !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+
+    .lp-graphic-container {
+      order: 5 !important;
+      height: 280px !important;
+      margin: 8px 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      overflow: hidden !important;
+      width: 100% !important;
+    }
+
+    .lp-graphic-scene {
+      transform: scale(0.7) !important;
+      transform-origin: center !important;
+      flex-shrink: 0 !important;
+    }
+
+    .lp-glow-background {
+      width: 260px !important;
+      height: 260px !important;
+    }
+
+    .lp-metrics {
+      order: 6 !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 12px !important;
+      padding-top: 16px !important;
+      margin-bottom: 12px !important;
+      border-top: 1px solid var(--border) !important;
+    }
+
+    .lp-metric-item {
+      padding: 14px 10px !important;
+      border-radius: 12px !important;
+      background: rgba(255, 255, 255, 0.02) !important;
+      border: 1px solid rgba(255, 255, 255, 0.05) !important;
+      backdrop-filter: blur(10px) !important;
+    }
+
+    html.light .lp-metric-item {
+      background: rgba(255, 255, 255, 0.7) !important;
+      border: 1px solid rgba(15, 23, 42, 0.04) !important;
+    }
+
+    .lp-metric-val {
+      font-size: 18px !important;
+      font-weight: 750 !important;
+      margin-bottom: 4px !important;
+    }
+
+    .lp-metric-lbl {
+      font-size: 10px !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.03em !important;
+    }
+
+    .lp-actions {
+      order: 7 !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 12px !important;
+      width: 100% !important;
+      max-width: 340px !important;
+      margin: 8px auto 16px auto !important;
+    }
+
+    .btn-check-availability,
+    .btn-talk-specialist {
+      width: 100% !important;
+      text-align: center !important;
+      justify-content: center !important;
+      padding: 12px 20px !important;
+      font-size: 13px !important;
+      height: 44px !important;
+      border-radius: 100px !important;
+    }
+
+    .lp-brands-section {
+      order: 8 !important;
+      border-top: 1px solid var(--border) !important;
+      padding-top: 16px !important;
+      margin-top: 8px !important;
+    }
+
+    .lp-brands-list {
+      justify-content: center !important;
+      gap: 8px !important;
+    }
+
+    .lp-brand-chip {
+      padding: 6px 12px !important;
+      font-size: 11px !important;
+      background: rgba(255, 255, 255, 0.02) !important;
+      border: 1px solid rgba(255, 255, 255, 0.04) !important;
+      border-radius: 100px !important;
+    }
+
+    html.light .lp-brand-chip {
+      background: rgba(15, 23, 42, 0.02) !important;
+      border: 1px solid rgba(15, 23, 42, 0.04) !important;
+    }
+
+    .lp-header {
+      padding: 20px 20px 8px 20px !important;
+    }
+
+    .lp-brand-logo {
+      width: 32px !important;
+      height: 32px !important;
+    }
+
+    .lp-brand-name {
+      font-size: 15px !important;
+    }
+
+    .lp-brand-tag {
+      font-size: 9px !important;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .lp-graphic-scene {
+      transform: scale(0.65) !important;
+    }
+    .lp-graphic-container {
+      height: 240px !important;
+    }
+    .lp-title {
+      font-size: 26px !important;
+    }
+  }
+
+  /* ── VISUALIZER ITEM GRID PICKER & HERO STYLES ── */
+  .items-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .item-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 10px 12px;
+    cursor: pointer;
+    transition: border-color .18s, box-shadow .18s, transform .15s;
+    text-align: center;
+    position: relative;
+    user-select: none;
+  }
+
+  .item-card:hover {
+    border-color: rgba(99, 102, 241, .5);
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, .18), 0 6px 22px rgba(99, 102, 241, .14);
+    transform: translateY(-1px);
+  }
+
+  .item-card.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, .25), 0 8px 28px rgba(99, 102, 241, .22);
+    background: linear-gradient(160deg, rgba(99, 102, 241, .1), var(--surface));
+  }
+
+  .item-card .emoji {
+    font-size: 32px;
+    line-height: 1;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .item-card .item-name {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+
+  .item-card .item-dim {
+    font-family: monospace;
+    font-size: 9.5px;
+    color: var(--text-3);
+  }
+
+  .item-card .active-check {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #fff;
+  }
+
+  .item-card.active .active-check {
+    display: flex;
+  }
+
+  /* Selected item hero styling */
+  .item-hero {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 14px 16px;
+    background: rgba(99, 102, 241, .07);
+    border: 1px solid rgba(99, 102, 241, .16);
+    border-radius: 13px;
+  }
+
+  .item-hero-emoji {
+    font-size: 44px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .item-hero-info {
+    text-align: left;
+  }
+
+  .item-hero-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .item-hero-dims {
+    font-family: monospace;
+    font-size: 11px;
+    color: var(--text-3);
+    margin-bottom: 6px;
+  }
+
+  .item-hero-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: monospace;
+    font-size: 9.5px;
+    letter-spacing: .05em;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-weight: 600;
+  }
+
+  .tag-violet {
+    background: var(--accent-soft);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, .25);
+  }
+
+  .tag-green {
+    background: var(--green-soft);
+    color: var(--green);
+    border: 1px solid rgba(16, 185, 129, .25);
+  }
+
+  .tag-amber {
+    background: var(--amber-soft);
+    color: var(--amber);
+    border: 1px solid rgba(245, 158, 11, .25);
+  }
+
+  /* Hint text below trigger */
+  .hint-text {
+    font-size: 11.5px;
+    color: var(--text-3);
+    text-align: center;
+    margin-top: 10px;
+  }
+}
 `;
 
 const DOCUMENTS = [
   { id: "gst", name: "GST certificate", sub: "PDF format", req: true },
   { id: "pan", name: "PAN card", sub: "PDF or JPG", req: true },
   { id: "reg", name: "Company registration", sub: "PDF format", req: false },
-  { id: "cat", name: "Product catalog", sub: "Excel (.xlsx)", req: true },
+  { id: "cat", name: "Product catalog", sub: "Excel (.xlsx)", req: false },
   { id: "fssai", name: "FSSAI license", sub: "For F&B brands", req: false },
 ];
 
@@ -4338,7 +6646,6 @@ const DS_CHIPS = ["Blinkit", "Swiggy Instamart", "Zepto", "Other", "None — fir
 const CHALLENGE_CHIPS = ["High delivery cost", "Slow delivery speed", "Inventory & ops management", "Lack of city expansion", "Low order volume"];
 
 const STEPS = [
-  { title: "Brand & requirements", desc: "Company info & product profile" },
   { title: "Store selection", desc: "browse map & book racks" },
   { title: "Verification", desc: "basic documents & final review" },
 ];
@@ -4351,9 +6658,32 @@ const isValidMobileNumber = (value) => {
 };
 
 const Icon = {
+  Sun: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="5" />
+      <line x1="12" y1="1" x2="12" y2="3" />
+      <line x1="12" y1="21" x2="12" y2="23" />
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+      <line x1="1" y1="12" x2="3" y2="12" />
+      <line x1="21" y1="12" x2="23" y2="12" />
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+    </svg>
+  ),
+  Moon: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  ),
   Store: () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
+    </svg>
+  ),
+  ChevronDown: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 9l6 6 6-6" />
     </svg>
   ),
   Check: () => (
@@ -4474,27 +6804,35 @@ function computeItem(item) {
   return { item, fit, effective, weightCount, itemsPerBin, oversized, tooHeavy, limiting, binsNeeded, shelvesNeeded };
 }
 
-function buildFloorSvg(r) {
+function buildFloorSvg(r, theme) {
+  const isLight = theme === 'light';
   const rectW = BIN.L * VIZ_SCALE, rectH = BIN.W * VIZ_SCALE;
   const x0 = (180 - rectW) / 2, y0 = (110 - rectH) / 2;
   const cellW = r.fit.ol * VIZ_SCALE, cellH = r.fit.ow * VIZ_SCALE;
+  const cellFill = isLight ? "rgba(79, 70, 229, 0.16)" : "rgba(99, 102, 241, 0.34)";
+  const cellStroke = isLight ? "#4f46e5" : "#818cf8";
   let cells = '';
   for (let i = 0; i < r.fit.cL; i++) {
     for (let j = 0; j < r.fit.cW; j++) {
-      cells += `<rect x="${x0 + i * cellW + 1.5}" y="${y0 + j * cellH + 1.5}" width="${cellW - 3}" height="${cellH - 3}" rx="3" fill="rgba(99,102,241,0.34)" stroke="#818cf8" stroke-width="1"/>`;
+      cells += `<rect x="${x0 + i * cellW + 1.5}" y="${y0 + j * cellH + 1.5}" width="${cellW - 3}" height="${cellH - 3}" rx="3" fill="${cellFill}" stroke="${cellStroke}" stroke-width="1"/>`;
     }
   }
   const usedW = r.fit.cL * cellW, usedH = r.fit.cW * cellH;
   let hatch = '';
   const hasUnused = (rectW - usedW > VIZ_UNUSED_VISIBLE_PX) || (rectH - usedH > VIZ_UNUSED_VISIBLE_PX);
+  const hatchLineColor = isLight ? "rgba(15,23,42,0.12)" : "rgba(255,255,255,0.12)";
+  const hatchBgColor = isLight ? "rgba(0,0,0,0.02)" : "rgba(255,255,255,0.03)";
+  const rectStrokeColor = isLight ? "rgba(15,23,42,0.18)" : "#3A3B47";
+
   if (usedW < rectW - 0.5) hatch += `<rect x="${x0 + usedW}" y="${y0}" width="${rectW - usedW}" height="${rectH}" fill="url(#hF)"/>`;
   if (usedH < rectH - 0.5) hatch += `<rect x="${x0}" y="${y0 + usedH}" width="${rectW}" height="${rectH - usedH}" fill="url(#hF)"/>`;
-  const svg = `<defs><pattern id="hF" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="rgba(255,255,255,0.03)"/><line x1="0" y1="0" x2="0" y2="6" stroke="rgba(255,255,255,0.12)" stroke-width="1.4"/></pattern></defs>
-  <rect x="${x0}" y="${y0}" width="${rectW}" height="${rectH}" rx="6" fill="none" stroke="#3A3B47" stroke-width="1.5"/>${hatch}${cells}`;
+  const svg = `<defs><pattern id="hF" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="${hatchBgColor}"/><line x1="0" y1="0" x2="0" y2="6" stroke="${hatchLineColor}" stroke-width="1.4"/></pattern></defs>
+  <rect x="${x0}" y="${y0}" width="${rectW}" height="${rectH}" rx="6" fill="none" stroke="${rectStrokeColor}" stroke-width="1.5"/>${hatch}${cells}`;
   return { svg, hasUnused };
 }
 
-function buildStackSvg(r) {
+function buildStackSvg(r, theme) {
+  const isLight = theme === 'light';
   const rectW = BIN.L * VIZ_SCALE, rectH = BIN.H * VIZ_SCALE;
   const x0 = (180 - rectW) / 2, y0 = (110 - rectH) / 2;
   const layerH = r.fit.oh * VIZ_SCALE;
@@ -4502,17 +6840,25 @@ function buildStackSvg(r) {
   for (let i = 0; i < r.fit.cH; i++) {
     const ly = y0 + rectH - (i + 1) * layerH;
     const op = Math.min(0.85, 0.30 + i * 0.09);
-    layers += `<rect x="${x0 + 2}" y="${ly + 1.5}" width="${rectW - 4}" height="${layerH - 3}" rx="3" fill="rgba(16,185,129,${op})" stroke="#10b981" stroke-width="1"/>`;
+    const fillAlpha = isLight ? op * 0.85 : op;
+    const layerFill = isLight ? `rgba(5, 150, 105, ${fillAlpha})` : `rgba(16, 185, 129, ${op})`;
+    const layerStroke = isLight ? "#059669" : "#10b981";
+    layers += `<rect x="${x0 + 2}" y="${ly + 1.5}" width="${rectW - 4}" height="${layerH - 3}" rx="3" fill="${layerFill}" stroke="${layerStroke}" stroke-width="1"/>`;
   }
   const usedH = r.fit.cH * layerH;
   const hasUnused = rectH - usedH > VIZ_UNUSED_VISIBLE_PX;
+  const hatchLineColor = isLight ? "rgba(15,23,42,0.12)" : "rgba(255,255,255,0.12)";
+  const hatchBgColor = isLight ? "rgba(0,0,0,0.02)" : "rgba(255,255,255,0.03)";
+  const rectStrokeColor = isLight ? "rgba(15,23,42,0.18)" : "#3A3B47";
+
   const hatch = (usedH < rectH - 0.5) ? `<rect x="${x0}" y="${y0}" width="${rectW}" height="${rectH - usedH}" fill="url(#hS)"/>` : '';
-  const svg = `<defs><pattern id="hS" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="rgba(255,255,255,0.03)"/><line x1="0" y1="0" x2="0" y2="6" stroke="rgba(255,255,255,0.12)" stroke-width="1.4"/></pattern></defs>
-  <rect x="${x0}" y="${y0}" width="${rectW}" height="${rectH}" rx="6" fill="none" stroke="#3A3B47" stroke-width="1.5"/>${hatch}${layers}`;
+  const svg = `<defs><pattern id="hS" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="${hatchBgColor}"/><line x1="0" y1="0" x2="0" y2="6" stroke="${hatchLineColor}" stroke-width="1.4"/></pattern></defs>
+  <rect x="${x0}" y="${y0}" width="${rectW}" height="${rectH}" rx="6" fill="none" stroke="${rectStrokeColor}" stroke-width="1.5"/>${hatch}${layers}`;
   return { svg, hasUnused };
 }
 
-function buildIsoBin(r) {
+function buildIsoBin(r, theme) {
+  const isLight = theme === 'light';
   const OX = 170, OY = 200, S = 3.6;
   const ISO = 0.866;
   function toIso(l, w, h) { return { x: OX + (l - w) * ISO * S, y: OY - (l + w) * 0.5 * S - h * S } }
@@ -4528,7 +6874,36 @@ function buildIsoBin(r) {
   const cL = r.fit.cL, cW = r.fit.cW, cH = r.fit.cH;
   const iL = r.fit.ol, iW = r.fit.ow, iH = r.fit.oh;
 
-  const PALETTES = [
+  const gFrStart = isLight ? '#cbd5e1' : '#1e1b4b';
+  const gFrEnd = isLight ? '#f1f5f9' : '#111029';
+  const gRtStart = isLight ? '#94a3b8' : '#141230';
+  const gRtEnd = isLight ? '#cbd5e1' : '#0a091d';
+  const gTpStart = isLight ? '#cbd5e1' : '#312e81';
+  const gTpEnd = isLight ? '#e2e8f0' : '#1e1b4b';
+
+  const oFrStart = isLight ? '.18' : '.92';
+  const oFrEnd = isLight ? '.08' : '.9';
+  const oRtStart = isLight ? '.20' : '.94';
+  const oRtEnd = isLight ? '.10' : '.92';
+  const oTpStart = isLight ? '.25' : '.45';
+  const oTpEnd = isLight ? '.12' : '.28';
+
+  const bottomFill = isLight ? '#e2e8f0' : '#0d0c18';
+  const bottomStroke = isLight ? '#cbd5e1' : '#1e1b4b';
+  const shadowOpacity = isLight ? '0.12' : '0.7';
+  const floodColor = isLight ? 'rgba(15,23,42,0.08)' : 'rgba(0,0,0,0.65)';
+  const dimensionsColor = isLight ? 'rgba(79,70,229,0.85)' : 'rgba(129,140,248,0.45)';
+
+  const binFrontStroke = isLight ? 'rgba(79,70,229,0.30)' : 'rgba(99,102,241,0.42)';
+  const binRightStroke = isLight ? 'rgba(79,70,229,0.25)' : 'rgba(99,102,241,0.36)';
+  const binTopStroke = isLight ? 'rgba(79,70,229,0.40)' : 'rgba(129,140,248,.52)';
+  const wireframesColor = isLight ? 'rgba(79,70,229,0.28)' : 'rgba(129,140,248,0.52)';
+
+  const PALETTES = isLight ? [
+    ['rgba(79, 70, 229, 0.72)', 'rgba(67, 56, 202, 0.85)', 'rgba(199, 210, 254, 0.8)'], // Clean Indigo
+    ['rgba(5, 150, 105, 0.65)', 'rgba(4, 120, 87, 0.78)', 'rgba(209, 250, 229, 0.75)'], // Forest Green
+    ['rgba(217, 119, 6, 0.65)', 'rgba(180, 83, 9, 0.78)', 'rgba(254, 243, 199, 0.75)'], // Warm Amber
+  ] : [
     ['rgba(99,102,241,0.78)', 'rgba(79,70,210,0.92)', 'rgba(139,127,255,0.55)'],
     ['rgba(16,185,129,0.72)', 'rgba(12,150,90,0.88)', 'rgba(80,230,170,0.5)'],
     ['rgba(245,158,11,0.68)', 'rgba(195,125,25,0.84)', 'rgba(255,200,90,0.48)'],
@@ -4548,8 +6923,10 @@ function buildIsoBin(r) {
         const tf = [T(x0, y0, z1), T(x1, y0, z1), T(x1, y1, z1), T(x0, y1, z1)];
         const poly = (pts, fill, stroke) => `<polygon points="${pts.map(p => pt(p)).join(' ')}" fill="${fill}" stroke="${stroke}" stroke-width="0.7"/>`;
         const delay = ((ll * 0.04 + ww * 0.07 + hh * 0.12)).toFixed(2);
+        const topStrokeColor = isLight ? 'rgba(79,70,229,0.18)' : 'rgba(255,255,255,0.2)';
+        const blockBorderColor = isLight ? 'rgba(0,0,0,0.08)' : pal[2];
         blocks += `<g style="animation:fadeUp .4s ease ${delay}s both">
-        ${poly(ff, pal[0], pal[2])}${poly(rf, pal[1], pal[2])}${poly(tf, pal[2], 'rgba(255,255,255,0.2)')}
+        ${poly(ff, pal[0], blockBorderColor)}${poly(rf, pal[1], blockBorderColor)}${poly(tf, pal[2], topStrokeColor)}
       </g>`;
         idx++;
       }
@@ -4558,29 +6935,29 @@ function buildIsoBin(r) {
 
   return `
   <defs>
-    <filter id="bsh"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="rgba(0,0,0,0.65)"/></filter>
-    <linearGradient id="gFr" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#1e1b4b" stop-opacity=".92"/><stop offset="100%" stop-color="#111029" stop-opacity=".9"/></linearGradient>
-    <linearGradient id="gRt" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#141230" stop-opacity=".94"/><stop offset="100%" stop-color="#0a091d" stop-opacity=".92"/></linearGradient>
-    <linearGradient id="gTp" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#312e81" stop-opacity=".45"/><stop offset="100%" stop-color="#1e1b4b" stop-opacity=".28"/></linearGradient>
+    <filter id="bsh"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="${floodColor}"/></filter>
+    <linearGradient id="gFr" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="${gFrStart}" stop-opacity="${oFrStart}"/><stop offset="100%" stop-color="${gFrEnd}" stop-opacity="${oFrEnd}"/></linearGradient>
+    <linearGradient id="gRt" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="${gRtStart}" stop-opacity="${oRtStart}"/><stop offset="100%" stop-color="${gRtEnd}" stop-opacity="${oRtEnd}"/></linearGradient>
+    <linearGradient id="gTp" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${gTpStart}" stop-opacity="${oTpStart}"/><stop offset="100%" stop-color="${gTpEnd}" stop-opacity="${oTpEnd}"/></linearGradient>
   </defs>
-  <g filter="url(#bsh)" opacity=".7">
-    <path d="M${pt(p00)} L${pt(p10)} L${pt(p11)} L${pt(p01)} Z" fill="#0d0c18" stroke="#1e1b4b" stroke-width="1"/>
-    <path d="M${pt(p00)} L${pt(p01)} L${pt(p01h)} L${pt(p00h)} Z" fill="#0b0a15" stroke="#1e1b4b" stroke-width="1"/>
+  <g filter="url(#bsh)" opacity="${shadowOpacity}">
+    <path d="M${pt(p00)} L${pt(p10)} L${pt(p11)} L${pt(p01)} Z" fill="${bottomFill}" stroke="${bottomStroke}" stroke-width="1"/>
+    <path d="M${pt(p00)} L${pt(p01)} L${pt(p01h)} L${pt(p00h)} Z" fill="${bottomFill}" stroke="${bottomStroke}" stroke-width="1"/>
   </g>
   ${blocks}
-  <path d="${fFront}" fill="url(#gFr)" stroke="rgba(99,102,241,.42)" stroke-width="1.3"/>
-  <path d="${fRight}" fill="url(#gRt)" stroke="rgba(99,102,241,.36)" stroke-width="1.3"/>
-  <path d="${fTop}" fill="url(#gTp)" stroke="rgba(129,140,248,.52)" stroke-width="1.3"/>
-  <line x1="${p00.x}" y1="${p00.y}" x2="${p10.x}" y2="${p10.y}" stroke="rgba(129,140,248,.55)" stroke-width="1.2"/>
-  <line x1="${p10.x}" y1="${p10.y}" x2="${p11.x}" y2="${p11.y}" stroke="rgba(129,140,248,.48)" stroke-width="1.2"/>
-  <line x1="${p00h.x}" y1="${p00h.y}" x2="${p10h.x}" y2="${p10h.y}" stroke="rgba(129,140,248,.7)" stroke-width="1.4"/>
-  <line x1="${p10h.x}" y1="${p10h.y}" x2="${p11h.x}" y2="${p11h.y}" stroke="rgba(129,140,248,.65)" stroke-width="1.4"/>
-  <line x1="${p11h.x}" y1="${p11h.y}" x2="${p01h.x}" y2="${p01h.y}" stroke="rgba(129,140,248,.52)" stroke-width="1.2"/>
-  <line x1="${p00h.x}" y1="${p00h.y}" x2="${p01h.x}" y2="${p01h.y}" stroke="rgba(129,140,248,.52)" stroke-width="1.2"/>
-  <line x1="${p10.x}" y1="${p10.y}" x2="${p10h.x}" y2="${p10h.y}" stroke="rgba(129,140,248,.58)" stroke-width="1.3"/>
-  <line x1="${p11.x}" y1="${p11.y}" x2="${p11h.x}" y2="${p11h.y}" stroke="rgba(129,140,248,.5)" stroke-width="1.3"/>
-  <line x1="${p00.x}" y1="${p00.y}" x2="${p00h.x}" y2="${p00h.y}" stroke="rgba(129,140,248,.38)" stroke-width="1.1"/>
-  <text x="${OX}" y="${OY + 24}" text-anchor="middle" font-family="monospace" font-size="10" fill="rgba(129,140,248,.45)" letter-spacing=".05em">${BIN.L} x ${BIN.W} x ${BIN.H} cm</text>`;
+  <path d="${fFront}" fill="url(#gFr)" stroke="${binFrontStroke}" stroke-width="1.3"/>
+  <path d="${fRight}" fill="url(#gRt)" stroke="${binRightStroke}" stroke-width="1.3"/>
+  <path d="${fTop}" fill="url(#gTp)" stroke="${binTopStroke}" stroke-width="1.3"/>
+  <line x1="${p00.x}" y1="${p00.y}" x2="${p10.x}" y2="${p10.y}" stroke="${wireframesColor}" stroke-width="1.2"/>
+  <line x1="${p10.x}" y1="${p10.y}" x2="${p11.x}" y2="${p11.y}" stroke="${wireframesColor}" stroke-width="1.2"/>
+  <line x1="${p00h.x}" y1="${p00h.y}" x2="${p10h.x}" y2="${p10h.y}" stroke="${wireframesColor}" stroke-width="1.4"/>
+  <line x1="${p10h.x}" y1="${p10h.y}" x2="${p11h.x}" y2="${p11h.y}" stroke="${wireframesColor}" stroke-width="1.4"/>
+  <line x1="${p11h.x}" y1="${p11h.y}" x2="${p01h.x}" y2="${p01h.y}" stroke="${wireframesColor}" stroke-width="1.2"/>
+  <line x1="${p00h.x}" y1="${p00h.y}" x2="${p01h.x}" y2="${p01h.y}" stroke="${wireframesColor}" stroke-width="1.2"/>
+  <line x1="${p10.x}" y1="${p10.y}" x2="${p10h.x}" y2="${p10h.y}" stroke="${wireframesColor}" stroke-width="1.3"/>
+  <line x1="${p11.x}" y1="${p11.y}" x2="${p11h.x}" y2="${p11h.y}" stroke="${wireframesColor}" stroke-width="1.3"/>
+  <line x1="${p00.x}" y1="${p00.y}" x2="${p00h.x}" y2="${p00h.y}" stroke="${wireframesColor}" stroke-width="1.1"/>
+  <text x="${OX}" y="${OY + 24}" text-anchor="middle" font-family="monospace" font-size="10" fill="${dimensionsColor}" letter-spacing=".05em">${BIN.L} x ${BIN.W} x ${BIN.H} cm</text>`;
 }
 
 function buildDotsHtml(r) {
@@ -4641,8 +7018,15 @@ async function safeJsonFromResponse(response) {
 }
 
 export default function DarkStoreOnboarding() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
+  const [specialistOrigin, setSpecialistOrigin] = useState(0);
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
   const [simulationData, setSimulationData] = useState(null);
+
+  useEffect(() => {
+    document.documentElement.className = theme;
+    localStorage.setItem("theme", theme);
+  }, [theme]);
   const [applicationId, setApplicationId] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [allocatedShelves, setAllocatedShelves] = useState([]);
@@ -4650,13 +7034,47 @@ export default function DarkStoreOnboarding() {
   // Smart Capacity Recommender State
   const [isRecommenderOpen, setIsRecommenderOpen] = useState(false);
   const [recommenderItems, setRecommenderItems] = useState([
-    { id: 1, name: "Juice Carton", l: 9, w: 9, h: 24, wt: 0.6, qty: 200, upright: true },
-    { id: 2, name: "Rice Bag", l: 30, w: 20, h: 8, wt: 5, qty: 40, upright: false },
-    { id: 3, name: "Oil Bottle", l: 8, w: 8, h: 27, wt: 1, qty: 150, upright: true }
+    { id: 1, emoji: '🥤', name: '500 ml Juice Carton', l: 9, w: 9, h: 24, wt: 0.6, qty: 200, upright: true },
+    { id: 2, emoji: '🍚', name: '5 kg Rice Bag', l: 30, w: 20, h: 8, wt: 5, qty: 40, upright: false },
+    { id: 3, emoji: '🫙', name: '1 L Cooking Oil Bottle', l: 8, w: 8, h: 27, wt: 1, qty: 150, upright: true },
+    { id: 4, emoji: '🧴', name: '200 ml Shampoo Bottle', l: 5, w: 5, h: 18, wt: 0.3, qty: 300, upright: true },
+    { id: 5, emoji: '🍫', name: 'Chocolate Biscuit Pack', l: 20, w: 12, h: 4, wt: 0.4, qty: 120, upright: false },
+    { id: 6, emoji: '🧻', name: '6-Roll Tissue Pack', l: 22, w: 11, h: 11, wt: 0.5, qty: 80, upright: false },
   ]);
-  const [nextItemId, setNextItemId] = useState(4);
-  const [vizItemId, setVizItemId] = useState(1);
+  const [nextItemId, setNextItemId] = useState(7);
+  const [vizItemId, setVizItemId] = useState(null);
   const [isPeekOpen, setIsPeekOpen] = useState(false);
+
+  // Lock page body scroll when modal is open to ensure only the modal body scrolls
+  useEffect(() => {
+    if (isRecommenderOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isRecommenderOpen]);
+
+  // Auto-scroll the modal overlay to align the Peek accordion trigger when expanded
+  useEffect(() => {
+    if (isPeekOpen && vizItemId) {
+      setTimeout(() => {
+        const overlay = document.querySelector(".recommender-modal-overlay");
+        const triggerEl = document.querySelector(".bin-peek-trigger");
+        if (overlay && triggerEl) {
+          const overlayRect = overlay.getBoundingClientRect();
+          const triggerRect = triggerEl.getBoundingClientRect();
+          const targetScrollTop = overlay.scrollTop + (triggerRect.top - overlayRect.top) - 16; // 16px padding from top
+          overlay.scrollTo({
+            top: targetScrollTop,
+            behavior: "smooth"
+          });
+        }
+      }, 300);
+    }
+  }, [isPeekOpen, vizItemId]);
 
   const [brandName, setBrandName] = useState("");
   const [poc, setPoc] = useState("");
@@ -4670,8 +7088,10 @@ export default function DarkStoreOnboarding() {
   const [cities, setCities] = useState([]);
   const [citiesLoading, setCitiesLoading] = useState(true);
   const [citiesError, setCitiesError] = useState("");
-  const [city, setCity] = useState("");
+  const [city, setCity] = useState([]);
   const [browseCity, setBrowseCity] = useState("");
+  const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
+
   const [stores, setStores] = useState([]);
   const [storesLoading, setStoresLoading] = useState(false);
   const [storesError, setStoresError] = useState("");
@@ -4690,9 +7110,11 @@ export default function DarkStoreOnboarding() {
   const [disclaimerAgreed, setDisclaimerAgreed] = useState(false);
   const [errors, setErrors] = useState({});
   const [showStepError, setShowStepError] = useState(false);
+  const [leadSubmitted, setLeadSubmitted] = useState(false);
+  const [ordersCount, setOrdersCount] = useState(120);
 
   const totalSteps = 3;
-  const pct = step > totalSteps ? 100 : Math.round((step / totalSteps) * 100);
+  const pct = step <= 2 ? 50 : 100;
 
   const totalCartRacks = cart.reduce((sum, item) => sum + item.racks, 0);
   const cartCityCount = new Set(cart.map((c) => c.city)).size;
@@ -4742,16 +7164,31 @@ export default function DarkStoreOnboarding() {
   }, [cities]);
 
   useEffect(() => {
-    if (step === 2 && city && !browseCity) {
-      setBrowseCity(city);
+    if (step === 2 && !browseCity) {
+      if (city && city.length > 0) {
+        setBrowseCity(city[0]);
+      } else if (cities && cities.length > 0) {
+        setBrowseCity(cities[0].name);
+      }
     }
-  }, [step, city, browseCity]);
+  }, [step, city, cities, browseCity]);
 
   useEffect(() => {
     if (cart.length === 0) {
       setDisclaimerAgreed(false);
     }
   }, [cart.length]);
+
+  useEffect(() => {
+    if (!isCityDropdownOpen) return;
+    const handleOutsideClick = (e) => {
+      if (!e.target.closest(".custom-select-trigger") && !e.target.closest(".custom-select-dropdown")) {
+        setIsCityDropdownOpen(false);
+      }
+    };
+    document.addEventListener("click", handleOutsideClick);
+    return () => document.removeEventListener("click", handleOutsideClick);
+  }, [isCityDropdownOpen]);
 
   useEffect(() => {
     if (!browseCity) {
@@ -4802,9 +7239,33 @@ export default function DarkStoreOnboarding() {
     }
   }, [step, applicationId]);
 
-  const handleCityChange = (nextCity) => {
-    setCity(nextCity);
-    setCart([]);
+  useEffect(() => {
+    if (step !== 0) return;
+    const interval = setInterval(() => {
+      setOrdersCount((prev) => {
+        const increment = Math.floor(Math.random() * 3) + 1;
+        return prev + increment;
+      });
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [step]);
+
+  const handleCityToggle = (cityName) => {
+    setCity((prev) => {
+      const nextCities = prev.includes(cityName)
+        ? prev.filter((c) => c !== cityName)
+        : [...prev, cityName];
+
+      // Filter cart to only keep items from selected cities
+      setCart((prevCart) => prevCart.filter((item) => nextCities.includes(item.city)));
+
+      // If the currently browsed city was deselected, switch to the first remaining city
+      if (browseCity === cityName && !nextCities.includes(cityName)) {
+        setBrowseCity(nextCities[0] || "");
+      }
+
+      return nextCities;
+    });
     clearError("city");
     clearError("cart");
   };
@@ -4900,9 +7361,8 @@ export default function DarkStoreOnboarding() {
       else if (!isValidMobileNumber(phone)) next.phone = "Enter a valid 10-digit mobile number";
       if (!email.trim()) next.email = "Email address is required";
       else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) next.email = "Enter a valid email address";
-      if (!city) next.city = "Please select a city";
+      if (!city || city.length === 0) next.city = "Please select at least one city";
       if (!orders) next.orders = "Please select expected daily orders";
-      if (!weight) next.weight = "Please select average product weight";
     }
 
     if (n === 2) {
@@ -4910,6 +7370,14 @@ export default function DarkStoreOnboarding() {
     }
 
     if (n === 3) {
+      if (!brandName.trim()) next.brandName = "Brand name is required";
+      if (!poc.trim()) next.poc = "Point of contact is required";
+      if (!phone.trim()) next.phone = "Mobile number is required";
+      else if (!isValidMobileNumber(phone)) next.phone = "Enter a valid 10-digit mobile number";
+      if (!email.trim()) next.email = "Email address is required";
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) next.email = "Enter a valid email address";
+      if (!orders) next.orders = "Please select expected daily orders";
+
       DOCUMENTS.filter(d => d.req).forEach(d => {
         if (!uploads[d.id]) next[`doc_${d.id}`] = "Required";
       });
@@ -4930,7 +7398,7 @@ export default function DarkStoreOnboarding() {
     }
     setErrors({});
     setShowStepError(false);
-    if (step === 1 && city) setBrowseCity(city);
+    if (step === 1 && city && city.length > 0) setBrowseCity(city[0]);
     setStep(step + 1);
   };
 
@@ -4972,7 +7440,7 @@ export default function DarkStoreOnboarding() {
         setSimulationData(null);
         setApplicationId(simulationData.applicationId);
         setRefreshKey((prev) => prev + 1);
-        setStep(3);
+        setStep(4);
       } else {
         alert("Verification failed: " + result.error);
       }
@@ -4982,14 +7450,12 @@ export default function DarkStoreOnboarding() {
   };
 
   const handleCheckoutPayment = async () => {
-    const step1Errors = validateStep(1);
-    if (Object.keys(step1Errors).length > 0) {
-      setErrors(step1Errors);
+    const step3Errors = validateStep(3);
+    if (Object.keys(step3Errors).length > 0) {
+      setErrors(step3Errors);
       setShowStepError(true);
-      setStep(1);
       return;
     }
-
     if (cart.length === 0) {
       alert("Please add at least one store/shelf to checkout.");
       return;
@@ -5055,7 +7521,7 @@ export default function DarkStoreOnboarding() {
               if (verification.success) {
                 setApplicationId(orderDetails.applicationId);
                 setRefreshKey((prev) => prev + 1);
-                setStep(3);
+                setStep(4);
               } else {
                 alert("Payment verification failed: " + verification.error);
               }
@@ -5134,6 +7600,292 @@ export default function DarkStoreOnboarding() {
     }
   };
 
+  const resetLeadForm = () => {
+    setBrandName("");
+    setPoc("");
+    setPhone("");
+    setEmail("");
+    setCity([]);
+    setOrders("");
+    setWeight("");
+    setDsChips([]);
+    setChalChips([]);
+    setErrors({});
+    setShowStepError(false);
+  };
+
+  const handleSpecialistCallSubmit = async () => {
+    const stepErrors = validateStep(1);
+    if (Object.keys(stepErrors).length > 0) {
+      setErrors(stepErrors);
+      setShowStepError(true);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/specialist-calls", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          brandName,
+          poc,
+          phone,
+          email,
+          city,
+          orders,
+          weight,
+          dsChips,
+          chalChips,
+          website,
+          instagram,
+          linkedin,
+          youtube,
+        }),
+      });
+
+      const result = await safeJsonFromResponse(response);
+      if (result.success) {
+        setLeadSubmitted(true);
+        setErrors({});
+        setShowStepError(false);
+      } else {
+        alert("Submission failed: " + result.error);
+      }
+    } catch (err) {
+      alert("Failed to submit request: " + err.message);
+    }
+  };
+
+  const renderStandaloneBrandForm = () => {
+    if (leadSubmitted) {
+      return (
+        <div className="lead-success-wrap">
+          <div className="lead-success-card">
+            <div className="lead-success-icon">
+              <Icon.Check />
+            </div>
+            <h2>Call Request Received!</h2>
+            <p className="lead-success-desc">
+              Thank you for sharing your requirements. A sales specialist from <strong>Blitz MiniPods</strong> will reach out to you at <strong>{email}</strong> or <strong>{phone}</strong> within 24 hours to book a specialist call.
+            </p>
+            <div className="lead-success-details">
+              <div className="lead-detail-row">
+                <span>Brand</span>
+                <strong>{brandName}</strong>
+              </div>
+              <div className="lead-detail-row">
+                <span>Contact</span>
+                <strong>{poc}</strong>
+              </div>
+            </div>
+            <button className="btn btn-primary btn-success-home" onClick={() => { setStep(specialistOrigin); setLeadSubmitted(false); resetLeadForm(); }}>
+              {specialistOrigin === 2 ? "Back to Store Selection" : specialistOrigin === 3 ? "Back to Verification" : "Back to Home"}
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="standalone-wrap">
+        <header className="standalone-header">
+          <div className="standalone-brand" onClick={() => setStep(0)} style={{ cursor: "pointer" }}>
+            <img src="/Logo.png" alt="Logo" className="standalone-logo" />
+            <div>
+              <div className="standalone-brand-name">Blitz MiniPods</div>
+              <div className="standalone-brand-tag">Talk to a specialist</div>
+            </div>
+          </div>
+          {renderHeaderActions("standalone-actions-wrap")}
+        </header>
+
+        <main className="standalone-main">
+          <div className="standalone-form-card">
+            <div className="standalone-form-head">
+              <h2>Share your brand requirements</h2>
+              <p>Fill in this quick form to schedule a call with our enterprise sales and deployment team.</p>
+            </div>
+
+            {showStepError && Object.keys(errors).length > 0 && (
+              <div className="step-error-banner" style={{ marginBottom: 20 }}>
+                Please fill in all required fields to submit your request.
+              </div>
+            )}
+
+            {renderPage1()}
+
+            <div className="standalone-form-foot">
+              <button className="btn btn-ghost" onClick={() => setStep(specialistOrigin)}>Cancel</button>
+              <button className="btn btn-primary btn-submit-lead" onClick={handleSpecialistCallSubmit}>
+                Request a Call <Icon.ArrowRight />
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  };
+
+  const renderLandingPage = () => {
+    return (
+      <div className="lp-wrap">
+        {/* Header */}
+        <header className="lp-header">
+          <div className="lp-brand" onClick={() => setStep(0)} style={{ cursor: "pointer" }}>
+            <img src="/Logo.png" alt="Logo" className="lp-brand-logo" />
+            <div className="lp-brand-text">
+              <span className="lp-brand-name">Blitz MiniPods</span>
+              <span className="lp-brand-tag">One Stop Solution for Quick Commerce</span>
+            </div>
+          </div>
+          {renderHeaderActions("lp-actions-wrap")}
+        </header>
+
+        {/* Hero Section */}
+        <div className="lp-body">
+          {/* Left Column */}
+          <div className="lp-content-left">
+            <div className="lp-badge">
+              16 Dark stores already live, 4 cities
+            </div>
+            <h1 className="lp-title">
+              Smarter Storage.<br />
+              Faster Deliveries.<br />
+              <span className="accent">Lower Costs.</span>
+            </h1>
+            <h2 className="lp-subtitle">
+              <em>Make it yours</em> - <strong>no warehouse, no lease, live in 7 days.</strong>
+            </h2>
+            <p className="lp-desc">
+              Blitz MiniPods helps D2C brands, FMCG brands & Quick Commerce sellers launch across multiple cities using shared dark store infrastructure.
+            </p>
+
+            {/* Metrics */}
+            <div className="lp-metrics">
+              <div className="lp-metric-item">
+                <span className="lp-metric-val">17</span>
+                <span className="lp-metric-lbl">Ready-to-Use Stores</span>
+              </div>
+              <div className="lp-metric-item">
+                <span className="lp-metric-val">99.5%</span>
+                <span className="lp-metric-lbl">inventory accuracy</span>
+              </div>
+              <div className="lp-metric-item">
+                <span className="lp-metric-val">7 days</span>
+                <span className="lp-metric-lbl">avg time to go live</span>
+              </div>
+              <div className="lp-metric-item">
+                <span className="lp-metric-val">5</span>
+                <span className="lp-metric-lbl">cities live</span>
+              </div>
+            </div>
+
+            {/* Call to Actions */}
+            <div className="lp-actions">
+              <button className="btn-check-availability" onClick={() => { setStep(2); setBrowseCity("Delhi"); }}>
+                Check availability in your city <Icon.ArrowRight />
+              </button>
+              <button className="btn-talk-specialist" onClick={() => { setSpecialistOrigin(0); setStep(1); }}>
+                Talk to a specialist instead
+              </button>
+            </div>
+
+            {/* Brands Section */}
+            <div className="lp-brands-section">
+              <div className="lp-brands-title">Brands already on shelf</div>
+              <div className="lp-brands-list">
+                <span className="lp-brand-chip">Nykaa Beauty</span>
+                <span className="lp-brand-chip">Myntra</span>
+                <span className="lp-brand-chip">Ajio</span>
+                <span className="lp-brand-chip">Durlabh Darshan</span>
+                <span className="lp-brand-chip">Foxtale</span>
+                <span className="lp-brand-chip">HealthKart</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Premium SVG Illustration and CSS animations */}
+          <div className="lp-graphic-container">
+            <div className="lp-glow-background"></div>
+            <div className="lp-graphic-scene">
+              {/* Radar pulsing rings behind everything */}
+              <svg className="lp-radar-pulse" viewBox="0 0 440 440">
+                <defs>
+                  <radialGradient id="ringGlowGrad" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stopColor="rgba(124, 108, 255, 0.4)" />
+                    <stop offset="20%" stopColor="rgba(99, 102, 241, 0.25)" />
+                    <stop offset="60%" stopColor="rgba(124, 108, 255, 0.06)" />
+                    <stop offset="100%" stopColor="rgba(124, 108, 255, 0)" />
+                  </radialGradient>
+                </defs>
+                <circle className="lp-pulse-ring lp-ring-1" cx="220" cy="220" r="160" fill="url(#ringGlowGrad)" />
+                <circle className="lp-pulse-ring lp-ring-2" cx="220" cy="220" r="160" fill="url(#ringGlowGrad)" />
+                <circle className="lp-pulse-ring lp-ring-3" cx="220" cy="220" r="160" fill="url(#ringGlowGrad)" />
+                <circle className="lp-pulse-center" cx="220" cy="220" r="10" />
+              </svg>
+
+              {/* Floating Plus tile */}
+              <div className="lp-floating-plus">+</div>
+
+              {/* Floating Racks tag */}
+              <div className="lp-floating-tag tag-booked">
+                <span className="lp-tag-dot green"></span>
+                <span>32 Racks Booked</span>
+              </div>
+
+              {/* Floating Free slots tag */}
+              <div className="lp-floating-tag tag-free">
+                <span className="lp-tag-dot orange"></span>
+                <span>26 Racks free in Delhi</span>
+              </div>
+
+              {/* Floating Orders tag */}
+              <div className="lp-floating-tag tag-orders">
+                <span className="lp-tag-arrow">▲</span>
+                <span>{ordersCount} orders today</span>
+              </div>
+
+              {/* Central Shelf Dashboard panel */}
+              <div className="lp-shelf-panel">
+                <div className="lp-shelf-grid">
+                  <div className="lp-shelf-row">
+                    <div className="lp-shelf-slot purple"></div>
+                    <div className="lp-shelf-slot green"></div>
+                    <div className="lp-shelf-slot"></div>
+                  </div>
+                  <div className="lp-shelf-row">
+                    <div className="lp-shelf-slot yellow"></div>
+                    <div className="lp-shelf-slot purple"></div>
+                    <div className="lp-shelf-slot"></div>
+                  </div>
+                  <div className="lp-shelf-row">
+                    <div className="lp-shelf-slot"></div>
+                    <div className="lp-shelf-slot green"></div>
+                    <div className="lp-shelf-slot purple"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Connecting Dashed SVG Paths */}
+              <svg className="lp-svg-overlay" viewBox="0 0 440 440">
+                {/* Dashed line connecting plus tile to shelf */}
+                <path
+                  d="M104,98 Q140,150 170,170"
+                  className="lp-connection-path"
+                />
+                {/* Dashed line connecting shelf to bottom-right order tag */}
+                <path
+                  d="M260,260 Q300,320 330,360"
+                  className="lp-connection-path"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderSimulationModal = () => (
     <div className="payment-modal-overlay">
       <div className="payment-modal">
@@ -5172,25 +7924,69 @@ export default function DarkStoreOnboarding() {
 
   const selectedCities = cart.length
     ? [...new Set(cart.map((c) => c.city))].join(", ")
-    : city || "—";
+    : city && city.length > 0 ? city.join(", ") : "—";
 
   const pageMeta = [
-    { eyebrow: "Step 1", title: "Tell us about your brand", desc: "Share your company details & operations profile so we can recommend the right stores, racks & fulfillment setup." },
-    { eyebrow: "Step 2", title: "Choose your stores", desc: "Browse cities, pick dark stores, and add racks to your booking." },
-    { eyebrow: "Step 3", title: "Verify and submit", desc: "Upload required documents and review your application before sending it to our team." },
+    null,
+    { eyebrow: "Step 1", title: "Choose your stores" },
+    { eyebrow: "Step 2", title: "Verify & Checkout", desc: "Enter company details, upload required documents." },
   ][step - 1];
+
+  const renderThemeToggle = () => (
+    <button
+      type="button"
+      className="btn-theme-toggle"
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      aria-label="Toggle theme"
+      title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+    >
+      {theme === "dark" ? <Icon.Sun /> : <Icon.Moon />}
+    </button>
+  );
+
+  const renderHeaderActions = (originClass = "") => {
+    if (step === 4) return null;
+    return (
+      <div className={`header-actions ${originClass}`}>
+        {renderThemeToggle()}
+        {(step === 0 || step === 2 || step === 3) && (
+          <button
+            type="button"
+            className="btn-talk"
+            onClick={() => {
+              setErrors({});
+              setShowStepError(false);
+              setSpecialistOrigin(step);
+              setStep(1);
+            }}
+          >
+            Talk to a specialist
+          </button>
+        )}
+        {step === 1 && (
+          <button
+            type="button"
+            className="btn-standalone-back"
+            onClick={() => setStep(specialistOrigin)}
+          >
+            {specialistOrigin === 2 ? "Back to Store Selection" : specialistOrigin === 3 ? "Back to Verification" : "Back to Home"}
+          </button>
+        )}
+      </div>
+    );
+  };
 
   const renderMobileHeader = () => (
     <header className="mobile-header">
       <div className="mobile-header-top">
-        <div className="mobile-brand">
+        <div className="mobile-brand" onClick={() => setStep(0)} style={{ cursor: "pointer" }}>
           <img src="/Logo.png" />
           <div className="mobile-brand-text">
             <strong>Blitz MiniPods</strong>
             <span>Client onboarding</span>
           </div>
         </div>
-        <span className="mobile-step-badge">Step {step} of {totalSteps}</span>
+        {renderHeaderActions("mobile-actions-wrap")}
       </div>
       <div className="mobile-progress-row">
         <div className="mobile-progress-track">
@@ -5200,18 +7996,18 @@ export default function DarkStoreOnboarding() {
       </div>
       <div className="mobile-step-pills">
         {STEPS.map((s, i) => {
-          const n = i + 1;
-          const isActive = step === n;
-          const isDone = step > n;
+          const stateVal = i + 2;
+          const isActive = step === stateVal;
+          const isDone = step > stateVal;
           const canGoBack = isDone && !applicationId;
           return (
             <div
-              key={n}
+              key={stateVal}
               className={`mobile-step-pill${isActive ? " active" : ""}${isDone ? " done" : ""}${canGoBack ? " clickable" : ""}`}
-              onClick={() => canGoBack && setStep(n)}
+              onClick={() => canGoBack && setStep(stateVal)}
               role={canGoBack ? "button" : undefined}
             >
-              <span className="mobile-step-pill-num">{isDone ? <Icon.Check /> : n}</span>
+              <span className="mobile-step-pill-num">{isDone ? <Icon.Check /> : (i + 1)}</span>
               {s.title}
             </div>
           );
@@ -5220,71 +8016,84 @@ export default function DarkStoreOnboarding() {
     </header>
   );
 
-  const renderSidebar = () => (
-    <aside className="sidebar">
-      <div className="brand">
-        <div className="brand-mark">
-          <img src="/Logo.png" alt="Company Logo" style={{ width: 40, height: 40, borderRadius: 8 }} />
-        </div>
+  const renderSidebar = () => {
+    const highlightedStore = allStores.find(s => s.id === highlightedStoreId) || stores.find(s => s.id === highlightedStoreId);
 
-        <div>
-          <div className="brand-name">Blitz MiniPods</div>
-          <div className="brand-tag">Client onboarding</div>
-        </div>
-      </div>
-
-      <nav className="nav-steps">
-        {STEPS.map((s, i) => {
-          const n = i + 1;
-          const isActive = step === n;
-          const isDone = step > n;
-          const isFuture = step < n;
-          const canGoBack = isDone && !applicationId;
-          return (
-            <div
-              key={n}
-              className={`nav-step${isActive ? " active" : ""}${isDone ? " done" : ""}${isFuture ? " future" : ""}${canGoBack ? " clickable" : ""}`}
-              onClick={() => canGoBack && setStep(n)}
-            >
-              <div className="nav-num">{isDone ? <Icon.Check /> : n}</div>
-              <div className="nav-text">
-                <h4>{s.title}</h4>
-                <p>{s.desc}</p>
-              </div>
-            </div>
-          );
-        })}
-      </nav>
-
-      {step === 2 && (
-        <div className="sidebar-recommender">
-          <div className="sidebar-recommender-title">
-            <span>✨ ⚡ Smart Recommender</span>
+    return (
+      <aside className="sidebar">
+        <div className="brand" onClick={() => setStep(0)} style={{ cursor: "pointer" }}>
+          <div className="brand-mark">
+            <img src="/Logo.png" alt="Company Logo" style={{ width: 40, height: 40, borderRadius: 8 }} />
           </div>
-          <p className="sidebar-recommender-desc">
-            Not sure how many shelves you need? Use our AI simulator to calculate your exact requirements.
-          </p>
-          <button type="button" className="btn-sidebar-recommender" onClick={() => setIsRecommenderOpen(true)}>
-            Launch Smart Recommender ↗
-          </button>
-        </div>
-      )}
 
-      <div className="sidebar-foot">
-        <div className="progress-label">
-          <span>Progress</span>
-          <span>{pct}%</span>
+          <div>
+            <div className="brand-name">Blitz MiniPods</div>
+            <div className="brand-tag">Client onboarding</div>
+          </div>
         </div>
-        <div className="progress-track">
-          <div className="progress-fill" style={{ width: `${pct}%` }} />
+
+        <div className="sidebar-body">
+          <nav className="nav-steps">
+            {STEPS.map((s, i) => {
+              const stateVal = i + 2;
+              const isActive = step === stateVal;
+              const isDone = step > stateVal;
+              const isFuture = step < stateVal;
+              const canGoBack = isDone && !applicationId;
+              return (
+                <div
+                  key={stateVal}
+                  className={`nav-step${isActive ? " active" : ""}${isDone ? " done" : ""}${isFuture ? " future" : ""}${canGoBack ? " clickable" : ""}`}
+                  onClick={() => canGoBack && setStep(stateVal)}
+                >
+                  <div className="nav-num">{isDone ? <Icon.Check /> : (i + 1)}</div>
+                  <div className="nav-text">
+                    <h4>{s.title}</h4>
+                    <p>{s.desc}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </nav>
+
+          {step === 2 && (
+            <div className="sidebar-recommender">
+              <div className="sidebar-recommender-title">
+                <span className="pulse-glowing-beacon"></span>
+                <span>📦 Peek Inside a Bin</span>
+              </div>
+              <p className="sidebar-recommender-desc">
+                Not sure how many shelves to book? Click below 👀.
+              </p>
+              <button
+                type="button"
+                className="btn-sidebar-recommender"
+                onClick={() => setIsRecommenderOpen(true)}
+              >
+                Peek Inside a Bin ↗
+              </button>
+            </div>
+          )}
         </div>
-        <div className="trust-note">
-          <Icon.Shield />
-          <span>Your data is encrypted and only used for partner verification. Typical review time is 2 business days.</span>
+
+        <div className="sidebar-foot">
+          <div className="progress-wrapper">
+            <div className="progress-label">
+              <span>Progress</span>
+              <span>{pct}%</span>
+            </div>
+            <div className="progress-track">
+              <div className="progress-fill" style={{ width: `${pct}%` }} />
+            </div>
+          </div>
+          <div className="trust-note">
+            <Icon.Shield />
+            <span>Your data is encrypted and only used for partner verification. Typical review time is 2 business days.</span>
+          </div>
         </div>
-      </div>
-    </aside>
-  );
+      </aside>
+    );
+  };
 
   const renderPage1 = () => (
     <>
@@ -5298,8 +8107,8 @@ export default function DarkStoreOnboarding() {
               {errors.brandName && <p className="field-error">{errors.brandName}</p>}
             </div>
             <div className={`field${errors.poc ? " has-error" : ""}`}>
-              <span>Point of contact <em>*</em></span>
-              <input type="text" placeholder="Full name" value={poc} onChange={e => { setPoc(e.target.value); clearError("poc"); }} />
+              <span>Name <em>*</em></span>
+              <input type="text" placeholder="Your name" value={poc} onChange={e => { setPoc(e.target.value); clearError("poc"); }} />
               {errors.poc && <p className="field-error">{errors.poc}</p>}
             </div>
             <div className={`field${errors.phone ? " has-error" : ""}`}>
@@ -5308,23 +8117,13 @@ export default function DarkStoreOnboarding() {
               {errors.phone ? <p className="field-error">{errors.phone}</p> : <p className="field-hint">10-digit Indian mobile number</p>}
             </div>
             <div className={`field${errors.email ? " has-error" : ""}`}>
-              <span>Email address <em>*</em></span>
+              <span>Work Email <em>*</em></span>
               <input type="email" placeholder="you@brand.com" value={email} onChange={e => { setEmail(e.target.value); clearError("email"); }} />
               {errors.email && <p className="field-error">{errors.email}</p>}
             </div>
-            <div className={`field${errors.city ? " has-error" : ""}`}>
-              <span>Interested city <em>*</em></span>
-              <select value={city} onChange={e => handleCityChange(e.target.value)} disabled={citiesLoading || cities.length === 0}>
-                <option value="">{citiesLoading ? "Loading cities…" : "Select city"}</option>
-                {cities.map(c => (
-                  <option key={c.id} value={c.name}>{c.name}</option>
-                ))}
-              </select>
-              {citiesError && <p className="field-error">{citiesError}</p>}
-              {errors.city && <p className="field-error">{errors.city}</p>}
-            </div>
+
             <div className={`field${errors.orders ? " has-error" : ""}`}>
-              <span>Expected daily orders <em>*</em></span>
+              <span>Average daily orders<em>*</em></span>
               <select value={orders} onChange={e => { setOrders(e.target.value); clearError("orders"); }}>
                 <option value="">Select range</option>
                 {["1 – 50 orders / day", "51 – 150 orders / day", "151 – 500 orders / day", "500+ orders / day"].map(o => (
@@ -5333,35 +8132,7 @@ export default function DarkStoreOnboarding() {
               </select>
               {errors.orders && <p className="field-error">{errors.orders}</p>}
             </div>
-            <div className={`field${errors.weight ? " has-error" : ""}`} style={{ gridColumn: "1 / -1" }}>
-              <span>Average product weight <em>*</em></span>
-              <select value={weight} onChange={e => { setWeight(e.target.value); clearError("weight"); }}>
-                <option value="">Select range</option>
-                {["Under 0.5 kg", "0.5 – 1 kg", "1 – 3 kg", "3 – 5 kg", "Above 5 kg"].map(w => (
-                  <option key={w} value={w}>{w}</option>
-                ))}
-              </select>
-              {errors.weight ? <p className="field-error">{errors.weight}</p> : <p className="field-hint">Helps determine rack type and slot sizing</p>}
-            </div>
           </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="section-label">Current dark store partners</div>
-        <div className="chips">
-          {DS_CHIPS.map(c => (
-            <div key={c} className={`chip${dsChips.includes(c) ? " on" : ""}`} onClick={() => toggleDs(c)}>{c}</div>
-          ))}
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="section-label">Biggest challenges <span className="optional">Select all that apply</span></div>
-        <div className="chips">
-          {CHALLENGE_CHIPS.map(c => (
-            <div key={c} className={`chip${chalChips.includes(c) ? " on" : ""}`} onClick={() => toggleChip(chalChips, setChalChips, c)}>{c}</div>
-          ))}
         </div>
       </section>
 
@@ -5375,6 +8146,7 @@ export default function DarkStoreOnboarding() {
 
 
       <StoreSelection
+        theme={theme}
         cities={cities}
         browseCity={browseCity}
         onBrowseCityChange={setBrowseCity}
@@ -5394,6 +8166,7 @@ export default function DarkStoreOnboarding() {
 
   const renderPage3 = () => (
     <>
+      {renderPage1()}
       <section className="section">
         <div className="section-label">Required documents</div>
         <div className="doc-list">
@@ -5421,7 +8194,7 @@ export default function DarkStoreOnboarding() {
           <div className="summary-item"><span>Brand</span><strong>{brandName || "—"}</strong></div>
           <div className="summary-item"><span>Cities</span><strong>{selectedCities}</strong></div>
           <div className="summary-item"><span>Total racks</span><strong>{totalCartRacks || "—"}</strong></div>
-          <div className="summary-item" style={{ gridColumn: "1 / -1" }}>
+          <div className="summary-item" >
             <span>Stores & racks</span>
             <strong>{selectedStores}</strong>
           </div>
@@ -5573,87 +8346,17 @@ export default function DarkStoreOnboarding() {
   };
 
   const renderRecommenderModal = () => {
-    // Recalculate everything
-    let totalBins = 0;
-    let usedVolume = 0;
-    let usedWeight = 0;
+    // Determine selected item
+    const selectedItem = recommenderItems.find(it => it.id === vizItemId);
+    const activeResult = selectedItem ? computeItem(selectedItem) : null;
 
-    const results = recommenderItems.map(it => computeItem(it));
-    results.forEach(r => {
-      if (!r.oversized && !r.tooHeavy) {
-        totalBins += r.binsNeeded;
-        usedVolume += r.item.l * r.item.w * r.item.h * r.item.qty;
-        usedWeight += r.item.wt * r.item.qty;
-      }
-    });
+    const totalBins = activeResult ? activeResult.binsNeeded : 0;
+    const totalShelves = activeResult ? activeResult.shelvesNeeded : 0;
 
-    const totalShelves = Math.ceil(totalBins / BINS_PER_SHELF);
-    const volCapacity = totalBins * BIN_VOL;
-    const wtCapacity = totalBins * MAX_BIN_WEIGHT;
-    const volPct = volCapacity > 0 ? Math.min(100, (usedVolume / volCapacity) * 100) : 0;
-    const wtPct = wtCapacity > 0 ? Math.min(100, (usedWeight / wtCapacity) * 100) : 0;
-
-    // Selected visual item
-    const validResults = results.filter(r => !r.oversized && !r.tooHeavy);
-    let activeResult = validResults.find(r => r.item.id === vizItemId);
-    if (validResults.length > 0 && !activeResult) {
-      activeResult = validResults[0];
-    }
-
-    const handleItemFieldChange = (id, field, value) => {
-      setRecommenderItems(prev => prev.map(item => {
-        if (item.id !== id) return item;
-        const nextItem = { ...item };
-        if (field === 'name') {
-          nextItem.name = value;
-        } else if (field === 'upright') {
-          nextItem.upright = value;
-        } else {
-          nextItem[field] = parseFloat(value) || 0;
-        }
-        return nextItem;
-      }));
+    const selectItem = (id) => {
+      setVizItemId(id);
+      setIsPeekOpen(true);
     };
-
-    const handleAddItem = () => {
-      setRecommenderItems(prev => [
-        ...prev,
-        { id: nextItemId, name: `Item ${nextItemId}`, l: 10, w: 10, h: 10, wt: 1, qty: 10, upright: false }
-      ]);
-      setNextItemId(prev => prev + 1);
-    };
-
-    const handleDeleteItem = (id) => {
-      setRecommenderItems(prev => prev.filter(item => item.id !== id));
-    };
-
-    const highlightedStore = allStores.find(s => s.id === highlightedStoreId) || stores.find(s => s.id === highlightedStoreId);
-
-    const handleApplyRecommendation = () => {
-      if (!highlightedStore) {
-        alert("Please select a store first.");
-        return;
-      }
-      const appliedRacks = Math.min(totalShelves, highlightedStore.shelvesAvailable || 1);
-      const targetCity = highlightedStore.cityName || browseCity;
-      handleAddToCart({
-        storeId: highlightedStore.id,
-        storeName: highlightedStore.name,
-        area: highlightedStore.area,
-        address: highlightedStore.address,
-        city: targetCity,
-        racks: appliedRacks,
-        shelvesAvailable: highlightedStore.shelvesAvailable,
-        avail: highlightedStore.avail,
-        availability: highlightedStore.availability,
-      });
-      if (targetCity && targetCity !== browseCity) {
-        setBrowseCity(targetCity);
-      }
-      setIsRecommenderOpen(false);
-      alert(`Applied ${appliedRacks} shelf/shelves to ${highlightedStore.name}!`);
-    };
-
     return (
       <div className="recommender-modal-overlay" onClick={() => setIsRecommenderOpen(false)}>
         <div className="recommender-modal" onClick={e => e.stopPropagation()}>
@@ -5664,308 +8367,225 @@ export default function DarkStoreOnboarding() {
                 <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
                 <line x1="12" y1="22.08" x2="12" y2="12" />
               </svg>
-              Smart Shelf Recommender
+              Peek Inside a Bin
             </h3>
             <button className="btn-close-modal" onClick={() => setIsRecommenderOpen(false)}>✕</button>
           </div>
 
           <div className="recommender-modal-body">
-            {/* LHS: Item inputs list */}
-            <div>
-              <div className="spec-strip">
-                <div className="spec-chip"><span className="lbl">Bin size</span><span className="val">28 × 45 × 25 cm</span></div>
-                <div className="spec-chip"><span className="lbl">Bin volume</span><span className="val">31.5 L</span></div>
-                <div className="spec-chip"><span className="lbl">Bins / shelf</span><span className="val">3</span></div>
-                <div className="spec-chip"><span className="lbl">Max kg / bin</span><span className="val">20 kg</span></div>
-                <div className="spec-chip"><span className="lbl">Bin Usable %</span><span className="val">90%</span></div>
-              </div>
-
-              <div style={{ marginBottom: 12, fontSize: 13, color: "var(--text-2)", fontWeight: 600 }}>
-                Inventory mix & dimensions
-              </div>
-
-              <div className="recommender-items-list">
-                {recommenderItems.map(it => {
-                  const r = computeItem(it);
-                  return (
-                    <div className="item-block" key={it.id}>
-                      <div className="item-row">
-                        <input
-                          type="text"
-                          value={it.name}
-                          placeholder="Item Name"
-                          onChange={e => handleItemFieldChange(it.id, 'name', e.target.value)}
-                        />
-                        <input
-                          type="number"
-                          value={it.l}
-                          placeholder="L cm"
-                          min="1"
-                          step="0.5"
-                          title="Length in cm"
-                          onChange={e => handleItemFieldChange(it.id, 'l', e.target.value)}
-                        />
-                        <input
-                          type="number"
-                          value={it.w}
-                          placeholder="W cm"
-                          min="1"
-                          step="0.5"
-                          title="Width in cm"
-                          onChange={e => handleItemFieldChange(it.id, 'w', e.target.value)}
-                        />
-                        <input
-                          type="number"
-                          value={it.h}
-                          placeholder="H cm"
-                          min="1"
-                          step="0.5"
-                          title="Height in cm"
-                          onChange={e => handleItemFieldChange(it.id, 'h', e.target.value)}
-                        />
-                        <input
-                          type="number"
-                          value={it.wt}
-                          placeholder="Wt kg"
-                          min="0.01"
-                          step="0.1"
-                          title="Weight in kg"
-                          onChange={e => handleItemFieldChange(it.id, 'wt', e.target.value)}
-                        />
-                        <input
-                          type="number"
-                          value={it.qty}
-                          placeholder="Qty"
-                          min="1"
-                          step="1"
-                          title="Quantity of items"
-                          onChange={e => handleItemFieldChange(it.id, 'qty', e.target.value)}
-                        />
-                        <div className="upright-wrap">
-                          <input
-                            type="checkbox"
-                            checked={it.upright}
-                            id={`up-${it.id}`}
-                            onChange={e => handleItemFieldChange(it.id, 'upright', e.target.checked)}
-                          />
-                          <label htmlFor={`up-${it.id}`}>fixed</label>
-                        </div>
-                        <button className="del-btn" onClick={() => handleDeleteItem(it.id)}>✕</button>
-                      </div>
-
-                      {r.oversized || r.tooHeavy ? (
-                        <div className="result-line warn">
-                          <span className="oversized-tag">Won't fit</span>
-                          {r.oversized ? "doesn't fit in any allowed orientation" : `single unit (${r.item.wt}kg) exceeds the ${MAX_BIN_WEIGHT}kg bin limit`}.
-                        </div>
-                      ) : (
-                        <div className="result-line ok">
-                          <span><b>{r.itemsPerBin}</b> / bin</span>
-                          <span>orientation {r.fit.ol}x{r.fit.ow}x{r.fit.oh}cm</span>
-                          <span><b>{r.binsNeeded}</b> bin{r.binsNeeded !== 1 ? 's' : ''} &rarr; <b>{r.shelvesNeeded}</b> {pluralize(r.shelvesNeeded, 'shelf', 'shelves')}</span>
-                          <span>limit: {r.limiting}</span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-
-                <button className="add-row-btn" onClick={handleAddItem}>+ Add item</button>
-              </div>
+            {/* Spec Strip */}
+            <div className="spec-strip">
+              <div className="spec-chip"><span className="lbl">Bin size</span><span className="val">28×45×25</span></div>
+              <div className="spec-chip"><span className="lbl">Max weight</span><span className="val">20 kg</span></div>
+              <div className="spec-chip"><span className="lbl">Bins/shelf</span><span className="val">3</span></div>
+              <div className="spec-chip"><span className="lbl">Usable</span><span className="val">90%</span></div>
             </div>
 
-            {/* RHS: Summary & capacity visualizer */}
-            <div>
-              <div className="big-stat">
-                <div className="num">{totalShelves}</div>
-                <div className="lbl">Shelves to book</div>
-                <div className="sub">{totalBins} bin{totalBins !== 1 ? 's' : ''} required</div>
-              </div>
-
-              <div className="panel" style={{ background: "var(--surface)" }}>
-                <p style={{ fontSize: 13, fontWeight: 700, marginBottom: 14, color: "var(--text)" }}>Capacity used</p>
-                <div className="util-row">
-                  <div className="top"><span>Volume</span><b>{volPct.toFixed(0)}%</b></div>
-                  <div className="bar"><div className="bar-fill" style={{ width: `${volPct}%`, background: "var(--accent)" }}></div></div>
-                </div>
-                <div className="util-row">
-                  <div className="top"><span>Weight</span><b>{wtPct.toFixed(0)}%</b></div>
-                  <div className="bar"><div className="bar-fill" style={{ width: `${wtPct}%`, background: "var(--green)" }}></div></div>
-                </div>
-
-                {/* PEEK Accordion trigger */}
-                <button
-                  className="bin-peek-trigger"
-                  onClick={() => setIsPeekOpen(!isPeekOpen)}
-                  aria-expanded={isPeekOpen}
-                >
-                  <div className="bin-peek-inner">
-                    <div className="bin-peek-icon">
-                      <div className="mini-bin-wrap">
-                        <div className="mini-face mini-top"></div>
-                        <div className="mini-face mini-side"></div>
-                        <div className="mini-face mini-front">
-                          <div className="mini-dots-grid">
-                            <span className="mini-d"></span><span className="mini-d"></span><span className="mini-d"></span>
-                            <span className="mini-d"></span><span className="mini-d"></span><span className="mini-d"></span>
-                          </div>
-                        </div>
-                      </div>
+            {/* Item grid picker */}
+            <p className="section-label" style={{ marginBottom: 4 }}>Pick an item to visualise</p>
+            <div className="items-grid">
+              {recommenderItems.map(item => {
+                const isActive = item.id === vizItemId;
+                const computed = computeItem(item);
+                return (
+                  <div
+                    key={item.id}
+                    className={`item-card${isActive ? ' active' : ''}${computed.oversized ? ' oversized' : ''}`}
+                    onClick={() => selectItem(item.id)}
+                    style={computed.oversized ? { borderColor: "rgba(239, 68, 68, 0.25)" } : undefined}
+                  >
+                    <span className="emoji">{item.emoji}</span>
+                    <div className="item-name">{item.name}</div>
+                    <div className="item-dim" style={computed.oversized ? { color: "var(--red)", fontWeight: "600" } : undefined}>
+                      {item.l}×{item.w}×{item.h} cm
                     </div>
-                    <div className="bin-peek-text">
-                      <div className="bin-peek-label">Peek inside a bin <span className="bin-peek-badge">Visual</span></div>
-                      <div className="bin-peek-sub">See exactly how one bin fills up</div>
+                    <div className="active-check" style={computed.oversized ? { display: "flex", background: "var(--red)" } : undefined}>
+                      {computed.oversized ? "!" : "✓"}
                     </div>
-                    <div className="bin-peek-arrow">{isPeekOpen ? "▲" : "▼"}</div>
                   </div>
-                </button>
+                );
+              })}
+            </div>
 
-                {/* Visualizer output */}
-                <div className={`bin-preview-shell${isPeekOpen ? " open" : ""}`}>
-                  <div className="bin-preview-panel">
-                    <div className="preview-topbar">
-                      <div className="preview-topbar-left">
-                        <div className="ptb-dot"></div>
-                        <span className="ptb-title">Bin packing preview</span>
+            {/* Accordion trigger button */}
+            <button
+              className="bin-peek-trigger"
+              onClick={() => {
+                if (vizItemId) {
+                  setIsPeekOpen(!isPeekOpen);
+                }
+              }}
+              aria-expanded={isPeekOpen}
+              style={{ cursor: vizItemId ? 'pointer' : 'default', marginTop: 8 }}
+            >
+              <div className="bin-peek-inner">
+                <div className="bin-peek-icon">
+                  <div className="mini-bin-wrap">
+                    <div className="mini-face mini-top"></div>
+                    <div className="mini-face mini-side"></div>
+                    <div className="mini-face mini-front">
+                      <div className="mini-dots-grid">
+                        <span className="mini-d"></span><span className="mini-d"></span><span className="mini-d"></span>
+                        <span className="mini-d"></span><span className="mini-d"></span><span className="mini-d"></span>
                       </div>
-                      {validResults.length > 0 && (
-                        <select
-                          className="viz-select"
-                          value={vizItemId}
-                          onChange={e => setVizItemId(parseInt(e.target.value))}
-                        >
-                          {validResults.map(vr => (
-                            <option key={vr.item.id} value={vr.item.id}>{vr.item.name}</option>
-                          ))}
-                        </select>
-                      )}
                     </div>
+                  </div>
+                </div>
+                <div className="bin-peek-text">
+                  <div className="bin-peek-label">Peek inside a bin <span className="bin-peek-badge">Visual</span></div>
+                  <div className="bin-peek-sub" style={activeResult?.oversized ? { color: "var(--red)", fontWeight: "500" } : undefined}>
+                    {selectedItem
+                      ? activeResult.oversized
+                        ? `⚠️ ${selectedItem.name} — Won't fit`
+                        : `${selectedItem.emoji} ${selectedItem.name} — ${activeResult.itemsPerBin} per bin`
+                      : "Select an item above to preview"}
+                  </div>
+                </div>
+                <div className="bin-peek-arrow">{isPeekOpen && vizItemId ? "▲" : "▼"}</div>
+              </div>
+            </button>
+            {!vizItemId && (
+              <div className="hint-text">Select any item above, then tap to see how it packs</div>
+            )}
 
-                    <div className="preview-body">
-                      {!activeResult ? (
-                        <div className="preview-empty">
-                          <div className="preview-empty-icon">📦</div>
-                          <span>Add at least one item that fits a standard bin to preview its layout.</span>
+            {/* Preview shell */}
+            <div className={`bin-preview-shell${isPeekOpen && vizItemId ? " open" : ""}`}>
+              {activeResult && (
+                <div className="shell-inner">
+                  <div className="bin-preview-panel" style={activeResult.oversized ? { borderColor: "rgba(239, 68, 68, 0.3)" } : undefined}>
+                    {/* Item hero card */}
+                    <div className="item-hero" style={activeResult.oversized ? { borderColor: "rgba(239, 68, 68, 0.2)" } : undefined}>
+                      <div className="item-hero-emoji">{selectedItem.emoji}</div>
+                      <div className="item-hero-info">
+                        <div className="item-hero-name">{selectedItem.name}</div>
+                        <div className="item-hero-dims">
+                          {selectedItem.l} × {selectedItem.w} × {selectedItem.h} cm · {selectedItem.wt} kg each · qty {selectedItem.qty}
                         </div>
-                      ) : (
-                        <>
-                          <div className="iso-stage">
-                            <svg viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg" dangerouslySetInnerHTML={{ __html: buildIsoBin(activeResult) }} />
-                          </div>
-
-                          <div className="flat-views">
-                            <div className="viz-panel">
-                              <div className="viz-panel-head">
-                                <span className="t">Top view</span>
-                                <span className="d">45 x 28 cm</span>
-                              </div>
-                              <svg viewBox="0 0 180 110" dangerouslySetInnerHTML={{ __html: buildFloorSvg(activeResult).svg }} />
-                              <div className="viz-panel-foot">
-                                {activeResult.fit.cL} x {activeResult.fit.cW} = <b>{activeResult.fit.cL * activeResult.fit.cW}</b> per layer
-                              </div>
-                            </div>
-
-                            <div className="viz-panel">
-                              <div className="viz-panel-head">
-                                <span className="t">Side view</span>
-                                <span className="d">25 cm tall</span>
-                              </div>
-                              <svg viewBox="0 0 180 110" dangerouslySetInnerHTML={{ __html: buildStackSvg(activeResult).svg }} />
-                              <div className="viz-panel-foot">
-                                <b>{activeResult.fit.cH}</b> {pluralize(activeResult.fit.cH, 'layer')} high
-                              </div>
-                            </div>
-                          </div>
-
-                          {(buildFloorSvg(activeResult).hasUnused || buildStackSvg(activeResult).hasUnused) && (
-                            <div className="viz-legend">
-                              <span><i className="swatch sw-fill"></i>Packed item</span>
-                              <span><i className="swatch sw-empty"></i>Empty space</span>
-                            </div>
+                        <div className="item-hero-tags">
+                          {activeResult.oversized ? (
+                            <span className="tag tag-red" style={{ background: "var(--red-soft)", color: "var(--red)", borderColor: "rgba(239, 68, 68, 0.2)" }}>Oversized</span>
+                          ) : (
+                            <>
+                              <span className="tag tag-violet">Best orientation: {activeResult.fit.ol}×{activeResult.fit.ow}×{activeResult.fit.oh} cm</span>
+                              <span className="tag tag-green">Limit: {activeResult.limiting}</span>
+                            </>
                           )}
-
-                          <div className="viz-buffer">
-                            <div className="viz-dots" dangerouslySetInnerHTML={{ __html: buildDotsHtml(activeResult) }} />
-                            <div className="viz-buffer-note" dangerouslySetInnerHTML={{ __html: `<b>Buffer Check:</b> ` + buildBufferNote(activeResult) }} />
-                          </div>
-
-                          <div className="viz-flow">
-                            <div className="viz-flow-stat">
-                              <div className="n">{activeResult.itemsPerBin}</div>
-                              <div className="l">per bin</div>
-                            </div>
-                            <div className="viz-flow-arrow">→</div>
-                            <div className="viz-flow-stat">
-                              <div className="n">{activeResult.binsNeeded}</div>
-                              <div className="l">bins needed</div>
-                            </div>
-                            <div className="viz-flow-arrow">→</div>
-                            <div className="viz-flow-stat hi">
-                              <div className="n">{activeResult.shelvesNeeded}</div>
-                              <div className="l">shelves</div>
-                            </div>
-                          </div>
-
-                          <p className="viz-sentence" dangerouslySetInnerHTML={{ __html: `<b>Optimized:</b> ` + buildCaption(activeResult) }} />
-                        </>
-                      )}
+                          {selectedItem.upright && <span className="tag tag-amber">Upright only</span>}
+                        </div>
+                      </div>
                     </div>
+
+                    {activeResult.oversized ? (
+                      <div className="preview-body" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", textAlign: "center", gap: "16px" }}>
+                        <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "var(--red-soft)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--red)", border: "1px solid rgba(239, 68, 68, 0.2)" }}>
+                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="10" />
+                            <line x1="15" y1="9" x2="9" y2="15" />
+                            <line x1="9" y1="9" x2="15" y2="15" />
+                          </svg>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                          <h4 style={{ color: "var(--red)", fontSize: "16px", fontWeight: "700" }}>Item does not fit in bin</h4>
+                          <p style={{ color: "var(--text-3)", fontSize: "13px", maxWidth: "360px", lineHeight: "1.5" }}>
+                            The dimensions of <b>{selectedItem.name}</b> ({selectedItem.l}×{selectedItem.w}×{selectedItem.h} cm) exceed the capacity of our standard bin (28×45×25 cm) under the required <b>{selectedItem.upright ? "upright-only" : "any"}</b> orientation rules.
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="preview-body">
+                        {/* Iso stage */}
+                        <div className="iso-stage">
+                          <svg viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg" dangerouslySetInnerHTML={{ __html: buildIsoBin(activeResult, theme) }} />
+                        </div>
+
+                        {/* Flat views */}
+                        <div className="flat-views">
+                          <div className="viz-panel">
+                            <div className="viz-panel-head">
+                              <span className="t">Top view</span>
+                              <span className="d">45 × 28 cm</span>
+                            </div>
+                            <svg viewBox="0 0 180 110" dangerouslySetInnerHTML={{ __html: buildFloorSvg(activeResult, theme).svg }} />
+                            <div className="viz-panel-foot">
+                              {activeResult.fit.cL} × {activeResult.fit.cW} = <b>{activeResult.fit.cL * activeResult.fit.cW}</b> per layer
+                            </div>
+                          </div>
+
+                          <div className="viz-panel">
+                            <div className="viz-panel-head">
+                              <span className="t">Side view</span>
+                              <span className="d">25 cm tall</span>
+                            </div>
+                            <svg viewBox="0 0 180 110" dangerouslySetInnerHTML={{ __html: buildStackSvg(activeResult, theme).svg }} />
+                            <div className="viz-panel-foot">
+                              <b>{activeResult.fit.cH}</b> {pluralize(activeResult.fit.cH, 'layer')} high
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Legend */}
+                        {(buildFloorSvg(activeResult, theme).hasUnused || buildStackSvg(activeResult, theme).hasUnused) && (
+                          <div className="viz-legend">
+                            <span><i className="swatch sw-fill"></i>Packed item</span>
+                            <span><i className="swatch sw-empty"></i>Unused space</span>
+                          </div>
+                        )}
+
+                        {/* Dots buffer */}
+                        <div className="viz-buffer">
+                          <div className="viz-dots" dangerouslySetInnerHTML={{ __html: buildDotsHtml(activeResult) }} />
+                          <div className="viz-buffer-note" dangerouslySetInnerHTML={{ __html: `<b>Buffer Check:</b> ` + buildBufferNote(activeResult) }} />
+                        </div>
+
+                        {/* Flow stats */}
+                        <div className="viz-flow">
+                          <div className="viz-flow-stat">
+                            <div className="n">{activeResult.itemsPerBin}</div>
+                            <div className="l">per bin</div>
+                          </div>
+                          <div className="viz-flow-arrow">→</div>
+                          <div className="viz-flow-stat">
+                            <div className="n">{activeResult.binsNeeded}</div>
+                            <div className="l">bins needed</div>
+                          </div>
+                          <div className="viz-flow-arrow">→</div>
+                          <div className="viz-flow-stat hi">
+                            <div className="n">{activeResult.shelvesNeeded}</div>
+                            <div className="l">shelves to book</div>
+                          </div>
+                        </div>
+
+                        {/* Caption */}
+                        <p className="viz-sentence" dangerouslySetInnerHTML={{ __html: `<b>Optimized:</b> ` + buildCaption(activeResult) }} />
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="recommender-modal-foot">
-            <div className="recommender-store-select-wrapper">
-              <label htmlFor="recommender-store-dropdown">Select Store to Apply:</label>
-              <select
-                id="recommender-store-dropdown"
-                className="recommender-store-select"
-                value={highlightedStoreId || ""}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setHighlightedStoreId(val ? Number(val) : null);
-                }}
-              >
-                <option value="">-- Choose a Dark Store --</option>
-                {cities.map(city => {
-                  const cityStores = allStores.filter(s => s.cityName === city.name && !s.disabled && s.shelvesAvailable > 0);
-                  if (cityStores.length === 0) return null;
-                  return (
-                    <optgroup key={city.id} label={city.name}>
-                      {cityStores.map(s => (
-                        <option key={s.id} value={s.id}>
-                          {s.name} ({s.area}) — {s.shelvesAvailable} free
-                        </option>
-                      ))}
-                    </optgroup>
-                  );
-                })}
-              </select>
-              {highlightedStore && totalShelves > highlightedStore.shelvesAvailable && (
-                <span className="recommender-store-warning">
-                  ⚠️ Only {highlightedStore.shelvesAvailable} free shelves left
-                </span>
               )}
             </div>
-            <button className="btn btn-ghost" onClick={() => setIsRecommenderOpen(false)}>Close</button>
-            <button
-              className="btn-recommender"
-              onClick={handleApplyRecommendation}
-              disabled={!highlightedStore}
-              title={!highlightedStore ? "Please select a store to apply the recommendation" : ""}
-              style={{ opacity: highlightedStore ? 1 : 0.6 }}
-            >
-              {highlightedStore
-                ? `Apply ${Math.min(totalShelves, highlightedStore.shelvesAvailable)} Shelf/Shelves to ${highlightedStore.name}`
-                : `Select Store to Apply (${totalShelves} Shelves)`}
-            </button>
           </div>
         </div>
       </div>
     );
   };
+
+  if (step === 0) {
+    return (
+      <>
+        <style>{STYLES}</style>
+        {renderLandingPage()}
+      </>
+    );
+  }
+
+  if (step === 1) {
+    return (
+      <>
+        <style>{STYLES}</style>
+        {renderStandaloneBrandForm()}
+      </>
+    );
+  }
 
   if (step === 4) {
     return (
@@ -5982,13 +8602,18 @@ export default function DarkStoreOnboarding() {
       <div className="shell">
         {renderSidebar()}
         <main className="main">
+          <div className="desktop-actions-wrap-outer">
+            {renderHeaderActions("desktop-actions-wrap")}
+          </div>
           {renderMobileHeader()}
           <div className={`main-inner${step === 2 ? " step-store" : ""}`}>
-            {pageMeta && step !== 2 && (
-              <header className="page-head">
-                <p className="page-eyebrow">{pageMeta.eyebrow}</p>
-                <h1 className="page-title">{pageMeta.title}</h1>
-                <p className="page-desc">{pageMeta.desc}</p>
+            {pageMeta && (
+              <header className="page-head" style={{ marginBottom: "24px" }}>
+                <div>
+                  <p className="page-eyebrow">{pageMeta.eyebrow}</p>
+                  <h1 className="page-title">{pageMeta.title}</h1>
+                  <p className="page-desc">{pageMeta.desc}</p>
+                </div>
               </header>
             )}
 
@@ -6007,7 +8632,7 @@ export default function DarkStoreOnboarding() {
             <div className="action-bar-inner">
               {step === 2 ? (
                 <>
-                  <button className="btn btn-ghost" onClick={() => { setStep(step - 1); setErrors({}); setShowStepError(false); }} aria-label="Go back">
+                  <button className="btn btn-ghost" onClick={() => { setStep(0); setErrors({}); setShowStepError(false); }} aria-label="Go back">
                     <Icon.ArrowLeft /> <span className="btn-label">Back</span>
                   </button>
                   <div className="checkout-summary">
@@ -6022,7 +8647,7 @@ export default function DarkStoreOnboarding() {
                   </div>
                   <button
                     className="btn btn-primary btn-checkout"
-                    onClick={handleCheckoutPayment}
+                    onClick={handleNext}
                     disabled={cart.length === 0 || !disclaimerAgreed}
                     title={
                       cart.length === 0
@@ -6032,7 +8657,7 @@ export default function DarkStoreOnboarding() {
                           : undefined
                     }
                   >
-                    Checkout <Icon.ArrowRight />
+                    Continue <Icon.ArrowRight />
                   </button>
                 </>
               ) : (
@@ -6048,8 +8673,8 @@ export default function DarkStoreOnboarding() {
                       Continue <Icon.ArrowRight />
                     </button>
                   ) : (
-                    <button className="btn btn-primary" onClick={handleSubmit} disabled={!isStepValid(3)} title={!isStepValid(3) ? "Complete all required fields to submit" : undefined}>
-                      <Icon.Send /> Submit application
+                    <button className="btn btn-primary btn-checkout" onClick={handleCheckoutPayment} disabled={!isStepValid(3)} title={!isStepValid(3) ? "Complete all required fields and documents to pay" : undefined}>
+                      Pay & Book Racks <Icon.ArrowRight />
                     </button>
                   )}
                 </>

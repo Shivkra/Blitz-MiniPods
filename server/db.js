@@ -638,8 +638,9 @@ export function getStoresByCityName(cityName) {
 }
 
 export function saveApplication(data) {
-  const city = db.prepare("SELECT id FROM cities WHERE name = ?").get(data.city);
-  if (!city) throw new Error("Invalid city");
+  const cityName = Array.isArray(data.city) ? data.city[0] : data.city;
+  const city = cityName ? db.prepare("SELECT id FROM cities WHERE name = ?").get(cityName) : null;
+  const cityId = city ? city.id : 1; // Fallback to first city id if none is matched/specified, to satisfy NOT NULL constraint
 
   const result = db
     .prepare(`
@@ -651,7 +652,7 @@ export function saveApplication(data) {
       data.poc,
       data.phone,
       data.email,
-      city.id,
+      cityId,
       JSON.stringify(data.cart || data.storeIds || []),
       JSON.stringify(data)
     );

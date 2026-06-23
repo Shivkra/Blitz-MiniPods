@@ -74,6 +74,7 @@ function groupCartByCity(cart) {
 }
 
 export default function StoreSelection({
+  theme,
   cities,
   browseCity,
   onBrowseCityChange,
@@ -113,11 +114,13 @@ export default function StoreSelection({
   const cityCount = Object.keys(cartByCity).length;
 
   const getDraftRacks = (storeId, maxRacks) => {
-    const draft = rackDrafts[storeId] ?? 1;
-    if (draft === "") return 1;
+    const inCart = cartMap[storeId];
+    const defaultVal = inCart ? inCart.racks : 0;
+    const draft = rackDrafts[storeId] ?? defaultVal;
+    if (draft === "") return 0;
     const num = Number(draft);
-    if (isNaN(num)) return 1;
-    return Math.min(Math.max(1, num), maxRacks || 1);
+    if (isNaN(num)) return 0;
+    return Math.min(Math.max(0, num), maxRacks || 0);
   };
 
   const setDraftRacks = (storeId, value) => {
@@ -127,7 +130,16 @@ export default function StoreSelection({
   const handleAdd = (store) => {
     if (store.disabled || store.shelvesAvailable <= 0 || !browseCity) return;
     const racks = getDraftRacks(store.id, store.shelvesAvailable);
-    setDraftRacks(store.id, racks, store.shelvesAvailable);
+    if (racks === 0) {
+      const inCart = cartMap[store.id];
+      if (inCart) {
+        onRemoveFromCart(store.id);
+      } else {
+        alert("Please select at least 1 shelf to add to your cart.");
+      }
+      return;
+    }
+    setDraftRacks(store.id, racks);
     onAddToCart({
       storeId: store.id,
       storeName: store.name,
@@ -181,14 +193,12 @@ export default function StoreSelection({
           <Icon.Search />
           <input
             type="search"
-            placeholder="Search dark stores by name or area…"
+            placeholder="Search dark stores by name"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
-        <span className="ss-count">
-          {storesLoading ? "Loading…" : `${filtered.length} store${filtered.length !== 1 ? "s" : ""} in ${browseCity || "—"}`}
-        </span>
+
         <div className="ss-view-toggle">
           <button type="button" className={`ss-view-btn${view === "grid" ? " active" : ""}`} onClick={() => setView("grid")}>
             <Icon.Grid /> Grid
@@ -223,7 +233,6 @@ export default function StoreSelection({
                 <div className="ss-card-head">
                   <div>
                     <h3>{store.name}</h3>
-                    <p>{store.area}</p>
                   </div>
                   {inCart && (
                     <span className="ss-in-cart-badge">
@@ -237,23 +246,14 @@ export default function StoreSelection({
                     <span className="ss-pill-dot" />
                     {store.availability}
                   </span>
-                  {storageTags(store.storage).map((tag) => (
-                    <span key={tag} className="ss-storage-tag">{tag}</span>
-                  ))}
+
                 </div>
-
-                <p className="ss-address"><Icon.Pin /> {store.address || `${store.area}, ${browseCity}`}</p>
-
                 {unavailable ? (() => {
                   const total = store.totalShelves || store.shelvesAvailable || 12;
                   return (
                     <>
-                      <div className="ss-shelf-visualizer exhausted">
-                        <div className="ss-shelf-status">
-                          <span className="ss-shelf-allocating">SELECTED: 0</span>
-                          <span className="ss-shelf-pending ss-shelf-pending-red">FREE: 0</span>
-                        </div>
 
+                      <div className="ss-shelf-visualizer exhausted">
                         {/* Solid red progress bar showing 100% blocked shelves */}
                         <div className="ss-shelf-progress-wrapper">
                           <div className="ss-shelf-progress-bar">
@@ -287,9 +287,7 @@ export default function StoreSelection({
                           <span className="ss-shelf-allocating">
                             SELECTED: <strong>{allocating}</strong>
                           </span>
-                          <span className="ss-shelf-pending ss-shelf-pending-green">
-                            FREE: <strong>{pending}</strong>
-                          </span>
+
                         </div>
 
                         {/* Beautiful percentage/distribution bar */}
@@ -318,9 +316,6 @@ export default function StoreSelection({
                             )}
                           </div>
                           <div className="ss-shelf-progress-labels">
-                            {booked > 0 && <span>Blocked:<strong>{booked} </strong></span>}
-                            <span>Selected:<strong style={{ color: "var(--accent)" }}>{allocating} </strong></span>
-                            <span className="green">Free:<strong>{pending} </strong></span>
                             <span className="ss-progress-total">Total: {total}</span>
                           </div>
                         </div>
@@ -328,37 +323,37 @@ export default function StoreSelection({
 
                       <div className="ss-card-actions">
                         <div className="ss-qty">
-                          <button type="button" aria-label="Decrease racks" onClick={() => setDraftRacks(store.id, draft - 1, maxRacks)} disabled={draft <= 1}>
+                          <button type="button" aria-label="Decrease racks" onClick={() => setDraftRacks(store.id, draft - 1, maxRacks)} disabled={draft <= 0}>
                             <Icon.Minus />
                           </button>
-                           <input
-                             type="number"
-                             className="ss-qty-input"
-                             value={rackDrafts[store.id] ?? 1}
-                             min={1}
-                             max={maxRacks}
-                             onChange={(e) => {
-                               const valStr = e.target.value;
-                               if (valStr === "") {
-                                 setDraftRacks(store.id, "");
-                               } else {
-                                 const val = parseInt(valStr, 10);
-                                 if (!isNaN(val)) {
-                                   setDraftRacks(store.id, val);
-                                 }
-                               }
-                             }}
-                             onBlur={() => {
-                               const raw = rackDrafts[store.id] ?? 1;
-                               let val = parseInt(raw, 10);
-                               if (isNaN(val) || val < 1) val = 1;
-                               if (val > maxRacks) val = maxRacks;
-                               setDraftRacks(store.id, val);
-                             }}
-                           />
-                           <span className="ss-qty-label">
-                             Shelf{draft !== 1 ? "s" : ""}
-                           </span>
+                          <input
+                            type="number"
+                            className="ss-qty-input"
+                            value={rackDrafts[store.id] ?? (inCart ? inCart.racks : 0)}
+                            min={0}
+                            max={maxRacks}
+                            onChange={(e) => {
+                              const valStr = e.target.value;
+                              if (valStr === "") {
+                                setDraftRacks(store.id, "");
+                              } else {
+                                const val = parseInt(valStr, 10);
+                                if (!isNaN(val)) {
+                                  setDraftRacks(store.id, val);
+                                }
+                              }
+                            }}
+                            onBlur={() => {
+                              const raw = rackDrafts[store.id] ?? (inCart ? inCart.racks : 0);
+                              let val = parseInt(raw, 10);
+                              if (isNaN(val) || val < 0) val = 0;
+                              if (val > maxRacks) val = maxRacks;
+                              setDraftRacks(store.id, val);
+                            }}
+                          />
+                          <span className="ss-qty-label">
+                            Shelf{draft !== 1 ? "s" : ""}
+                          </span>
                           <button type="button" aria-label="Increase racks" onClick={() => setDraftRacks(store.id, draft + 1, maxRacks)} disabled={draft >= maxRacks}>
                             <Icon.Plus />
                           </button>
@@ -377,6 +372,7 @@ export default function StoreSelection({
       ) : (
         <div className="ss-map-wrap">
           <StoreMap
+            theme={theme}
             stores={filtered}
             cartMap={cartMap}
             browseCity={browseCity}
@@ -422,7 +418,7 @@ export default function StoreSelection({
                             {item.racks} rack{item.racks !== 1 ? "s" : ""}
                           </span>
                         </div>
-                        <p className="ss-selection-area">{item.area}</p>
+
                         {item.address && <p className="ss-selection-address"><Icon.Pin /> {item.address}</p>}
                       </div>
                       <div className="ss-selection-item-actions">
