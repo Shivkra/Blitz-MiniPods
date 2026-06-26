@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import "./DocumentUpload.css";
 import { useDocumentVerification } from "../../hooks/useDocumentVerification.js";
 
 // Local SVG icons for self-containment

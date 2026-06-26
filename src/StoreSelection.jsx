@@ -135,7 +135,7 @@ export default function StoreSelection({
       if (inCart) {
         onRemoveFromCart(store.id);
       } else {
-        alert("Please select at least 1 shelf to add to your cart.");
+        alert("Please select at least 1 MiniPod to add to your cart.");
       }
       return;
     }
@@ -223,6 +223,13 @@ export default function StoreSelection({
             const unavailable = store.disabled || store.shelvesAvailable <= 0;
             const maxRacks = store.shelvesAvailable || 0;
             const draft = getDraftRacks(store.id, maxRacks);
+            const total = store.totalShelves || store.shelvesAvailable || 12;
+            const booked = total - store.shelvesAvailable;
+            const allocating = draft;
+            const pending = store.shelvesAvailable - draft;
+            const bookedPct = (booked / total) * 100;
+            const allocatingPct = (allocating / total) * 100;
+            const pendingPct = (pending / total) * 100;
 
             return (
               <article
@@ -230,141 +237,101 @@ export default function StoreSelection({
                 id={`store-card-${store.id}`}
                 className={`ss-card${unavailable ? " unavailable" : ""}${inCart ? " in-cart" : ""}${highlightedStoreId === store.id ? " highlighted" : ""}`}
               >
-                <div className="ss-card-head">
-                  <div>
-                    <h3>{store.name}</h3>
+
+                <div className="ss-card-body">
+                  {/* Header: store name + in-cart badge */}
+                  <div className="ss-card-head">
+                    <div className="ss-card-name-block">
+                      <h3 title={store.name}>{store.name}</h3>
+                    </div>
+                    {inCart && (
+                      <span className="ss-in-cart-badge">
+                        <Icon.Check /> {inCart.racks} MiniPod{inCart.racks !== 1 ? "s" : ""}
+                      </span>
+                    )}
                   </div>
-                  {inCart && (
-                    <span className="ss-in-cart-badge">
-                      <Icon.Check /> {inCart.racks} Shelf{inCart.racks !== 1 ? "s" : ""}
-                    </span>
+
+                  {/* Big shelf counter */}
+                  {!unavailable && (
+                    <div>
+                      <div className="ss-shelf-counter">
+                        <span className="ss-shelf-counter-num">{store.shelvesAvailable}</span>
+                        <span className="ss-shelf-counter-label">MiniPods available</span>
+                      </div>
+                      <div className="ss-shelf-counter-sub">out of {total} total in this store</div>
+                    </div>
+                  )}
+
+                  {/* Shelf distribution bar */}
+                  <div className="ss-shelf-visualizer">
+                    <div className="ss-shelf-progress-wrapper">
+                      <div className="ss-shelf-progress-bar">
+                        {booked > 0 && (
+                          <div className="ss-progress-segment blocked" style={{ width: `${bookedPct}%` }} title={`${booked} already booked`} />
+                        )}
+                        {allocating > 0 && (
+                          <div className="ss-progress-segment selected" style={{ width: `${allocatingPct}%` }} title={`${allocating} you're selecting`} />
+                        )}
+                        {pending > 0 && (
+                          <div className="ss-progress-segment free" style={{ width: `${pendingPct}%` }} title={`${pending} still available`} />
+                        )}
+                        {unavailable && (
+                          <div className="ss-progress-segment blocked" style={{ width: "100%" }} title="No MiniPods available" />
+                        )}
+                      </div>
+                      {/* Legend */}
+                      <div className="ss-bar-legend">
+                        {booked > 0 && <span className="ss-bar-legend-item"><span className="ss-bar-legend-dot blocked" />{booked} booked</span>}
+                        {allocating > 0 && <span className="ss-bar-legend-item"><span className="ss-bar-legend-dot selected" />{allocating} yours</span>}
+                      </div>
+                    </div>
+                  </div>
+
+                  {unavailable && (
+                    <p className="ss-unavailable-msg">🚫 All MiniPods are taken at this location</p>
                   )}
                 </div>
 
-                <div className="ss-card-badges">
-                  <span className={`ss-pill ss-pill-${store.avail}`}>
-                    <span className="ss-pill-dot" />
-                    {store.availability}
-                  </span>
+                {/* Action footer */}
+                {!unavailable && (
+                  <div className="ss-card-actions">
+                    <div className="ss-stepper-row">
 
-                </div>
-                {unavailable ? (() => {
-                  const total = store.totalShelves || store.shelvesAvailable || 12;
-                  return (
-                    <>
-
-                      <div className="ss-shelf-visualizer exhausted">
-                        {/* Solid red progress bar showing 100% blocked shelves */}
-                        <div className="ss-shelf-progress-wrapper">
-                          <div className="ss-shelf-progress-bar">
-                            <div className="ss-progress-segment blocked" style={{ width: "100%" }} />
-                          </div>
-                          <div className="ss-shelf-progress-labels">
-                            <span>Blocked:<strong>{total} </strong></span>
-                            <span>Selected:<strong>0 </strong></span>
-                            <span className="red">Free:<strong>0 </strong></span>
-                            <span className="ss-progress-total">Total: {total}</span>
-                          </div>
-                        </div>
-                      </div>
-                      <p className="ss-unavailable-msg">No racks available at this store</p>
-                    </>
-                  );
-                })() : (() => {
-                  const total = store.totalShelves || store.shelvesAvailable || 12;
-                  const booked = total - store.shelvesAvailable;
-                  const allocating = draft;
-                  const pending = store.shelvesAvailable - draft;
-
-                  const bookedPct = (booked / total) * 100;
-                  const allocatingPct = (allocating / total) * 100;
-                  const pendingPct = (pending / total) * 100;
-
-                  return (
-                    <>
-                      <div className="ss-shelf-visualizer">
-                        <div className="ss-shelf-status">
-                          <span className="ss-shelf-allocating">
-                            SELECTED: <strong>{allocating}</strong>
-                          </span>
-
-                        </div>
-
-                        {/* Beautiful percentage/distribution bar */}
-                        <div className="ss-shelf-progress-wrapper">
-                          <div className="ss-shelf-progress-bar">
-                            {booked > 0 && (
-                              <div
-                                className="ss-progress-segment blocked"
-                                style={{ width: `${bookedPct}%` }}
-                                title={`${booked} Blocked (${Math.round(bookedPct)}%)`}
-                              />
-                            )}
-                            {allocating > 0 && (
-                              <div
-                                className="ss-progress-segment selected"
-                                style={{ width: `${allocatingPct}%` }}
-                                title={`${allocating} Selected (${Math.round(allocatingPct)}%)`}
-                              />
-                            )}
-                            {pending > 0 && (
-                              <div
-                                className="ss-progress-segment free"
-                                style={{ width: `${pendingPct}%` }}
-                                title={`${pending} Free (${Math.round(pendingPct)}%)`}
-                              />
-                            )}
-                          </div>
-                          <div className="ss-shelf-progress-labels">
-                            <span className="ss-progress-total">Total: {total}</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="ss-card-actions">
-                        <div className="ss-qty">
-                          <button type="button" aria-label="Decrease racks" onClick={() => setDraftRacks(store.id, draft - 1, maxRacks)} disabled={draft <= 0}>
-                            <Icon.Minus />
-                          </button>
-                          <input
-                            type="number"
-                            className="ss-qty-input"
-                            value={rackDrafts[store.id] ?? (inCart ? inCart.racks : 0)}
-                            min={0}
-                            max={maxRacks}
-                            onChange={(e) => {
-                              const valStr = e.target.value;
-                              if (valStr === "") {
-                                setDraftRacks(store.id, "");
-                              } else {
-                                const val = parseInt(valStr, 10);
-                                if (!isNaN(val)) {
-                                  setDraftRacks(store.id, val);
-                                }
-                              }
-                            }}
-                            onBlur={() => {
-                              const raw = rackDrafts[store.id] ?? (inCart ? inCart.racks : 0);
-                              let val = parseInt(raw, 10);
-                              if (isNaN(val) || val < 0) val = 0;
-                              if (val > maxRacks) val = maxRacks;
-                              setDraftRacks(store.id, val);
-                            }}
-                          />
-                          <span className="ss-qty-label">
-                            Shelf{draft !== 1 ? "s" : ""}
-                          </span>
-                          <button type="button" aria-label="Increase racks" onClick={() => setDraftRacks(store.id, draft + 1, maxRacks)} disabled={draft >= maxRacks}>
-                            <Icon.Plus />
-                          </button>
-                        </div>
-                        <button type="button" className="ss-add-btn" onClick={() => handleAdd(store)}>
-                          <Icon.Cart /> {inCart ? "Update" : "Add"}
+                      <div className="ss-qty">
+                        <button type="button" aria-label="Decrease" onClick={() => setDraftRacks(store.id, draft - 1, maxRacks)} disabled={draft <= 0}>
+                          <Icon.Minus />
+                        </button>
+                        <input
+                          type="number"
+                          className="ss-qty-input"
+                          value={rackDrafts[store.id] ?? (inCart ? inCart.racks : 0)}
+                          min={0}
+                          max={maxRacks}
+                          onChange={(e) => {
+                            const valStr = e.target.value;
+                            if (valStr === "") { setDraftRacks(store.id, ""); }
+                            else { const val = parseInt(valStr, 10); if (!isNaN(val)) setDraftRacks(store.id, val); }
+                          }}
+                          onBlur={() => {
+                            const raw = rackDrafts[store.id] ?? (inCart ? inCart.racks : 0);
+                            let val = parseInt(raw, 10);
+                            if (isNaN(val) || val < 0) val = 0;
+                            if (val > maxRacks) val = maxRacks;
+                            setDraftRacks(store.id, val);
+                          }}
+                        />
+                        <span className="ss-qty-label">MiniPod{draft !== 1 ? "s" : ""}</span>
+                        <button type="button" aria-label="Increase" onClick={() => setDraftRacks(store.id, draft + 1, maxRacks)} disabled={draft >= maxRacks}>
+                          <Icon.Plus />
                         </button>
                       </div>
-                    </>
-                  );
-                })()}
+                    </div>
+                    <button type="button" className="ss-add-btn" onClick={() => handleAdd(store)}>
+                      <Icon.Cart />
+                      {inCart ? `Update — ${draft} MiniPod${draft !== 1 ? "s" : ""}` : `Book ${draft > 0 ? draft + " " : ""}MiniPod${draft !== 1 ? "s" : ""}`}
+                    </button>
+                  </div>
+                )}
               </article>
             );
           })}
@@ -381,11 +348,11 @@ export default function StoreSelection({
           />
 
           <div className="ss-map-legend">
-            <span><span className="ss-legend-dot green" /> 10+ shelves available</span>
-            <span><span className="ss-legend-dot amber" /> 1–10 shelves available</span>
-            <span><span className="ss-legend-dot red" /> No shelves available</span>
+            <span><span className="ss-legend-dot green" /> 10+ MiniPods available</span>
+            <span><span className="ss-legend-dot amber" /> 1–10 MiniPods available</span>
+            <span><span className="ss-legend-dot red" /> No MiniPods available</span>
           </div>
-          <p className="ss-map-hint">Tap a marker for store details, or open grid view to add racks.</p>
+          <p className="ss-map-hint">Tap a marker for store details, or open grid view to book MiniPods.</p>
         </div>
       )}
 
@@ -394,9 +361,9 @@ export default function StoreSelection({
           <div className="ss-selection-head">
             <div>
               <h4>Your selection</h4>
-              <p>{cart.length} store{cart.length !== 1 ? "s" : ""} across {cityCount} cit{cityCount !== 1 ? "ies" : "y"} · {totalRacks} total rack{totalRacks !== 1 ? "s" : ""}</p>
+              <p>{cart.length} store{cart.length !== 1 ? "s" : ""} across {cityCount} cit{cityCount !== 1 ? "ies" : "y"} · {totalRacks} MiniPod{totalRacks !== 1 ? "s" : ""}</p>
             </div>
-            <span className="ss-selection-total">{totalRacks} racks</span>
+            <span className="ss-selection-total">{totalRacks} MiniPods</span>
           </div>
 
           <div className="ss-selection-groups">
@@ -415,7 +382,7 @@ export default function StoreSelection({
                           <strong>{item.storeName}</strong>
                           <span className={`ss-pill ss-pill-${item.avail || "green"}`}>
                             <span className="ss-pill-dot" />
-                            {item.racks} rack{item.racks !== 1 ? "s" : ""}
+                            {item.racks} MiniPod{item.racks !== 1 ? "s" : ""}
                           </span>
                         </div>
 

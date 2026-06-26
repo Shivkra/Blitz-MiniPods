@@ -1,6 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import StoreSelection, { StoreIcon } from "./StoreSelection.jsx";
 import DocumentUpload from "./components/onboarding/DocumentUpload.jsx";
+import Bengaluru3DMap from "./components/onboarding/Bengaluru3DMap.jsx";
+import IndiaMapSVG from "./components/onboarding/IndiaMapSVG.jsx";
 
 const STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
@@ -253,6 +255,36 @@ const STYLES = `
     flex-shrink: 0;
   }
 
+  .form-progress-footer {
+    width: 100%;
+    max-width: 720px;
+    margin: auto auto 0 auto;
+    padding: 16px 32px 16px 32px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-progress-footer.step-store {
+    max-width: 900px;
+  }
+
+  /* Hide progress bar on desktop — sidebar step nav already shows progress */
+  .progress-wrapper {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .form-progress-footer {
+      padding: 12px 24px;
+    }
+    /* Show progress bar on mobile */
+    .progress-wrapper {
+      display: block;
+    }
+  }
+
   .progress-label {
     display: flex;
     justify-content: space-between;
@@ -288,6 +320,19 @@ const STYLES = `
   }
 
   .trust-note svg { flex-shrink: 0; margin-top: 1px; color: var(--text-3); }
+
+  /* Trust note positioned in action bar bottom-left */
+  .action-bar-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .trust-note-bar {
+    max-width: 260px;
+    margin-top: 0;
+  }
 
   /* === RECOMMENDER MODAL === */
   .recommender-sidebar-promo {
@@ -567,7 +612,7 @@ const STYLES = `
     border-radius: var(--radius-xl);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 32px 80px rgba(0, 0, 0, 0.6), 0 0 50px rgba(99, 102, 241, 0.12);
     animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
@@ -578,6 +623,8 @@ const STYLES = `
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-top-left-radius: var(--radius-xl);
+    border-top-right-radius: var(--radius-xl);
   }
 
   .recommender-modal-head h3 {
@@ -625,6 +672,8 @@ const STYLES = `
     align-items: center;
     gap: 16px;
     background: rgba(15, 15, 18, 0.4);
+    border-bottom-left-radius: var(--radius-xl);
+    border-bottom-right-radius: var(--radius-xl);
   }
 
   .recommender-store-select-wrapper {
@@ -693,8 +742,8 @@ const STYLES = `
   .spec-chip {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 4px 12px;
+    gap: 4px;
+    padding: 6px 16px;
     border-right: 1px solid var(--border);
   }
 
@@ -703,18 +752,19 @@ const STYLES = `
   }
 
   .spec-chip .lbl {
-    font-family: monospace;
-    font-size: 9px;
-    letter-spacing: .06em;
+    font-family: var(--sans);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .05em;
     color: var(--text-3);
     text-transform: uppercase;
   }
 
   .spec-chip .val {
-    font-family: monospace;
-    font-size: 13px;
-    color: var(--text-2);
-    font-weight: 600;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 700;
   }
 
   /* List & inputs styling */
@@ -941,7 +991,7 @@ const STYLES = `
   /* Bin visualizer Peek */
   .bin-peek-trigger {
     width: 100%;
-    margin-top: 14px;
+    margin-top: 0;
     padding: 0;
     border: none;
     background: none;
@@ -1127,7 +1177,7 @@ const STYLES = `
   }
 
   .bin-preview-panel {
-    margin-top: 12px;
+    margin-top: 4px;
     background: linear-gradient(160deg, #111115, #16161c);
     border: 1px solid rgba(99, 102, 241, 0.15);
     border-radius: 12px;
@@ -1431,7 +1481,7 @@ const STYLES = `
     max-width: 720px;
     width: 100%;
     margin: 0 auto;
-    padding: 20px 32px 20px;
+    padding: 47px 32px 20px;
   }
 
   .page-head {
@@ -1850,99 +1900,156 @@ const STYLES = `
 
   .ss-view-toggle {
     display: flex;
-    gap: 4px;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 4px;
+    gap: 6px;
+    align-items: center;
   }
 
   .ss-view-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    border: none;
-    border-radius: 8px;
-    background: transparent;
-    color: var(--text-3);
+    gap: 7px;
+    padding: 8px 16px;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 100px;
+    background: var(--surface-2);
+    color: var(--text-2);
     font-size: 13px;
     font-weight: 600;
     font-family: var(--sans);
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Inactive Map button gets a teal/cyan identity */
+  .ss-view-btn:not(.active) {
+    color: #22d3ee;
+    border-color: rgba(34,211,238,0.25);
+    background: rgba(34,211,238,0.06);
+    text-shadow: 0 0 12px rgba(34,211,238,0.4);
+  }
+
+  .ss-view-btn:not(.active) svg {
+    color: #22d3ee;
+    filter: drop-shadow(0 0 4px rgba(34,211,238,0.6));
+    animation: map-icon-pulse 2.5s ease-in-out infinite;
+  }
+
+  @keyframes map-icon-pulse {
+    0%, 100% { filter: drop-shadow(0 0 3px rgba(34,211,238,0.5)); opacity: 1; }
+    50%       { filter: drop-shadow(0 0 8px rgba(34,211,238,0.9)); opacity: 0.85; }
+  }
+
+  .ss-view-btn:hover:not(.active) {
+    border-color: rgba(34,211,238,0.55);
+    background: rgba(34,211,238,0.12);
+    color: #67e8f9;
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 20px rgba(34,211,238,0.2);
   }
 
   .ss-view-btn.active {
-    background: var(--surface-3);
-    color: var(--text);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
   }
 
   .ss-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 14px;
+    gap: 16px;
   }
 
+  /* ── Premium Store Card ── */
   .ss-card {
     background: var(--surface-2);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 18px;
+    border-radius: 16px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    transition: border-color 0.2s, box-shadow 0.2s;
+    transition: transform 0.22s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s ease, border-color 0.2s;
+    cursor: default;
+  }
+
+  .ss-card:hover:not(.unavailable) {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.25);
   }
 
   .ss-card.highlighted {
-    border-color: rgba(99,102,241,0.5);
-    box-shadow: 0 0 0 3px var(--accent-soft);
+    border-color: rgba(99,102,241,0.6);
+    box-shadow: 0 0 0 3px var(--accent-soft), 0 16px 40px rgba(99,102,241,0.12);
   }
 
   .ss-card.in-cart {
-    border-color: rgba(99,102,241,0.35);
-    background: rgba(99,102,241,0.06);
+    border-color: rgba(99,102,241,0.5);
+    background: linear-gradient(145deg, rgba(99,102,241,0.07) 0%, var(--surface-2) 100%);
   }
 
   .ss-card.unavailable {
-    opacity: 0.55;
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
+  /* Top color stripe = availability indicator */
+  .ss-card-stripe {
+    height: 4px;
+    width: 100%;
+    flex-shrink: 0;
+  }
+  .ss-card-stripe.green { background: linear-gradient(90deg, #10b981, #34d399); }
+  .ss-card-stripe.amber { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+  .ss-card-stripe.red   { background: linear-gradient(90deg, #ef4444, #f87171); }
+
+  /* Card body */
+  .ss-card-body {
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+
+  /* Header row: name + booked badge */
   .ss-card-head {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 10px;
+    gap: 8px;
   }
+
+  .ss-card-name-block { flex: 1; min-width: 0; }
 
   .ss-card-head h3 {
     font-size: 15px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-
-  .ss-card-head p {
-    font-size: 12px;
-    color: var(--text-3);
-    margin-top: 2px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .ss-in-cart-badge {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 10.5px;
+    font-weight: 700;
     color: #a5b4fc;
     background: var(--accent-soft);
     border: 1px solid rgba(99,102,241,0.3);
-    padding: 4px 8px;
+    padding: 4px 9px;
     border-radius: 100px;
     flex-shrink: 0;
+    white-space: nowrap;
   }
 
+  /* Availability badge row */
   .ss-card-badges {
     display: flex;
     flex-wrap: wrap;
@@ -1955,9 +2062,10 @@ const STYLES = `
     align-items: center;
     gap: 5px;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     padding: 4px 10px;
     border-radius: 100px;
+    letter-spacing: 0.01em;
   }
 
   .ss-pill-green { background: var(--green-soft); color: var(--green); }
@@ -1965,10 +2073,40 @@ const STYLES = `
   .ss-pill-red   { background: var(--red-soft);   color: var(--red); }
 
   .ss-pill-dot {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
     border-radius: 50%;
     background: currentColor;
+    animation: ss-pulse-dot 2s infinite;
+  }
+
+  @keyframes ss-pulse-dot {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+  }
+
+  /* Big shelf counter */
+  .ss-shelf-counter {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .ss-shelf-counter-num {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--text);
+    line-height: 1;
+  }
+  .ss-shelf-counter-label {
+    font-size: 12px;
+    color: var(--text-3);
+    font-weight: 500;
+  }
+  .ss-shelf-counter-sub {
+    font-size: 10.5px;
+    color: var(--text-3);
+    margin-top: 2px;
   }
 
   .ss-storage-tag {
@@ -1988,25 +2126,15 @@ const STYLES = `
     color: var(--text-3);
   }
 
-  /* ── SHELF VISUALIZER ── */
+  /* ── SHELF VISUALIZER (redesigned) ── */
   .ss-shelf-visualizer {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: var(--radius);
-    padding: 14px;
-    margin-top: 4px;
-    margin-bottom: 4px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 8px;
   }
 
-  .ss-shelf-visualizer:hover {
-    background: rgba(255, 255, 255, 0.03);
-    border-color: rgba(255, 255, 255, 0.08);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  .ss-shelf-visualizer.exhausted {
+    opacity: 0.75;
   }
 
   .ss-shelf-status {
@@ -2014,20 +2142,21 @@ const STYLES = `
     justify-content: space-between;
     align-items: center;
     font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
     font-weight: 600;
   }
 
   .ss-shelf-allocating {
     color: var(--text-2);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
   }
 
   .ss-shelf-allocating strong {
     color: #a5b4fc;
     font-size: 13px;
     margin-left: 4px;
-    text-shadow: 0 0 8px rgba(99,102,241,0.4);
   }
 
   .ss-shelf-pending {
@@ -2038,47 +2167,42 @@ const STYLES = `
 
   .ss-shelf-pending-green { color: var(--green); }
   .ss-shelf-pending-amber { color: var(--amber); }
-  .ss-shelf-pending-red { color: var(--red); }
+  .ss-shelf-pending-red   { color: var(--red); }
 
   .ss-shelf-pending strong {
     font-size: 13px;
-    text-shadow: currentColor 0px 0px 8px;
   }
 
-  /* Segmented progress bar for shelves distribution */
+  /* Thick segmented bar */
   .ss-shelf-progress-wrapper {
-    margin-bottom: 14px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
 
   .ss-shelf-progress-bar {
-    height: 6px;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 3px;
+    height: 10px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 100px;
     overflow: hidden;
     display: flex;
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255,255,255,0.06);
   }
 
   .ss-progress-segment {
     height: 100%;
-    transition: width 0.3s ease;
+    transition: width 0.4s cubic-bezier(0.34,1,0.64,1);
   }
   .ss-progress-segment.blocked {
-    background: #f87171 !important;
-    box-shadow: none !important;
+    background: linear-gradient(90deg, #ef4444, #f87171);
   }
-
   .ss-progress-segment.selected {
-    background: linear-gradient(90deg, #a855f7 0%, #8b5cf6 100%);
-    box-shadow: 0 0 6px rgba(139, 92, 246, 0.5);
+    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+    box-shadow: 0 0 8px rgba(139,92,246,0.5);
   }
-
   .ss-progress-segment.free {
-    background: var(--green);
-    box-shadow: 0 0 6px rgba(16, 185, 129, 0.45);
+    background: linear-gradient(90deg, #10b981, #34d399);
+    box-shadow: 0 0 8px rgba(16,185,129,0.4);
   }
 
   .ss-shelf-progress-labels {
@@ -2268,36 +2392,75 @@ const STYLES = `
   .ss-unavailable-msg {
     font-size: 12px;
     color: var(--text-3);
-    padding: 10px 0 4px;
+    text-align: center;
+    padding: 8px 0 4px;
     border-top: 1px solid var(--border);
-    margin-top: auto;
+    margin-top: 4px;
   }
 
-  .ss-card-actions {
+  /* Progress bar legend */
+  .ss-bar-legend {
+    display: flex;
+    gap: 12px;
+    font-size: 10.5px;
+    color: var(--text-3);
+  }
+  .ss-bar-legend-item {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding-top: 12px;
+    gap: 4px;
+  }
+  .ss-bar-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .ss-bar-legend-dot.blocked { background: #f87171; }
+  .ss-bar-legend-dot.free    { background: #34d399; }
+  .ss-bar-legend-dot.selected{ background: #a78bfa; }
+
+  /* Card actions area */
+  .ss-card-actions {
     border-top: 1px solid var(--border);
-    margin-top: auto;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(0,0,0,0.1);
+  }
+
+  /* Shelf stepper row */
+  .ss-stepper-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .ss-stepper-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
   }
 
   .ss-qty {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 4px;
+    padding: 3px;
+    flex: 1;
   }
 
   .ss-qty button {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border: none;
-    border-radius: 8px;
+    border-radius: 7px;
     background: var(--surface-2);
     color: var(--text-2);
     display: flex;
@@ -2305,27 +2468,21 @@ const STYLES = `
     justify-content: center;
     cursor: pointer;
     transition: background 0.15s;
+    flex-shrink: 0;
   }
 
-  .ss-qty button:disabled { opacity: 0.35; cursor: not-allowed; }
+  .ss-qty button:disabled { opacity: 0.3; cursor: not-allowed; }
   .ss-qty button:not(:disabled):hover { background: var(--surface-3); color: var(--text); }
 
-  .ss-qty span {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-2);
-    min-width: 58px;
-    text-align: center;
-  }
-
   .ss-qty-input {
-    width: 36px;
-    height: 32px;
+    flex: 1;
+    min-width: 0;
+    height: 30px;
     background: transparent;
     border: none;
     color: var(--text);
-    font-size: 13px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 700;
     font-family: var(--sans);
     text-align: center;
     outline: none;
@@ -2337,37 +2494,44 @@ const STYLES = `
     -webkit-appearance: none;
     margin: 0;
   }
-  .ss-qty-input[type=number] {
-    -moz-appearance: textfield;
-  }
+  .ss-qty-input[type=number] { -moz-appearance: textfield; }
 
   .ss-qty-label {
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 11px;
+    font-weight: 600;
     color: var(--text-3);
-    margin-right: 6px;
+    flex-shrink: 0;
+    padding: 0 6px 0 2px;
     user-select: none;
   }
 
+  /* Big Add / Update CTA */
   .ss-add-btn {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 10px 16px;
-    border: 1px solid rgba(99,102,241,0.35);
+    justify-content: center;
+    gap: 7px;
+    padding: 11px 16px;
+    border: none;
     border-radius: 10px;
-    background: var(--accent-soft);
-    color: #c7d2fe;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     font-family: var(--sans);
     cursor: pointer;
-    transition: all 0.15s;
+    width: 100%;
+    transition: opacity 0.2s, transform 0.15s;
+    letter-spacing: 0.01em;
   }
 
   .ss-add-btn:hover {
-    background: rgba(99,102,241,0.22);
-    border-color: rgba(99,102,241,0.5);
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .ss-add-btn:active {
+    transform: scale(0.98);
   }
 
   .ss-map-wrap { display: flex; flex-direction: column; gap: 12px; }
@@ -4919,10 +5083,10 @@ const STYLES = `
   }
 
   .lp-title {
-    font-size: 46px;
+    font-size: 56px;
     font-weight: 800;
     line-height: 1.15;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
     color: var(--text);
     margin-bottom: 16px;
   }
@@ -4961,7 +5125,7 @@ const STYLES = `
 
   .lp-desc {
     font-size: 15px;
-    color: var(--text-3);
+    color: var(--text-2);
     line-height: 1.6;
     margin-bottom: 24px;
     max-width: 540px;
@@ -5052,8 +5216,8 @@ const STYLES = `
     color: #fff;
     border: none;
     border-radius: 100px;
-    padding: 12px 24px;
-    font-size: 14px;
+    padding: 14px 30px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -5074,8 +5238,8 @@ const STYLES = `
     background: rgba(255,255,255,0.02);
     color: var(--text-2);
     border-radius: 100px;
-    padding: 12px 24px;
-    font-size: 14px;
+    padding: 14px 30px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -5129,7 +5293,7 @@ const STYLES = `
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 400px;
+    height: 550px;
   }
 
   .lp-glow-background {
@@ -6334,6 +6498,10 @@ const STYLES = `
     .mobile-actions-wrap {
       gap: 6px;
     }
+    .lp-graphic-container {
+      height: 220px !important;
+      margin: 2px 0 !important;
+    }
   }
 
   /* World-Class Mobile-First Landing Page Restructuring */
@@ -6380,10 +6548,10 @@ const STYLES = `
 
     .lp-title {
       order: 2 !important;
-      font-size: 32px !important;
-      line-height: 1.25 !important;
+      font-size: 38px !important;
+      line-height: 1.2 !important;
       margin-bottom: 8px !important;
-      letter-spacing: -0.02em !important;
+      letter-spacing: -0.03em !important;
     }
 
     .lp-subtitle {
@@ -6406,7 +6574,7 @@ const STYLES = `
 
     .lp-graphic-container {
       order: 5 !important;
-      height: 280px !important;
+      height: 460px !important;
       margin: 8px 0 !important;
       display: flex !important;
       align-items: center !important;
@@ -6475,9 +6643,9 @@ const STYLES = `
       width: 100% !important;
       text-align: center !important;
       justify-content: center !important;
-      padding: 12px 20px !important;
-      font-size: 13px !important;
-      height: 44px !important;
+      padding: 14px 24px !important;
+      font-size: 14px !important;
+      height: 48px !important;
       border-radius: 100px !important;
     }
 
@@ -6529,11 +6697,121 @@ const STYLES = `
       transform: scale(0.65) !important;
     }
     .lp-graphic-container {
-      height: 240px !important;
+      height: 180px !important;
+      margin: 0 !important;
     }
     .lp-title {
-      font-size: 26px !important;
+      font-size: 30px !important;
     }
+  }
+
+  /* Custom Dropdown Selector styling */
+  .custom-dropdown-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 8px;
+    z-index: 100;
+  }
+
+  .custom-dropdown-trigger {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    color: var(--text);
+    font-size: 14.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+
+  .custom-dropdown-trigger:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent-glow);
+  }
+
+  .custom-dropdown-trigger .trigger-val {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .custom-dropdown-trigger .trigger-val .emoji {
+    font-size: 18px;
+  }
+
+  .custom-dropdown-trigger .arrow {
+    font-size: 10px;
+    color: var(--text-3);
+  }
+
+  .custom-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+    z-index: 200;
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 6px;
+    backdrop-filter: blur(8px);
+  }
+
+  .custom-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--text-2);
+  }
+
+  .custom-dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text);
+  }
+
+  .custom-dropdown-item.selected {
+    background: rgba(99, 102, 241, 0.08);
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .custom-dropdown-item .emoji {
+    font-size: 17px;
+  }
+
+  .custom-dropdown-item .name {
+    font-size: 13.5px;
+  }
+
+  .custom-dropdown-item .dims {
+    font-size: 12px;
+    color: var(--text-3);
+    margin-left: auto;
+  }
+
+  .custom-dropdown-item .oversized-tag {
+    font-size: 9px;
+    background: rgba(239, 68, 68, 0.15);
+    color: var(--red);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
   }
 
   /* ── VISUALIZER ITEM GRID PICKER & HERO STYLES ── */
@@ -6541,7 +6819,7 @@ const STYLES = `
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
   }
 
   .item-card {
@@ -6683,6 +6961,1851 @@ const STYLES = `
     color: var(--text-3);
     text-align: center;
     margin-top: 10px;
+  }
+
+  /* ─── NEW PREMIUM REBRANDED LANDING SECTIONS ─── */
+  .lp-wrap {
+    gap: 0 !important;
+  }
+  
+  .lp-body {
+    padding-bottom: 0 !important;
+  }
+
+  @media (min-width: 769px) {
+    .lp-body {
+      padding-top: 72px !important;
+      transform: none !important;
+    }
+  }
+
+  .lp-section {
+    position: relative;
+    padding: 100px 96px;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+  }
+
+  @media (max-width: 768px) {
+    .lp-section {
+      padding: 60px 24px;
+    }
+  }
+
+  .lp-divider {
+    height: 1px;
+    border: none;
+    background: linear-gradient(90deg, transparent, var(--border) 20%, var(--border) 80%, transparent);
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    opacity: 0.8;
+  }
+
+  .lp-section-header {
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto 60px auto;
+  }
+
+  .lp-section-title {
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  html.light .lp-section-title {
+    background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .lp-section-subtitle {
+    font-size: 16px;
+    color: var(--text-2);
+    line-height: 1.5;
+  }
+
+  /* 2. Trust Section */
+  .lp-trust-section {
+    padding: 40px 96px 80px 96px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  @media (max-width: 768px) {
+    .lp-trust-section {
+      padding: 30px 24px 60px 24px;
+    }
+  }
+
+  .lp-trust-title {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+  }
+
+  .lp-trust-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .lp-trust-chip {
+    padding: 8px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-2);
+    transition: all 0.3s ease;
+  }
+
+  .lp-trust-chip:hover {
+    background: rgba(99, 102, 241, 0.08);
+    border-color: rgba(99, 102, 241, 0.3);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+  }
+
+  html.light .lp-trust-chip:hover {
+    color: var(--accent);
+    background: rgba(99, 102, 241, 0.04);
+  }
+
+  .lp-trust-pills {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .lp-trust-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--green);
+  }
+
+  /* 3. Why Choose section */
+  .lp-why-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  @media (max-width: 1024px) {
+    .lp-why-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .lp-why-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Base card */
+  .lp-why-card {
+    position: relative;
+    border-radius: 16px;
+    padding: 28px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+    cursor: default;
+    background: rgba(255,255,255,0.018);
+    border: 1px solid rgba(255,255,255,0.07);
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1),
+                box-shadow 0.35s ease,
+                border-color 0.35s ease;
+    /* staggered entrance */
+    opacity: 0;
+    transform: translateY(28px);
+    animation: why-card-in 0.55s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+  .lp-why-card:nth-child(1) { animation-delay: 0.05s; }
+  .lp-why-card:nth-child(2) { animation-delay: 0.12s; }
+  .lp-why-card:nth-child(3) { animation-delay: 0.19s; }
+  .lp-why-card:nth-child(4) { animation-delay: 0.26s; }
+  .lp-why-card:nth-child(5) { animation-delay: 0.33s; }
+  .lp-why-card:nth-child(6) { animation-delay: 0.40s; }
+
+  @keyframes why-card-in {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Colored top accent bar */
+  .lp-why-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2.5px;
+    background: var(--why-accent, #6366f1);
+    box-shadow: 0 0 18px var(--why-accent, #6366f1), 0 0 6px var(--why-accent, #6366f1);
+    border-radius: 16px 16px 0 0;
+    opacity: 0.8;
+  }
+
+  /* Shimmer sweep on hover */
+  .lp-why-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.04) 50%, transparent 70%);
+    background-size: 200% 100%;
+    background-position: -100% 0;
+    transition: background-position 0.6s ease;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  .lp-why-card:hover::after {
+    background-position: 200% 0;
+  }
+
+  /* Hover lift + radial glow */
+  .lp-why-card:hover {
+    transform: translateY(-6px);
+    border-color: color-mix(in srgb, var(--why-accent, #6366f1) 35%, transparent);
+    box-shadow:
+      0 16px 40px rgba(0,0,0,0.25),
+      0 0 0 1px color-mix(in srgb, var(--why-accent, #6366f1) 20%, transparent),
+      inset 0 0 60px color-mix(in srgb, var(--why-accent, #6366f1) 4%, transparent);
+  }
+
+  /* Icon circle */
+  .lp-why-icon-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--why-accent, #6366f1) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--why-accent, #6366f1) 25%, transparent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--why-accent, #6366f1) 15%, transparent);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .lp-why-card:hover .lp-why-icon-wrap {
+    transform: scale(1.1) rotate(-4deg);
+    box-shadow: 0 0 30px color-mix(in srgb, var(--why-accent, #6366f1) 35%, transparent);
+  }
+
+  /* Pulsing ring around icon */
+  .lp-why-icon-ring {
+    position: absolute;
+    inset: -6px;
+    border-radius: 20px;
+    border: 1.5px solid color-mix(in srgb, var(--why-accent, #6366f1) 30%, transparent);
+    animation: why-ring-pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes why-ring-pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50%       { opacity: 0.8; transform: scale(1.06); }
+  }
+
+  /* Metric chip */
+  .lp-why-metric {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--why-accent, #6366f1);
+    background: color-mix(in srgb, var(--why-accent, #6366f1) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--why-accent, #6366f1) 22%, transparent);
+    border-radius: 20px;
+    padding: 3px 9px;
+    width: fit-content;
+    margin-bottom: 2px;
+    opacity: 0;
+    animation: why-metric-pop 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+  .lp-why-card:nth-child(1) .lp-why-metric { animation-delay: 0.5s; }
+  .lp-why-card:nth-child(2) .lp-why-metric { animation-delay: 0.57s; }
+  .lp-why-card:nth-child(3) .lp-why-metric { animation-delay: 0.64s; }
+  .lp-why-card:nth-child(4) .lp-why-metric { animation-delay: 0.71s; }
+  .lp-why-card:nth-child(5) .lp-why-metric { animation-delay: 0.78s; }
+  .lp-why-card:nth-child(6) .lp-why-metric { animation-delay: 0.85s; }
+  @keyframes why-metric-pop {
+    from { opacity: 0; transform: scale(0.7); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  .lp-why-metric-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: why-dot-blink 1.2s ease-in-out infinite alternate;
+  }
+  @keyframes why-dot-blink {
+    from { opacity: 0.3; }
+    to   { opacity: 1; }
+  }
+
+  /* Card body text */
+  .lp-why-card-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  .lp-why-card-desc {
+    font-size: 13.5px;
+    color: var(--text-2);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  /* 4. Comparison Section */
+  /* 4. Comparison Section */
+  .lp-compare-table-container {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.01);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .lp-compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    min-width: 600px;
+  }
+
+  .lp-compare-th {
+    padding: 24px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .lp-compare-td {
+    padding: 20px 24px;
+    font-size: 14px;
+    color: var(--text-2);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .lp-compare-highlight {
+    background: rgba(99, 102, 241, 0.03);
+    border-left: 1.5px solid rgba(99, 102, 241, 0.2);
+    border-right: 1.5px solid rgba(99, 102, 241, 0.2);
+  }
+
+  tr:last-child .lp-compare-td {
+    border-bottom: none;
+  }
+
+  .lp-compare-check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: var(--green-soft);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 50%;
+    color: var(--green);
+    margin-right: 8px;
+    flex-shrink: 0;
+    font-style: normal;
+  }
+
+  .lp-compare-cross {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    background: var(--red-soft);
+    border: 1px solid rgba(248, 113, 113, 0.2);
+    border-radius: 50%;
+    color: var(--red);
+    margin-right: 8px;
+    flex-shrink: 0;
+    font-style: normal;
+  }
+
+  .lp-compare-item-wrap {
+    display: flex;
+    align-items: center;
+  }
+  /* 5. Journey Roadmap Section */
+  .lp-journey-split {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: stretch;
+    width: 100%;
+    margin-top: 32px;
+  }
+
+  @media (max-width: 1024px) {
+    .lp-journey-split {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+
+  /* Left Showcase Panel */
+  .lp-journey-visual-panel {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    height: 100% !important;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
+  }
+
+  .lp-journey-visual-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 80%);
+    pointer-events: none;
+  }
+
+  /* Right steps list */
+  .lp-journey-steps-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  @media (min-width: 1025px) {
+    .lp-journey-split {
+      height: 380px;
+    }
+    .lp-journey-steps-list {
+      height: 100%;
+      justify-content: space-between;
+      gap: 0 !important;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .lp-journey-visual-panel {
+      height: 280px !important;
+    }
+    .lp-journey-steps-list {
+      gap: 12px !important;
+    }
+  }
+
+  .lp-journey-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .lp-journey-step:hover {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .lp-journey-step-node {
+    flex-shrink: 0;
+  }
+
+  .lp-journey-step-num {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--bg-elevated);
+    border: 2px solid var(--border);
+    color: var(--text-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .lp-journey-step-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .lp-journey-step-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text);
+    transition: all 0.3s ease;
+  }
+
+  .lp-journey-step-desc {
+    font-size: 12px;
+    color: var(--text-3);
+    line-height: 1.4;
+    transition: all 0.3s ease;
+  }
+
+  /* Active states */
+  .lp-journey-step.active-step {
+    background: rgba(99, 102, 241, 0.04);
+    border-color: rgba(99, 102, 241, 0.35);
+    box-shadow: 0 8px 24px -8px rgba(99, 102, 241, 0.15);
+    transform: translateX(4px);
+  }
+
+  .lp-journey-step.active-step .lp-journey-step-num {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 12px var(--accent-glow);
+    transform: scale(1.05);
+  }
+
+  .lp-journey-step.active-step .lp-journey-step-title {
+    color: #fff;
+  }
+
+  .lp-journey-step.active-step .lp-journey-step-desc {
+    color: var(--text-2);
+  }
+
+  /* Timer bar animation */
+  .lp-journey-card-timer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent);
+    width: 0%;
+  }
+
+  .lp-journey-step.active-step .lp-journey-card-timer {
+    animation: active-timer-anim 5s linear forwards;
+  }
+
+  @keyframes active-timer-anim {
+    from { width: 0%; }
+    to { width: 100%; }
+  }
+
+  /* Showcase Card Visual Elements - Select Location Radar Visual */
+  .jv-map-card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: radial-gradient(circle at center, rgba(99, 102, 241, 0.04) 0%, transparent 80%);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .radar-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    transform: translateX(-50px) translateY(15px);
+  }
+
+  .radar-line-v {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.02), transparent);
+  }
+
+  html.light .radar-line-v {
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.02), transparent);
+  }
+
+  .radar-line-h {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.02), transparent);
+  }
+
+  html.light .radar-line-h {
+    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.02), transparent);
+  }
+
+  .radar-circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px dashed rgba(255, 255, 255, 0.015);
+    border-radius: 50%;
+  }
+
+  html.light .radar-circle {
+    border-color: rgba(0, 0, 0, 0.02);
+  }
+
+  .rc-1 { width: 100px; height: 100px; }
+  .rc-2 { width: 200px; height: 200px; }
+  .rc-3 { width: 300px; height: 300px; }
+
+  .radar-sweep {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 180px;
+    height: 180px;
+    background: conic-gradient(from 0deg at 0% 0%, rgba(255, 255, 255, 0.025) 0deg, transparent 90deg);
+    transform-origin: 0% 0%;
+    animation: radar-sweep-anim 9s infinite linear;
+    z-index: 1;
+  }
+
+  html.light .radar-sweep {
+    background: conic-gradient(from 0deg at 0% 0%, rgba(99, 102, 241, 0.02) 0deg, transparent 90deg);
+  }
+
+  @keyframes radar-sweep-anim {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Stats Overlay Card */
+  .jv-map-stats-overlay {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    left: auto;
+    background: rgba(18, 18, 28, 0.85);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px;
+    width: 130px;
+    z-index: 5;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .overlay-tag {
+    font-size: 8px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--text-3);
+    letter-spacing: 0.05em;
+  }
+
+  .overlay-city {
+    font-size: 12px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+
+  .overlay-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+  }
+
+  .overlay-row span {
+    color: var(--text-3);
+  }
+
+  .overlay-row strong {
+    color: var(--text-2);
+  }
+
+  /* India Map & Wrapper */
+  .jv-india-map-wrapper {
+    position: relative;
+    height: 100%;
+    aspect-ratio: 612 / 696;
+    margin: 0 auto;
+    z-index: 2;
+    transform: scale(1.0) translateX(-50px) translateY(15px);
+    transform-origin: center;
+  }
+
+  @media (max-width: 1024px) {
+    .jv-india-map-wrapper {
+      transform: scale(0.92) translateX(-50px) translateY(11px);
+    }
+  }
+
+  .jv-india-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.45)) drop-shadow(0 0 1px rgba(99, 102, 241, 0.25));
+    transition: filter 0.3s ease;
+  }
+
+  html.light .jv-india-svg {
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.08)) drop-shadow(0 0 1px rgba(79, 70, 229, 0.15));
+  }
+
+  .india-map-paths path {
+    fill: #1f213a;
+    stroke: #1f213a;
+    stroke-width: 0.5px;
+    transition: all 0.3s ease;
+  }
+
+  html.light .india-map-paths path {
+    fill: #e6e9f8;
+    stroke: #e6e9f8;
+  }
+
+  /* Pulsing Map Pins */
+  .jv-map-pin {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .pin-label {
+    margin-top: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-3);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .pin-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    z-index: 2;
+    transition: all 0.3s ease;
+  }
+
+  .pin-pulse {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.4;
+    z-index: 1;
+  }
+
+  @keyframes pin-pulse-anim {
+    0% { transform: scale(0.5); opacity: 0.8; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+
+  .jv-map-pin.active .pin-label {
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  .jv-map-pin.active .pin-dot {
+    background: #fff;
+    box-shadow: 0 0 12px #fff;
+    transform: scale(1.2);
+  }
+
+  .jv-map-pin.active .pin-pulse {
+    animation: pin-pulse-anim 2.2s infinite ease-out;
+  }
+
+  .jv-tech-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .jv-tech-flow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+  }
+
+  .jv-tech-left {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .jv-tech-badge {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .jv-tech-badge.shopify {
+    border-color: #96bf48;
+    color: #96bf48;
+  }
+
+  .jv-tech-badge.custom-api {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .jv-tech-line {
+    flex: 1;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.05);
+    margin: 0 16px;
+    position: relative;
+  }
+
+  .jv-tech-dot {
+    position: absolute;
+    top: -3px;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: jv-tech-dot-anim 2s infinite linear;
+  }
+
+  .jv-tech-dot.delay-1 { animation-delay: 0.6s; }
+  .jv-tech-dot.delay-2 { animation-delay: 1.2s; }
+
+  @keyframes jv-tech-dot-anim {
+    0% { left: 0%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+  }
+
+  .jv-tech-blitz {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-glow) 100%);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+
+  .jv-json {
+    background: #06060c;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px;
+    font-family: monospace;
+    font-size: 11px;
+    color: #818cf8;
+    line-height: 1.4;
+  }
+
+  .jv-compliance-card {
+    width: 100%;
+  }
+
+  .jv-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+
+  .jv-check-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+  }
+
+  .jv-check-item.checked {
+    border-color: rgba(16, 185, 129, 0.3);
+    background: rgba(16, 185, 129, 0.02);
+  }
+
+  .jv-check-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+
+  .jv-check-item.checked .jv-check-icon {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--green);
+  }
+
+  .jv-check-item.signing .jv-check-icon {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--amber);
+    animation: jv-pulse-sign 1s infinite alternate;
+  }
+
+  @keyframes jv-pulse-sign {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+  .jv-check-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .jv-check-text strong {
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .jv-check-text span {
+    font-size: 11px;
+    color: var(--text-3);
+  }
+
+  /* ── Inward Inventory — WMS Dashboard ─────────────────────────── */
+  .jv-inventory-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* --- Header --- */
+  .inv-hdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .inv-hdr-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .inv-session-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .inv-session-id {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .inv-live-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    color: #22d3ee;
+    background: rgba(34,211,238,0.08);
+    border: 1px solid rgba(34,211,238,0.25);
+    border-radius: 20px;
+    padding: 4px 10px;
+    animation: inv-pill-glow 2s ease-in-out infinite alternate;
+  }
+  .inv-live-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #22d3ee;
+    box-shadow: 0 0 6px #22d3ee;
+    animation: inv-live-blink 0.9s infinite alternate;
+  }
+  @keyframes inv-live-blink {
+    from { opacity: 0.3; }
+    to   { opacity: 1; }
+  }
+  @keyframes inv-pill-glow {
+    from { box-shadow: none; }
+    to   { box-shadow: 0 0 14px rgba(34,211,238,0.2); }
+  }
+
+  /* --- Body: two-column layout --- */
+  .inv-body {
+    display: grid;
+    grid-template-columns: 1fr 110px;
+    gap: 10px;
+    min-height: 160px;
+  }
+
+  /* --- Left: Live scan feed --- */
+  .inv-feed-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+  .inv-feed-title {
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .inv-feed-viewport {
+    position: relative;
+    flex: 1;
+    overflow: hidden;
+    border-radius: 8px;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  /* scrolling container — duplicate items so it loops */
+  .inv-feed-scroll {
+    display: flex;
+    flex-direction: column;
+    animation: inv-scroll-up 12s linear infinite;
+  }
+  @keyframes inv-scroll-up {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
+  .inv-scan-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    flex-shrink: 0;
+  }
+  /* mini barcode graphic */
+  .inv-barcode {
+    display: flex;
+    align-items: stretch;
+    gap: 1.5px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+  .inv-bar {
+    display: block;
+    background: var(--text-3);
+    border-radius: 0.5px;
+    flex-shrink: 0;
+  }
+  .inv-row-info {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .inv-row-brand {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .inv-row-name {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .inv-row-meta {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    margin-top: 1px;
+  }
+  .inv-row-sku {
+    font-size: 8.5px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-3);
+    letter-spacing: 0.04em;
+  }
+  .inv-row-qty {
+    font-size: 8.5px;
+    font-weight: 700;
+    color: #6366f1;
+    background: rgba(99,102,241,0.1);
+    border-radius: 3px;
+    padding: 0px 4px;
+  }
+  .inv-row-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .inv-row-check {
+    font-size: 9px;
+    font-weight: 800;
+    color: #22d3ee;
+    background: rgba(34,211,238,0.1);
+    border-radius: 3px;
+    padding: 1px 4px;
+  }
+  .inv-row-time {
+    font-size: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-3);
+  }
+  /* laser scan line over the feed */
+  .inv-feed-laser {
+    position: absolute;
+    left: 0; right: 0;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent 0%, #22d3ee 30%, #6366f1 70%, transparent 100%);
+    box-shadow: 0 0 10px #22d3ee, 0 0 20px rgba(34,211,238,0.3);
+    pointer-events: none;
+    animation: inv-laser-v2 2.4s ease-in-out infinite;
+    z-index: 4;
+  }
+  @keyframes inv-laser-v2 {
+    0%   { top: 5%;   opacity: 0; }
+    8%   { opacity: 1; }
+    85%  { top: 92%; opacity: 1; }
+    100% { top: 92%; opacity: 0; }
+  }
+  /* bottom fade on feed */
+  .inv-feed-fade {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 36px;
+    background: linear-gradient(to bottom, transparent, rgba(8,10,26,0.9));
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  /* --- Right: Ring + categories --- */
+  .inv-ring-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .inv-ring-wrap {
+    position: relative;
+    width: 86px;
+    height: 86px;
+    flex-shrink: 0;
+  }
+  .inv-ring-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  /* background track glow */
+  .inv-ring-track {
+    filter: none;
+  }
+  .inv-ring-arc {
+    stroke-dasharray: 263.9; /* 2*pi*42 */
+    stroke-dashoffset: 263.9;
+    animation: inv-arc-fill 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s forwards;
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+  @keyframes inv-arc-fill {
+    to { stroke-dashoffset: 34.3; } /* 263.9 * 0.13 = 34.3 → 87% filled */
+  }
+  .inv-ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+  .inv-ring-pct {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .inv-ring-sub {
+    font-size: 8px;
+    font-weight: 600;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .inv-ring-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-3);
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  /* category mini-bars */
+  .inv-cats {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+  }
+  .inv-cat-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .inv-cat-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .inv-cat-name {
+    font-size: 8.5px;
+    font-weight: 600;
+    color: var(--text-3);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .inv-cat-bar {
+    width: 36px;
+    height: 3px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 2px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .inv-cat-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 2px;
+    animation: inv-cat-grow 1.4s ease-out forwards;
+  }
+  @keyframes inv-cat-grow {
+    to { width: var(--w); }
+  }
+  .inv-cat-pct {
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--text-3);
+    flex-shrink: 0;
+    min-width: 22px;
+    text-align: right;
+  }
+
+  /* --- Bottom KPI strip --- */
+  .inv-kpi-strip {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: 0;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .inv-kpi {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 7px 6px;
+    gap: 1px;
+  }
+  .inv-kpi-val {
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #6366f1, #22d3ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .inv-kpi-key {
+    font-size: 8.5px;
+    font-weight: 600;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  .inv-kpi-div {
+    width: 1px;
+    background: rgba(255,255,255,0.07);
+    margin: 6px 0;
+  }
+
+
+
+  .jv-live-card {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .jv-live-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .jv-live-status-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: live-pulse-anim 1s infinite alternate;
+  }
+
+  @keyframes live-pulse-anim {
+    0% { opacity: 0.4; }
+    100% { opacity: 1; }
+  }
+
+  .jv-live-eta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .jv-live-eta span {
+    font-size: 11px;
+    color: var(--text-3);
+  }
+
+  .jv-live-eta strong {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--green);
+  }
+
+  .jv-live-route {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .route-node {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .route-node.source {
+    border-color: var(--accent);
+  }
+
+  .route-node.dest {
+    border-color: var(--green);
+  }
+
+  .route-path {
+    flex: 1;
+    height: 2px;
+    margin: 0 10px;
+    position: relative;
+    background: repeating-linear-gradient(
+      to right,
+      rgba(255,255,255,0.25) 0 8px,
+      transparent 8px 16px
+    );
+  }
+
+  .route-truck {
+    position: absolute;
+    top: -12px;
+    left: 0;
+    font-size: 18px;
+    animation: truck-move-anim 3s infinite linear;
+  }
+
+  @keyframes truck-move-anim {
+    0% { left: 0%; transform: scaleX(-1); }
+    45% { left: 95%; transform: scaleX(-1); }
+    50% { left: 95%; transform: scaleX(1); }
+    95% { left: 0%; transform: scaleX(1); }
+    100% { left: 0%; transform: scaleX(-1); }
+  }
+
+
+
+  /* 6. Forecasting Section */
+  .lp-forecast-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  @media (max-width: 1024px) {
+    .lp-forecast-layout {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+
+  .lp-forecast-info {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .lp-forecast-tag {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .lp-forecast-title-large {
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  html.light .lp-forecast-title-large {
+    background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .lp-forecast-desc {
+    font-size: 16px;
+    color: var(--text-2);
+    line-height: 1.6;
+  }
+
+  .lp-forecast-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .lp-forecast-list-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .lp-forecast-list-bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  /* Forecast interactive visual dashboard mock */
+  .lp-forecast-visual {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .lp-forecast-visual::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15), transparent 70%);
+    filter: blur(40px);
+  }
+
+  .lp-forecast-visual-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+  }
+
+  .lp-forecast-visual-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .lp-forecast-visual-selector {
+    display: flex;
+    gap: 6px;
+    background: var(--bg-elevated);
+    padding: 3px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  .lp-forecast-visual-btn {
+    border: none;
+    background: transparent;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-3);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .lp-forecast-visual-btn.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .lp-forecast-insights {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .lp-forecast-stat-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .lp-forecast-stat-label {
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .lp-forecast-stat-val {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .lp-forecast-stat-trend {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green);
+  }
+
+  .lp-forecast-chart {
+    height: 130px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+  }
+
+  .lp-forecast-chart-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .lp-forecast-chart-bar-container {
+    position: relative;
+    width: 100%;
+    height: 100px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .lp-forecast-chart-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-radius: 4px;
+    transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .lp-forecast-chart-bar.actual {
+    background: var(--accent);
+    opacity: 0.4;
+  }
+
+  .lp-forecast-chart-bar.predicted {
+    background: linear-gradient(to top, var(--accent) 0%, #818cf8 100%);
+    box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+  }
+
+  .lp-forecast-chart-label {
+    font-size: 10px;
+    color: var(--text-3);
+    font-weight: 500;
+  }
+
+  .lp-forecast-chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  .lp-forecast-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-3);
+  }
+
+  .lp-forecast-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+  }
+
+  .lp-forecast-legend-dot.actual {
+    background: var(--accent);
+    opacity: 0.4;
+  }
+
+  .lp-forecast-legend-dot.predicted {
+    background: var(--accent);
+  }
+
+  /* 7. Own The Customer Section */
+  .lp-own-card {
+    background: linear-gradient(135deg, rgba(20, 20, 30, 0.8) 0%, rgba(10, 10, 15, 0.9) 100%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+  }
+
+  @media (max-width: 768px) {
+    .lp-own-card {
+      grid-template-columns: 1fr;
+    }
+    .lp-own-side:first-child {
+      border-right: none !important;
+      border-bottom: 1px solid var(--border);
+    }
+  }
+
+  .lp-own-side {
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .lp-own-side:first-child {
+    border-right: 1px solid var(--border);
+  }
+
+  .lp-own-side-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .lp-own-side-tag {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .lp-own-side-tag.red {
+    color: var(--red);
+  }
+
+  .lp-own-side-tag.green {
+    color: var(--green);
+  }
+
+  .lp-own-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .lp-own-list-item {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .lp-own-list-item.red {
+    color: var(--text-3);
+    text-decoration: line-through;
+    opacity: 0.45;
+  }
+
+  .lp-own-list-item.green {
+    background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  html.light .lp-own-list-item.green {
+    background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* 8. Final CTA Section */
+  .lp-final-cta-section {
+    padding-bottom: 140px;
+  }
+
+  .lp-final-cta-card {
+    background: radial-gradient(circle at center top, rgba(99, 102, 241, 0.1) 0%, rgba(255, 255, 255, 0.01) 80%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 80px 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+  }
+
+  .lp-final-cta-title {
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    background: linear-gradient(135deg, #ffffff 0%, #c7d2fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    max-width: 600px;
+  }
+
+  html.light .lp-final-cta-title {
+    background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .lp-final-cta-desc {
+    font-size: 18px;
+    color: var(--text-2);
+    max-width: 600px;
+    line-height: 1.5;
   }
 }
 `;
@@ -7082,16 +9205,101 @@ async function safeJsonFromResponse(response) {
   return response.json();
 }
 
+const SelectLocationVisual = ({ theme }) => {
+  const [activeIdx, setActiveIdx] = useState(0);
+
+  const cities = [
+    { name: "Delhi NCR", class: "del", x: 30.5, y: 30.3, pods: "2500+", space: "19%" },
+    { name: "Bengaluru", class: "blr", x: 32.4, y: 79.8, pods: "2500+", space: "23%" },
+    { name: "Mumbai", class: "bom", x: 16.2, y: 59.6, pods: "1500+", space: "16%" },
+    { name: "Kolkata", class: "ccu", x: 69.1, y: 48.0, pods: "500+", space: "30%" },
+    { name: "Patna", class: "pat", x: 58.1, y: 44.0, pods: "300+", space: "0%" },
+    { name: "Hyderabad", class: "hyd", x: 35.4, y: 65.2, pods: "400+", space: "13%" }
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIdx((prev) => (prev + 1) % cities.length);
+    }, 1800);
+    return () => clearInterval(timer);
+  }, []);
+
+  const activeRadarCity = cities[activeIdx];
+
+  return (
+    <div className="jv-map-card">
+      <div className="radar-grid">
+        <div className="radar-line-v"></div>
+        <div className="radar-line-h"></div>
+        <div className="radar-circle rc-1"></div>
+        <div className="radar-circle rc-2"></div>
+        <div className="radar-circle rc-3"></div>
+        <div className="radar-sweep"></div>
+      </div>
+
+      <div className="jv-map-stats-overlay">
+        <div className="overlay-tag">⚡ Live Status</div>
+        <div className="overlay-city">{activeRadarCity.name}</div>
+        <div className="overlay-row">
+          <span>Pods Live</span>
+          <strong>{activeRadarCity.pods}</strong>
+        </div>
+        <div className="overlay-row">
+          <span>Space Avail.</span>
+          <strong style={{ color: 'var(--accent)' }}>{activeRadarCity.space}</strong>
+        </div>
+      </div>
+
+      <div className="jv-india-map-wrapper">
+        <IndiaMapSVG
+          className="jv-india-svg"
+        />
+        {cities.map((c, index) => {
+          const isActive = activeIdx === index;
+          return (
+            <div
+              key={c.name}
+              className={`jv-map-pin pin-${c.class} ${isActive ? "active" : ""}`}
+              style={{
+                position: "absolute",
+                left: `${c.x}%`,
+                top: `${c.y}%`,
+                transform: "translate(-50%, -50%)"
+              }}
+            >
+              <span className="pin-pulse"></span>
+              <span className="pin-dot"></span>
+              <span className="pin-label">{c.name}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 export default function DarkStoreOnboarding() {
   const [step, setStep] = useState(0);
   const [specialistOrigin, setSpecialistOrigin] = useState(0);
+  const [forecastTab, setForecastTab] = useState("sku"); // 'sku', 'city', 'restock'
+  const [journeyHoverStep, setJourneyHoverStep] = useState(null);
+  const [journeyAutoStep, setJourneyAutoStep] = useState(0);
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
   const [simulationData, setSimulationData] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.className = theme;
     localStorage.setItem("theme", theme);
   }, [theme]);
+
+  useEffect(() => {
+    if (journeyHoverStep !== null) return;
+    const interval = setInterval(() => {
+      setJourneyAutoStep((prev) => (prev + 1) % 5);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [journeyHoverStep]);
   const [applicationId, setApplicationId] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [allocatedShelves, setAllocatedShelves] = useState([]);
@@ -7811,142 +10019,279 @@ export default function DarkStoreOnboarding() {
           {/* Left Column */}
           <div className="lp-content-left">
             <div className="lp-badge">
-              16 Dark stores already live, 4 cities
+              17 MiniPods live across 5 cities
             </div>
             <h1 className="lp-title">
-              Smarter Storage.<br />
-              Faster Deliveries.<br />
-              <span className="accent">Lower Costs.</span>
+              Your Brand.<br />
+              <span className="accent">Every City.</span><br />
+              Zero Infrastructure.
             </h1>
-            <h2 className="lp-subtitle">
-              <em>Make it yours</em> - <strong>no warehouse, no lease, live in 7 days.</strong>
-            </h2>
             <p className="lp-desc">
-              Blitz MiniPods helps D2C brands, FMCG brands & Quick Commerce sellers launch across multiple cities using shared dark store infrastructure.
+              Launch 60-minute to same-day delivery across India without investing in warehouses, operations teams, or infrastructure.
             </p>
 
             {/* Metrics */}
             <div className="lp-metrics">
               <div className="lp-metric-item">
                 <span className="lp-metric-val">17</span>
-                <span className="lp-metric-lbl">Ready-to-Use Stores</span>
+                <span className="lp-metric-lbl">MiniPods Live</span>
               </div>
               <div className="lp-metric-item">
                 <span className="lp-metric-val">99.5%</span>
-                <span className="lp-metric-lbl">inventory accuracy</span>
+                <span className="lp-metric-lbl">Inventory Accuracy</span>
               </div>
               <div className="lp-metric-item">
                 <span className="lp-metric-val">7 days</span>
-                <span className="lp-metric-lbl">avg time to go live</span>
+                <span className="lp-metric-lbl">Go Live In 7 Days</span>
               </div>
               <div className="lp-metric-item">
                 <span className="lp-metric-val">5</span>
-                <span className="lp-metric-lbl">cities live</span>
+                <span className="lp-metric-lbl">Cities Active</span>
               </div>
             </div>
 
             {/* Call to Actions */}
             <div className="lp-actions">
               <button className="btn-check-availability" onClick={() => { setStep(2); setBrowseCity("Delhi"); }}>
-                Check availability in your city <Icon.ArrowRight />
+                Calculate My Coverage <Icon.ArrowRight />
               </button>
               <button className="btn-talk-specialist" onClick={() => { setSpecialistOrigin(0); setStep(1); }}>
-                Talk to a specialist instead
+                Talk To Our Team
               </button>
             </div>
 
-            {/* Brands Section */}
-            <div className="lp-brands-section">
-              <div className="lp-brands-title">Brands already on shelf</div>
-              <div className="lp-brands-list">
-                <span className="lp-brand-chip">Nykaa Beauty</span>
-                <span className="lp-brand-chip">Myntra</span>
-                <span className="lp-brand-chip">Ajio</span>
-                <span className="lp-brand-chip">Durlabh Darshan</span>
-                <span className="lp-brand-chip">Foxtale</span>
-                <span className="lp-brand-chip">HealthKart</span>
-              </div>
-            </div>
           </div>
 
-          {/* Right Column - Premium SVG Illustration and CSS animations */}
+          {/* Right Column - Bengaluru 3D Folding Map Animation */}
           <div className="lp-graphic-container">
-            <div className="lp-glow-background"></div>
-            <div className="lp-graphic-scene">
-              {/* Radar pulsing rings behind everything */}
-              <svg className="lp-radar-pulse" viewBox="0 0 440 440">
-                <defs>
-                  <radialGradient id="ringGlowGrad" cx="50%" cy="50%" r="50%">
-                    <stop offset="0%" stopColor="rgba(124, 108, 255, 0.4)" />
-                    <stop offset="20%" stopColor="rgba(99, 102, 241, 0.25)" />
-                    <stop offset="60%" stopColor="rgba(124, 108, 255, 0.06)" />
-                    <stop offset="100%" stopColor="rgba(124, 108, 255, 0)" />
-                  </radialGradient>
-                </defs>
-                <circle className="lp-pulse-ring lp-ring-1" cx="220" cy="220" r="160" fill="url(#ringGlowGrad)" />
-                <circle className="lp-pulse-ring lp-ring-2" cx="220" cy="220" r="160" fill="url(#ringGlowGrad)" />
-                <circle className="lp-pulse-ring lp-ring-3" cx="220" cy="220" r="160" fill="url(#ringGlowGrad)" />
-                <circle className="lp-pulse-center" cx="220" cy="220" r="10" />
-              </svg>
-
-              {/* Floating Plus tile */}
-              <div className="lp-floating-plus">+</div>
-
-              {/* Floating Racks tag */}
-              <div className="lp-floating-tag tag-booked">
-                <span className="lp-tag-dot green"></span>
-                <span>32 Racks Booked</span>
-              </div>
-
-              {/* Floating Free slots tag */}
-              <div className="lp-floating-tag tag-free">
-                <span className="lp-tag-dot orange"></span>
-                <span>26 Racks free in Delhi</span>
-              </div>
-
-              {/* Floating Orders tag */}
-              <div className="lp-floating-tag tag-orders">
-                <span className="lp-tag-arrow">▲</span>
-                <span>{ordersCount} orders today</span>
-              </div>
-
-              {/* Central Shelf Dashboard panel */}
-              <div className="lp-shelf-panel">
-                <div className="lp-shelf-grid">
-                  <div className="lp-shelf-row">
-                    <div className="lp-shelf-slot purple"></div>
-                    <div className="lp-shelf-slot green"></div>
-                    <div className="lp-shelf-slot"></div>
-                  </div>
-                  <div className="lp-shelf-row">
-                    <div className="lp-shelf-slot yellow"></div>
-                    <div className="lp-shelf-slot purple"></div>
-                    <div className="lp-shelf-slot"></div>
-                  </div>
-                  <div className="lp-shelf-row">
-                    <div className="lp-shelf-slot"></div>
-                    <div className="lp-shelf-slot green"></div>
-                    <div className="lp-shelf-slot purple"></div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Connecting Dashed SVG Paths */}
-              <svg className="lp-svg-overlay" viewBox="0 0 440 440">
-                {/* Dashed line connecting plus tile to shelf */}
-                <path
-                  d="M104,98 Q140,150 170,170"
-                  className="lp-connection-path"
-                />
-                {/* Dashed line connecting shelf to bottom-right order tag */}
-                <path
-                  d="M260,260 Q300,320 330,360"
-                  className="lp-connection-path"
-                />
-              </svg>
-            </div>
+            <Bengaluru3DMap />
           </div>
         </div>
+
+        {/* 2. TRUST SECTION */}
+        <section className="lp-trust-section">
+          <h2 className="lp-trust-title">Trusted By Brands Already Growing With Blitz</h2>
+          <div className="lp-trust-logos">
+            <span className="lp-trust-chip">Nykaa</span>
+            <span className="lp-trust-chip">Foxtale</span>
+            <span className="lp-trust-chip">HealthKart</span>
+            <span className="lp-trust-chip">Ajio</span>
+            <span className="lp-trust-chip">Myntra</span>
+            <span className="lp-trust-chip">Durlabh Darshan</span>
+          </div>
+        </section>
+
+        {/* 5. QUICK COMMERCE JOURNEY */}
+        <section className="lp-section">
+          <div className="lp-section-header">
+            <h2 className="lp-section-title">Your Journey To Quick Commerce</h2>
+            <p className="lp-section-subtitle">A seamless onboarding lifecycle designed to launch your brand live in days.</p>
+          </div>
+          <div className="lp-journey-split">
+            <div className="lp-journey-visual-panel">
+              {renderJourneyVisual(journeyHoverStep !== null ? journeyHoverStep : journeyAutoStep)}
+            </div>
+
+            <div className="lp-journey-steps-list">
+              {[
+                { step: 1, title: "Select Stores", },
+                { step: 2, title: "Tech Integration", },
+                { step: 3, title: "Compliance & Setup", },
+                { step: 4, title: "Inward Inventory", },
+                { step: 5, title: "Go Live", }
+              ].map((j, idx) => {
+                const isActive = (journeyHoverStep !== null ? journeyHoverStep : journeyAutoStep) === idx;
+                return (
+                  <div
+                    key={idx}
+                    className={`lp-journey-step ${isActive ? "active-step" : ""}`}
+                    onMouseEnter={() => { setJourneyHoverStep(idx); setJourneyAutoStep(idx); }}
+                    onMouseLeave={() => setJourneyHoverStep(null)}
+                  >
+                    <div className="lp-journey-step-node">
+                      <div className="lp-journey-step-num">{j.step}</div>
+                    </div>
+                    <div className="lp-journey-step-content">
+                      <h3 className="lp-journey-step-title">{j.title}</h3>
+                      {j.desc && <p className="lp-journey-step-desc">{j.desc}</p>}
+                      <div className="lp-journey-card-timer"></div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <hr className="lp-divider" />
+
+        {/* 3. WHY BRANDS CHOOSE MINIPODS */}
+        <section className="lp-section">
+          <div className="lp-section-header">
+            <h2 className="lp-section-title">Why Leading D2C Brands Choose MiniPods</h2>
+            <p className="lp-section-subtitle">Quick commerce infrastructure built for brands, not marketplaces.</p>
+          </div>
+          <div className="lp-why-grid">
+            {[
+              {
+                icon: '🚀',
+                accent: '#6366f1',
+                metric: '7 Days to Live',
+                title: 'Launch in Days',
+                desc: 'Skip the cost & complexity of dark stores. Start selling in just 7 days.',
+              },
+              {
+                icon: '🌏',
+                accent: '#22d3ee',
+                metric: 'All Major Metros',
+                title: 'Expand Without Limits',
+                desc: 'Launch in all major metros without any Capex or warehouse leases.',
+              },
+              {
+                icon: '📊',
+                accent: '#a78bfa',
+                metric: 'Blitz AI Forecast',
+                title: 'Stock Where Demand Is',
+                desc: 'AI keeps the right inventory in the right MiniPods at the right time.',
+              },
+              {
+                icon: '⚡',
+                accent: '#fbbf24',
+                metric: '60-Min Delivery',
+                title: 'Deliver at QCom Speed',
+                desc: 'Enable 60-min, 2-hr, same-day & next-day delivery from one network.',
+              },
+              {
+                icon: '👑',
+                accent: '#f472b6',
+                metric: '0% Commission',
+                title: 'Own Your Brand & Customer',
+                desc: 'Sell directly from your website without marketplace commissions.',
+              },
+              {
+                icon: '📈',
+                accent: '#34d399',
+                metric: 'Scale with Growth',
+                title: 'Scale Only When You Grow',
+                desc: 'Start with a few MiniPods and expand effortlessly as demand rises.',
+              },
+            ].map((card, i) => (
+              <div
+                key={i}
+                className="lp-why-card"
+                style={{ '--why-accent': card.accent }}
+              >
+                <div className="lp-why-icon-wrap">
+                  <span className="lp-why-icon-ring"></span>
+                  <span style={{ fontSize: '26px', lineHeight: 1 }}>{card.icon}</span>
+                </div>
+                <div className="lp-why-metric">
+                  <span className="lp-why-metric-dot"></span>
+                  {card.metric}
+                </div>
+                <h3 className="lp-why-card-title">{card.title}</h3>
+                <p className="lp-why-card-desc">{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <hr className="lp-divider" />
+
+        {/* 4. MARKETPLACE VS MINIPODS */}
+        <section className="lp-section">
+          <div className="lp-section-header">
+            <h2 className="lp-section-title">Why Build Your Brand On Someone Else's Shelf?</h2>
+            <p className="lp-section-subtitle">Take control of your quick commerce fulfillment, margins, and customer data.</p>
+          </div>
+          <div className="lp-compare-table-container">
+            <table className="lp-compare-table">
+              <thead>
+                <tr>
+                  <th className="lp-compare-th">Fulfillment Dimension</th>
+                  <th className="lp-compare-th">Marketplace Model</th>
+                  <th className="lp-compare-th lp-compare-highlight">Blitz MiniPods</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Listing Fees</td>
+                  <td className="lp-compare-td">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> ₹25,000 listing fees</span>
+                  </td>
+                  <td className="lp-compare-td lp-compare-highlight">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> No listing fees</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Storage Model</td>
+                  <td className="lp-compare-td">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> High storage charges &amp; trial periods</span>
+                  </td>
+                  <td className="lp-compare-td lp-compare-highlight">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> Shelf-based pricing</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Delisting Risk</td>
+                  <td className="lp-compare-td">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> Constant risk of sudden delisting</span>
+                  </td>
+                  <td className="lp-compare-td lp-compare-highlight">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> No delisting risk</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Distribution &amp; Cities</td>
+                  <td className="lp-compare-td">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> Restricted by platform algorithm</span>
+                  </td>
+                  <td className="lp-compare-td lp-compare-highlight">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> Choose your own active cities</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Customer Ownership</td>
+                  <td className="lp-compare-td">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> Customers owned by marketplace</span>
+                  </td>
+                  <td className="lp-compare-td lp-compare-highlight">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> Own your customer database</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Marketing Control</td>
+                  <td className="lp-compare-td">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> Heavy paid advertising required</span>
+                  </td>
+                  <td className="lp-compare-td lp-compare-highlight">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> Direct demand generation</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <hr className="lp-divider" />
+
+        {/* 8. FINAL CTA SECTION */}
+        <section className="lp-section lp-final-cta-section">
+          <div className="lp-final-cta-card">
+            <h2 className="lp-final-cta-title">Ready To Launch Quick Commerce?</h2>
+            <p className="lp-final-cta-desc">
+              Go live in days without warehouses, operations teams, or marketplace dependency.
+            </p>
+            <div className="lp-actions" style={{ margin: 0, justifyContent: 'center' }}>
+              <button className="btn-check-availability" onClick={() => { setStep(2); setBrowseCity("Delhi"); }}>
+                Check Availability In Your City <Icon.ArrowRight />
+              </button>
+              <button className="btn-talk-specialist" onClick={() => { setSpecialistOrigin(0); setStep(1); }}>
+                Talk To Our Team
+              </button>
+            </div>
+          </div>
+        </section>
       </div>
     );
   };
@@ -7983,6 +10328,237 @@ export default function DarkStoreOnboarding() {
     </div>
   );
 
+  const renderJourneyVisual = (idx) => {
+    switch (idx) {
+      case 0:
+        return <SelectLocationVisual theme={theme} />;
+      case 1:
+        return (
+          <div className="jv-tech-card">
+            <div className="jv-tech-flow">
+              <div className="jv-tech-left">
+                <div className="jv-tech-badge shopify">Shopify</div>
+                <div className="jv-tech-badge custom-api">API</div>
+              </div>
+              <div className="jv-tech-line">
+                <span className="jv-tech-dot"></span>
+                <span className="jv-tech-dot delay-1"></span>
+                <span className="jv-tech-dot delay-2"></span>
+              </div>
+              <div className="jv-tech-right">
+                <div className="jv-tech-blitz">Blitz OMS</div>
+              </div>
+            </div>
+            <pre className="jv-json">
+              {`{
+  "status": "connected",
+  "sync": "real-time",
+  "webhooks": "active"
+}`}
+            </pre>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="jv-compliance-card">
+            <div className="jv-checklist">
+              <div className="jv-check-item checked">
+                <span className="jv-check-icon">✓</span>
+                <div className="jv-check-text">
+                  <strong>FSSAI Registration</strong>
+                  <span>Validated by compliance team</span>
+                </div>
+              </div>
+              <div className="jv-check-item checked">
+                <span className="jv-check-icon">✓</span>
+                <div className="jv-check-text">
+                  <strong>GSTIN Check</strong>
+                  <span>Automatic tax verification</span>
+                </div>
+              </div>
+              <div className="jv-check-item signing">
+                <span className="jv-check-icon">✍</span>
+                <div className="jv-check-text">
+                  <strong>Onboarding SLA</strong>
+                  <span>Signing agreement...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 3: {
+        // 263.9 = 2*pi*42 (SVG ring circumference), 34.3 = 263.9*0.13 (13% remaining = 87% filled)
+        const scanItems = [
+          { brand: 'Nykaa', name: 'SPF50+ Sunscreen', sku: 'NK-1284', qty: 24, time: '08:04:32' },
+          { brand: 'Foxtale', name: 'Vitamin C Serum', sku: 'FT-0891', qty: 12, time: '08:04:31' },
+          { brand: 'HealthKart', name: 'B12 Supplement', sku: 'HK-4421', qty: 36, time: '08:04:29' },
+          { brand: 'Ajio', name: 'Casual Linen Shirt', sku: 'AJ-7723', qty: 18, time: '08:04:28' },
+          { brand: 'Nykaa', name: 'Hydra Moisturiser', sku: 'NK-2291', qty: 30, time: '08:04:26' },
+          { brand: 'Foxtale', name: 'Retinol Night Cream', sku: 'FT-1102', qty: 15, time: '08:04:24' },
+          { brand: 'HealthKart', name: 'Whey Protein 1kg', sku: 'HK-0033', qty: 8, time: '08:04:22' },
+          { brand: 'Myntra', name: 'Sports Joggers', sku: 'MN-8812', qty: 22, time: '08:04:20' },
+        ];
+        const barWidths = [3, 1.5, 2, 1.5, 3, 1.5, 2, 1.5, 3, 1.5, 2, 1.5];
+        const cats = [
+          { name: 'Skincare', color: '#6366f1', w: '62%' },
+          { name: 'Beverages', color: '#22d3ee', w: '85%' },
+          { name: 'Health', color: '#34d399', w: '44%' },
+        ];
+        return (
+          <div className="jv-inventory-card">
+
+            {/* Header */}
+            <div className="inv-hdr">
+              <div className="inv-hdr-left">
+                <span className="inv-session-label">Receiving Session</span>
+                <span className="inv-session-id">#RS-2847</span>
+              </div>
+              <div className="inv-live-pill">
+                <span className="inv-live-dot"></span>
+                LIVE
+              </div>
+            </div>
+
+            {/* Body */}
+            <div className="inv-body">
+
+              {/* Left: scrolling scan feed */}
+              <div className="inv-feed-panel">
+                <span className="inv-feed-title">Live Scan Feed</span>
+                <div className="inv-feed-viewport">
+                  <div className="inv-feed-scroll">
+                    {[...scanItems, ...scanItems].map((item, i) => (
+                      <div key={i} className="inv-scan-row">
+                        {/* mini barcode */}
+                        <div className="inv-barcode">
+                          {barWidths.map((w, k) => (
+                            <span key={k} className="inv-bar" style={{ width: `${w}px`, opacity: k % 2 === 0 ? 0.9 : 0.45 }} />
+                          ))}
+                        </div>
+                        {/* item info */}
+                        <div className="inv-row-info">
+                          <div className="inv-row-brand">{item.brand}</div>
+                          <div className="inv-row-name">{item.name}</div>
+                          <div className="inv-row-meta">
+                            <span className="inv-row-sku">{item.sku}</span>
+                            <span className="inv-row-qty">×{item.qty}</span>
+                          </div>
+                        </div>
+                        {/* status */}
+                        <div className="inv-row-right">
+                          <span className="inv-row-check">✓ OK</span>
+                          <span className="inv-row-time">{item.time}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {/* laser line */}
+                  <div className="inv-feed-laser"></div>
+                  {/* fade bottom */}
+                  <div className="inv-feed-fade"></div>
+                </div>
+              </div>
+
+              {/* Right: ring + cats */}
+              <div className="inv-ring-panel">
+                {/* SVG donut ring */}
+                <div className="inv-ring-wrap">
+                  <svg viewBox="0 0 90 90" className="inv-ring-svg">
+                    <defs>
+                      <linearGradient id="inv2grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#6366f1" />
+                        <stop offset="100%" stopColor="#22d3ee" />
+                      </linearGradient>
+                      <filter id="inv-glow">
+                        <feGaussianBlur stdDeviation="2" result="blur" />
+                        <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                      </filter>
+                    </defs>
+                    {/* outer bg glow ring */}
+                    <circle cx="45" cy="45" r="42" fill="none"
+                      stroke="rgba(99,102,241,0.07)" strokeWidth="10" />
+                    {/* track */}
+                    <circle cx="45" cy="45" r="42" fill="none"
+                      stroke="rgba(255,255,255,0.06)" strokeWidth="7" />
+                    {/* animated arc */}
+                    <circle cx="45" cy="45" r="42" fill="none"
+                      stroke="url(#inv2grad)" strokeWidth="7"
+                      strokeLinecap="round"
+                      filter="url(#inv-glow)"
+                      className="inv-ring-arc"
+                      style={{ transform: 'rotate(-90deg)', transformOrigin: '45px 45px' }}
+                    />
+                  </svg>
+                  <div className="inv-ring-center">
+                    <span className="inv-ring-pct">87%</span>
+                    <span className="inv-ring-sub">filled</span>
+                  </div>
+                </div>
+                <span className="inv-ring-label">1,240 / 1,425<br />SKUs received</span>
+
+                {/* category mini bars */}
+                <div className="inv-cats">
+                  {cats.map((c, i) => (
+                    <div key={i} className="inv-cat-row">
+                      <span className="inv-cat-dot" style={{ background: c.color }}></span>
+                      <span className="inv-cat-name">{c.name}</span>
+                      <div className="inv-cat-bar">
+                        <div className="inv-cat-fill" style={{ '--w': c.w, background: c.color }}></div>
+                      </div>
+                      <span className="inv-cat-pct">{c.w}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>{/* /inv-body */}
+
+            {/* KPI strip */}
+            <div className="inv-kpi-strip">
+              <div className="inv-kpi">
+                <span className="inv-kpi-val">312</span>
+                <span className="inv-kpi-key">SKUs / hr</span>
+              </div>
+              <div className="inv-kpi-div"></div>
+              <div className="inv-kpi">
+                <span className="inv-kpi-val">1,240</span>
+                <span className="inv-kpi-key">Total SKUs</span>
+              </div>
+              <div className="inv-kpi-div"></div>
+              <div className="inv-kpi">
+                <span className="inv-kpi-val">99.8%</span>
+                <span className="inv-kpi-key">Accuracy</span>
+              </div>
+            </div>
+
+          </div>
+        );
+      }
+      case 4:
+        return (
+          <div className="jv-live-card">
+            <div className="jv-live-head">
+              <span className="jv-live-status-pulse"></span>
+              <strong>Live Delivery Routing</strong>
+            </div>
+            <div className="jv-live-eta">
+              <span>ETA to Destination</span>
+              <strong>14 Mins</strong>
+            </div>
+            <div className="jv-live-route">
+              <div className="route-node source">Store</div>
+              <div className="route-path">
+                <span className="route-truck">🛵</span>
+              </div>
+              <div className="route-node dest">User</div>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   const selectedStores = cart.length
     ? cart.map((c) => `${c.storeName}, ${c.city} (${c.racks} rack${c.racks !== 1 ? "s" : ""})`).join(" · ")
     : "—";
@@ -7993,8 +10569,8 @@ export default function DarkStoreOnboarding() {
 
   const pageMeta = [
     null,
-    { eyebrow: "Step 1", title: "Choose your stores" },
-    { eyebrow: "Step 2", title: "Verify & Checkout", desc: "Enter company details, upload required documents." },
+    { title: "Choose your stores" },
+    { title: "Verify & Checkout", desc: "Enter company details, upload required documents." },
   ][step - 1];
 
   const renderThemeToggle = () => (
@@ -8126,7 +10702,7 @@ export default function DarkStoreOnboarding() {
             <div className="sidebar-recommender">
               <div className="sidebar-recommender-title">
                 <span className="pulse-glowing-beacon"></span>
-                <span>📦 Peek Inside a Bin</span>
+                <span>📦 Minipods Calculator</span>
               </div>
               <p className="sidebar-recommender-desc">
                 Not sure how many shelves to book? Click below 👀.
@@ -8136,27 +10712,12 @@ export default function DarkStoreOnboarding() {
                 className="btn-sidebar-recommender"
                 onClick={() => setIsRecommenderOpen(true)}
               >
-                Peek Inside a Bin ↗
+                Minipods Calculator ↗
               </button>
             </div>
           )}
         </div>
 
-        <div className="sidebar-foot">
-          <div className="progress-wrapper">
-            <div className="progress-label">
-              <span>Progress</span>
-              <span>{pct}%</span>
-            </div>
-            <div className="progress-track">
-              <div className="progress-fill" style={{ width: `${pct}%` }} />
-            </div>
-          </div>
-          <div className="trust-note">
-            <Icon.Shield />
-            <span>Your data is encrypted and only used for partner verification. Typical review time is 2 business days.</span>
-          </div>
-        </div>
       </aside>
     );
   };
@@ -8433,7 +10994,7 @@ export default function DarkStoreOnboarding() {
                 <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
                 <line x1="12" y1="22.08" x2="12" y2="12" />
               </svg>
-              Peek Inside a Bin
+              Minipods Calculator
             </h3>
             <button className="btn-close-modal" onClick={() => setIsRecommenderOpen(false)}>✕</button>
           </div>
@@ -8441,104 +11002,78 @@ export default function DarkStoreOnboarding() {
           <div className="recommender-modal-body">
             {/* Spec Strip */}
             <div className="spec-strip">
-              <div className="spec-chip"><span className="lbl">Bin size</span><span className="val">28×45×25</span></div>
-              <div className="spec-chip"><span className="lbl">Max weight</span><span className="val">20 kg</span></div>
-              <div className="spec-chip"><span className="lbl">Bins/shelf</span><span className="val">3</span></div>
-              <div className="spec-chip"><span className="lbl">Usable</span><span className="val">90%</span></div>
+              <div className="spec-chip"><span className="lbl">Bin Size</span><span className="val">28 × 45 × 25 cm</span></div>
+              <div className="spec-chip"><span className="lbl">Max Weight</span><span className="val">20 kg</span></div>
+              <div className="spec-chip"><span className="lbl">Bins / Shelf</span><span className="val">3 units</span></div>
+              <div className="spec-chip"><span className="lbl">Usable Space</span><span className="val">90%</span></div>
             </div>
 
-            {/* Item grid picker */}
-            <p className="section-label" style={{ marginBottom: 4 }}>Pick an item to visualise</p>
-            <div className="items-grid">
-              {recommenderItems.map(item => {
-                const isActive = item.id === vizItemId;
-                const computed = computeItem(item);
-                return (
-                  <div
-                    key={item.id}
-                    className={`item-card${isActive ? ' active' : ''}${computed.oversized ? ' oversized' : ''}`}
-                    onClick={() => selectItem(item.id)}
-                    style={computed.oversized ? { borderColor: "rgba(239, 68, 68, 0.25)" } : undefined}
-                  >
-                    <span className="emoji">{item.emoji}</span>
-                    <div className="item-name">{item.name}</div>
-                    <div className="item-dim" style={computed.oversized ? { color: "var(--red)", fontWeight: "600" } : undefined}>
-                      {item.l}×{item.w}×{item.h} cm
-                    </div>
-                    <div className="active-check" style={computed.oversized ? { display: "flex", background: "var(--red)" } : undefined}>
-                      {computed.oversized ? "!" : "✓"}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            {/* Custom Dropdown Selector */}
+            <p className="section-label" style={{ margin: '0 0 -2px 0', fontSize: '11px', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: '700' }}>Select an item to check packing efficiency</p>
+            <div className="custom-dropdown-container">
+              <button
+                type="button"
+                className="custom-dropdown-trigger"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
+                {selectedItem ? (
+                  <span className="trigger-val">
+                    <span className="emoji">{selectedItem.emoji}</span>
+                    <span className="name">{selectedItem.name} ({selectedItem.l}×{selectedItem.w}×{selectedItem.h} cm)</span>
+                  </span>
+                ) : (
+                  <span className="trigger-placeholder">Choose an item to preview...</span>
+                )}
+                <span className="arrow">{isDropdownOpen ? "▲" : "▼"}</span>
+              </button>
 
-            {/* Accordion trigger button */}
-            <button
-              className="bin-peek-trigger"
-              onClick={() => {
-                if (vizItemId) {
-                  setIsPeekOpen(!isPeekOpen);
-                }
-              }}
-              aria-expanded={isPeekOpen}
-              style={{ cursor: vizItemId ? 'pointer' : 'default', marginTop: 8 }}
-            >
-              <div className="bin-peek-inner">
-                <div className="bin-peek-icon">
-                  <div className="mini-bin-wrap">
-                    <div className="mini-face mini-top"></div>
-                    <div className="mini-face mini-side"></div>
-                    <div className="mini-face mini-front">
-                      <div className="mini-dots-grid">
-                        <span className="mini-d"></span><span className="mini-d"></span><span className="mini-d"></span>
-                        <span className="mini-d"></span><span className="mini-d"></span><span className="mini-d"></span>
+              {isDropdownOpen && (
+                <div className="custom-dropdown-menu">
+                  {recommenderItems.map(item => {
+                    const isSelected = item.id === vizItemId;
+                    const computed = computeItem(item);
+                    return (
+                      <div
+                        key={item.id}
+                        className={`custom-dropdown-item ${isSelected ? 'selected' : ''}`}
+                        onClick={() => {
+                          selectItem(item.id);
+                          setIsDropdownOpen(false);
+                        }}
+                      >
+                        <span className="emoji">{item.emoji}</span>
+                        <span className="name">{item.name}</span>
+                        <span className="dims">{item.l}×{item.w}×{item.h} cm</span>
+                        {computed.oversized && <span className="oversized-tag">Oversized</span>}
                       </div>
-                    </div>
-                  </div>
+                    );
+                  })}
                 </div>
-                <div className="bin-peek-text">
-                  <div className="bin-peek-label">Peek inside a bin <span className="bin-peek-badge">Visual</span></div>
-                  <div className="bin-peek-sub" style={activeResult?.oversized ? { color: "var(--red)", fontWeight: "500" } : undefined}>
-                    {selectedItem
-                      ? activeResult.oversized
-                        ? `⚠️ ${selectedItem.name} — Won't fit`
-                        : `${selectedItem.emoji} ${selectedItem.name} — ${activeResult.itemsPerBin} per bin`
-                      : "Select an item above to preview"}
-                  </div>
-                </div>
-                <div className="bin-peek-arrow">{isPeekOpen && vizItemId ? "▲" : "▼"}</div>
-              </div>
-            </button>
+              )}
+            </div>
+
             {!vizItemId && (
-              <div className="hint-text">Select any item above, then tap to see how it packs</div>
+              <div className="hint-text" style={{ textAlign: 'center', marginTop: '20px', color: 'var(--text-3)' }}>
+                Select an item from the dropdown to check its dimensions and visual bin packing efficiency.
+              </div>
             )}
 
             {/* Preview shell */}
-            <div className={`bin-preview-shell${isPeekOpen && vizItemId ? " open" : ""}`}>
+            <div className={`bin-preview-shell ${vizItemId ? "open" : ""}`}>
               {activeResult && (
                 <div className="shell-inner">
                   <div className="bin-preview-panel" style={activeResult.oversized ? { borderColor: "rgba(239, 68, 68, 0.3)" } : undefined}>
-                    {/* Item hero card */}
-                    <div className="item-hero" style={activeResult.oversized ? { borderColor: "rgba(239, 68, 68, 0.2)" } : undefined}>
-                      <div className="item-hero-emoji">{selectedItem.emoji}</div>
-                      <div className="item-hero-info">
-                        <div className="item-hero-name">{selectedItem.name}</div>
-                        <div className="item-hero-dims">
-                          {selectedItem.l} × {selectedItem.w} × {selectedItem.h} cm · {selectedItem.wt} kg each · qty {selectedItem.qty}
-                        </div>
-                        <div className="item-hero-tags">
-                          {activeResult.oversized ? (
-                            <span className="tag tag-red" style={{ background: "var(--red-soft)", color: "var(--red)", borderColor: "rgba(239, 68, 68, 0.2)" }}>Oversized</span>
-                          ) : (
-                            <>
-                              <span className="tag tag-violet">Best orientation: {activeResult.fit.ol}×{activeResult.fit.ow}×{activeResult.fit.oh} cm</span>
-                              <span className="tag tag-green">Limit: {activeResult.limiting}</span>
-                            </>
-                          )}
-                          {selectedItem.upright && <span className="tag tag-amber">Upright only</span>}
-                        </div>
-                      </div>
+                    {/* Compact Specs and Orientation Tags (directly below dropdown, no duplicate hero card) */}
+                    <div className="recommender-item-tags" style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', padding: '14px 18px', borderBottom: '1px solid var(--border)' }}>
+                      {activeResult.oversized ? (
+                        <span className="tag tag-red" style={{ background: "var(--red-soft)", color: "var(--red)", borderColor: "rgba(239, 68, 68, 0.2)" }}>Oversized</span>
+                      ) : (
+                        <>
+                          <span className="tag tag-violet">Best orientation: {activeResult.fit.ol}×{activeResult.fit.ow}×{activeResult.fit.oh} cm</span>
+                          <span className="tag tag-green">Limit: {activeResult.limiting}</span>
+                        </>
+                      )}
+                      {selectedItem.upright && <span className="tag tag-amber">Upright only</span>}
                     </div>
 
                     {activeResult.oversized ? (
@@ -8676,9 +11211,9 @@ export default function DarkStoreOnboarding() {
             {pageMeta && (
               <header className="page-head" style={{ marginBottom: "24px" }}>
                 <div>
-                  <p className="page-eyebrow">{pageMeta.eyebrow}</p>
+                  {pageMeta.eyebrow && <p className="page-eyebrow">{pageMeta.eyebrow}</p>}
                   <h1 className="page-title">{pageMeta.title}</h1>
-                  <p className="page-desc">{pageMeta.desc}</p>
+                  {pageMeta.desc && <p className="page-desc">{pageMeta.desc}</p>}
                 </div>
               </header>
             )}
@@ -8693,6 +11228,20 @@ export default function DarkStoreOnboarding() {
             {step === 2 && renderPage2()}
             {step === 3 && renderPage3()}
           </div>
+
+          {step >= 1 && step <= 3 && (
+            <div className={`form-progress-footer${step === 2 ? " step-store" : ""}`}>
+              <div className="progress-wrapper">
+                <div className="progress-label">
+                  <span>Progress</span>
+                  <span>{pct}%</span>
+                </div>
+                <div className="progress-track">
+                  <div className="progress-fill" style={{ width: `${pct}%` }} />
+                </div>
+              </div>
+            </div>
+          )}
 
           <footer className={`action-bar${step === 2 ? " checkout-bar" : ""}`}>
             <div className="action-bar-inner">
