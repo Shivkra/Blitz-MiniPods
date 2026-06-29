@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 import StoreSelection, { StoreIcon } from "./StoreSelection.jsx";
 import DocumentUpload from "./components/onboarding/DocumentUpload.jsx";
 import Bengaluru3DMap from "./components/onboarding/Bengaluru3DMap.jsx";
@@ -5125,7 +5125,7 @@ const STYLES = `
 
   .lp-desc {
     font-size: 15px;
-    color: var(--text-2);
+    color: var(--text);
     line-height: 1.6;
     margin-bottom: 24px;
     max-width: 540px;
@@ -6750,6 +6750,64 @@ const STYLES = `
     color: var(--text-3);
   }
 
+  .custom-dropdown-trigger:has(.trigger-placeholder) {
+    border-color: rgba(99, 102, 241, 0.4);
+    background: rgba(99, 102, 241, 0.02);
+    animation: trigger-border-pulse 2s infinite alternate;
+  }
+
+  html.light .custom-dropdown-trigger:has(.trigger-placeholder) {
+    border-color: rgba(79, 70, 229, 0.35);
+    background: rgba(79, 70, 229, 0.015);
+  }
+
+  .custom-dropdown-trigger .trigger-placeholder {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    animation: placeholder-pulse 2s infinite alternate;
+  }
+
+  .custom-dropdown-trigger .trigger-placeholder .sparkle-icon {
+    display: inline-block;
+    margin-right: 6px;
+    animation: sparkle-spin 3s infinite linear;
+    -webkit-text-fill-color: initial;
+  }
+
+  @keyframes trigger-border-pulse {
+    from {
+      box-shadow: 0 0 0 0px rgba(99, 102, 241, 0);
+      border-color: rgba(99, 102, 241, 0.3);
+    }
+    to {
+      box-shadow: 0 0 12px 1px rgba(99, 102, 241, 0.12);
+      border-color: rgba(99, 102, 241, 0.65);
+    }
+  }
+
+  @keyframes placeholder-pulse {
+    0% {
+      opacity: 0.85;
+      filter: drop-shadow(0 0 1px rgba(99, 102, 241, 0.1));
+    }
+    100% {
+      opacity: 1;
+      filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.45));
+    }
+  }
+
+  @keyframes sparkle-spin {
+    0% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.25) rotate(180deg); }
+    100% { transform: scale(1) rotate(360deg); }
+  }
+
   .custom-dropdown-menu {
     position: absolute;
     top: calc(100% + 6px);
@@ -7383,6 +7441,82 @@ const STYLES = `
     }
   }
 
+  @media (max-width: 1250px) and (min-width: 1025px) {
+    .lp-journey-split {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 20px !important;
+    }
+    .lp-journey-visual-panel {
+      padding: 16px !important;
+      align-items: flex-start !important;
+      padding-top: 24px !important;
+    }
+    /* Select Stores shrink visual */
+    .lp-journey-visual-panel .jv-india-map-wrapper {
+      transform: scale(0.8) translateX(-35px) translateY(10px) !important;
+    }
+    .lp-journey-visual-panel .radar-grid {
+      transform: scale(0.8) translateX(-35px) translateY(10px) !important;
+    }
+    .lp-journey-visual-panel .jv-map-stats-overlay {
+      width: 110px !important;
+      padding: 8px !important;
+      top: 10px !important;
+      right: 10px !important;
+      gap: 4px !important;
+    }
+    .lp-journey-visual-panel .jv-map-stats-overlay .overlay-city {
+      font-size: 11px !important;
+    }
+    .lp-journey-visual-panel .jv-map-stats-overlay .overlay-row {
+      font-size: 9px !important;
+    }
+    .lp-journey-visual-panel .jv-map-stats-overlay .overlay-tag {
+      font-size: 7px !important;
+    }
+
+    /* Send Inventory shrink visual */
+    .lp-journey-visual-panel .jv-inventory-card {
+      gap: 8px !important;
+    }
+    .lp-journey-visual-panel .inv-body {
+      grid-template-columns: 1fr 90px !important;
+      min-height: 140px !important;
+      gap: 8px !important;
+    }
+    .lp-journey-visual-panel .inv-ring-wrap {
+      width: 74px !important;
+      height: 74px !important;
+    }
+    .lp-journey-visual-panel .inv-ring-pct {
+      font-size: 15px !important;
+    }
+    .lp-journey-visual-panel .inv-ring-label {
+      font-size: 8px !important;
+    }
+    .lp-journey-visual-panel .inv-kpi-strip {
+      border-radius: 6px !important;
+    }
+    .lp-journey-visual-panel .inv-kpi {
+      padding: 5px 3px !important;
+    }
+    .lp-journey-visual-panel .inv-kpi-val {
+      font-size: 11px !important;
+    }
+    .lp-journey-visual-panel .inv-kpi-key {
+      font-size: 7.5px !important;
+    }
+    .lp-journey-visual-panel .inv-scan-row {
+      padding: 4px 6px !important;
+    }
+    .lp-journey-visual-panel .inv-barcode {
+      height: 18px !important;
+    }
+    .lp-journey-visual-panel .inv-row-name {
+      font-size: 9px !important;
+    }
+  }
+
   /* Left Showcase Panel */
   .lp-journey-visual-panel {
     background: var(--bg-elevated);
@@ -7413,11 +7547,12 @@ const STYLES = `
     display: flex;
     flex-direction: column;
     width: 100%;
+    position: relative;
   }
 
   @media (min-width: 1025px) {
     .lp-journey-split {
-      height: 380px;
+      height: 470px;
     }
     .lp-journey-steps-list {
       height: 100%;
@@ -7426,27 +7561,188 @@ const STYLES = `
     }
   }
 
+  .lp-journey-mobile-visual {
+    display: none;
+  }
+
   @media (max-width: 1024px) {
     .lp-journey-visual-panel {
-      height: 280px !important;
+      display: none !important;
     }
     .lp-journey-steps-list {
-      gap: 12px !important;
+      gap: 6px !important;
+    }
+    .lp-journey-step {
+      padding: 10px 14px !important;
+    }
+    .lp-journey-step-desc {
+      display: none !important;
+    }
+    .lp-journey-step-num {
+      width: 32px !important;
+      height: 32px !important;
+      font-size: 13px !important;
+    }
+    .lp-step-connector {
+      min-height: 8px !important;
+    }
+    .lp-step-connector-track {
+      left: 29px !important; /* aligns with center of 32px circle: 14px padding + 16px half-circle - 1px half-width */
+      top: -10px !important;  /* aligns with 10px step padding */
+      bottom: -10px !important;
+    }
+    .lp-journey-mobile-visual {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin-top: 16px;
+      width: 100%;
+      height: 290px;
+      background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.08) 0%, rgba(15, 23, 42, 0.6) 100%);
+      border-radius: 16px;
+      border: 1px solid rgba(99, 102, 241, 0.18);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      padding: 16px;
+      overflow: hidden;
+      position: relative;
+      backdrop-filter: blur(12px);
+      animation: mobile-visual-entrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    html.light .lp-journey-mobile-visual {
+      background: radial-gradient(circle at 50% 0%, rgba(79, 70, 229, 0.06) 0%, rgba(255, 255, 255, 0.95) 100%);
+      border-color: rgba(79, 70, 229, 0.15);
+      box-shadow: 0 8px 24px rgba(79, 70, 229, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    @keyframes mobile-visual-entrance {
+      from {
+        opacity: 0;
+        transform: translateY(-6px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .lp-journey-mobile-visual .jv-india-map-wrapper {
+      transform: scale(1.0) translateX(0) translateY(0) !important;
+    }
+
+    .lp-journey-mobile-visual .radar-grid {
+      transform: translateX(0) translateY(0) !important;
+    }
+
+    .lp-journey-mobile-visual .jv-map-stats-overlay {
+      width: 105px !important;
+      padding: 6px 8px !important;
+      top: 8px !important;
+      right: 8px !important;
+      gap: 3px !important;
+    }
+
+    .lp-journey-mobile-visual .jv-map-stats-overlay .overlay-city {
+      font-size: 10px !important;
+    }
+
+    .lp-journey-mobile-visual .jv-map-stats-overlay .overlay-row {
+      font-size: 8.5px !important;
+    }
+
+    .lp-journey-mobile-visual .jv-map-stats-overlay .overlay-tag {
+      font-size: 7px !important;
+    }
+  }
+
+  /* Step Connector between steps */
+  .lp-step-connector {
+    flex-grow: 1;
+    min-height: 12px;
+    position: relative;
+    width: 100%;
+    z-index: 0;
+  }
+
+  .lp-step-connector-track {
+    position: absolute;
+    top: -16px; /* align with bottom of preceding circle */
+    bottom: -16px; /* align with top of succeeding circle */
+    left: 41px; /* center under the 44px circle */
+    width: 2px;
+    background: rgba(255, 255, 255, 0.05);
+    overflow: visible;
+  }
+
+  html.light .lp-step-connector-track {
+    background: rgba(0, 0, 0, 0.06);
+  }
+
+  .lp-step-connector-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: linear-gradient(180deg, var(--accent) 0%, var(--accent-glow) 100%);
+    box-shadow: 0 0 8px var(--accent-glow);
+    border-radius: 2px;
+    transition: height 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .lp-step-connector.filled .lp-step-connector-fill {
+    height: 100%;
+  }
+
+  /* Laser light dot cursor */
+  .lp-step-connector-fill::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%, 50%) scale(0);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 8px var(--accent), 0 0 16px var(--accent-glow);
+    transition: transform 0.3s ease;
+  }
+
+  .lp-step-connector.filled .lp-step-connector-fill::after {
+    transform: translate(-50%, 50%) scale(1);
+    animation: connector-dot-glow 1.5s ease-in-out infinite;
+  }
+
+  @keyframes connector-dot-glow {
+    0%, 100% {
+      box-shadow: 0 0 6px var(--accent), 0 0 12px var(--accent-glow);
+    }
+    50% {
+      box-shadow: 0 0 12px var(--accent), 0 0 24px var(--accent-glow);
     }
   }
 
   .lp-journey-step {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 16px;
-    background: rgba(255, 255, 255, 0.01);
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 20px;
+    background: rgba(18, 18, 24, 0.6); /* Slightly more solid but premium translucent glass background */
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    z-index: 1;
+    backdrop-filter: blur(8px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  html.light .lp-journey-step {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: var(--border);
   }
 
   .lp-journey-step:hover {
@@ -7454,13 +7750,18 @@ const STYLES = `
     border-color: rgba(255, 255, 255, 0.15);
   }
 
+  html.light .lp-journey-step:hover {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.12);
+  }
+
   .lp-journey-step-node {
     flex-shrink: 0;
   }
 
   .lp-journey-step-num {
-    width: 30px;
-    height: 30px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background: var(--bg-elevated);
     border: 2px solid var(--border);
@@ -7468,8 +7769,9 @@ const STYLES = `
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 800;
+    flex-shrink: 0;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
@@ -7477,20 +7779,22 @@ const STYLES = `
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 5px;
+    padding-top: 2px;
   }
 
   .lp-journey-step-title {
-    font-size: 13.5px;
+    font-size: 14.5px;
     font-weight: 700;
     color: var(--text);
+    letter-spacing: -0.2px;
     transition: all 0.3s ease;
   }
 
   .lp-journey-step-desc {
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--text-3);
-    line-height: 1.4;
+    line-height: 1.55;
     transition: all 0.3s ease;
   }
 
@@ -7502,20 +7806,32 @@ const STYLES = `
     transform: translateX(4px);
   }
 
+  html.light .lp-journey-step.active-step {
+    background: rgba(99, 102, 241, 0.06);
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 8px 24px -8px rgba(99, 102, 241, 0.25);
+  }
+
   .lp-journey-step.active-step .lp-journey-step-num {
     border-color: var(--accent);
     background: var(--accent);
     color: #fff;
-    box-shadow: 0 0 12px var(--accent-glow);
-    transform: scale(1.05);
+    box-shadow: 0 0 18px var(--accent-glow);
+    transform: scale(1.1);
   }
 
   .lp-journey-step.active-step .lp-journey-step-title {
     color: #fff;
+    font-size: 15.5px;
+  }
+
+  html.light .lp-journey-step.active-step .lp-journey-step-title {
+    color: var(--accent);
   }
 
   .lp-journey-step.active-step .lp-journey-step-desc {
     color: var(--text-2);
+    font-size: 13px;
   }
 
   /* Timer bar animation */
@@ -7563,11 +7879,11 @@ const STYLES = `
     bottom: 0;
     left: 50%;
     width: 1px;
-    background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.02), transparent);
+    background: linear-gradient(180deg, transparent, rgba(99, 102, 241, 0.18), transparent);
   }
 
   html.light .radar-line-v {
-    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.02), transparent);
+    background: linear-gradient(180deg, transparent, rgba(99, 102, 241, 0.12), transparent);
   }
 
   .radar-line-h {
@@ -7576,11 +7892,11 @@ const STYLES = `
     right: 0;
     top: 50%;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.02), transparent);
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.18), transparent);
   }
 
   html.light .radar-line-h {
-    background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.02), transparent);
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.12), transparent);
   }
 
   .radar-circle {
@@ -7588,12 +7904,12 @@ const STYLES = `
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    border: 1px dashed rgba(255, 255, 255, 0.015);
+    border: 1px dashed rgba(99, 102, 241, 0.22);
     border-radius: 50%;
   }
 
   html.light .radar-circle {
-    border-color: rgba(0, 0, 0, 0.02);
+    border-color: rgba(99, 102, 241, 0.15);
   }
 
   .rc-1 { width: 100px; height: 100px; }
@@ -7604,16 +7920,16 @@ const STYLES = `
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 180px;
-    height: 180px;
-    background: conic-gradient(from 0deg at 0% 0%, rgba(255, 255, 255, 0.025) 0deg, transparent 90deg);
+    width: 240px;
+    height: 240px;
+    background: conic-gradient(from 0deg at 0% 0%, rgba(99, 102, 241, 0.45) 0deg, rgba(99, 102, 241, 0.1) 90deg, transparent 180deg);
     transform-origin: 0% 0%;
-    animation: radar-sweep-anim 9s infinite linear;
+    animation: radar-sweep-anim 8s infinite linear;
     z-index: 1;
   }
 
   html.light .radar-sweep {
-    background: conic-gradient(from 0deg at 0% 0%, rgba(99, 102, 241, 0.02) 0deg, transparent 90deg);
+    background: conic-gradient(from 0deg at 0% 0%, rgba(99, 102, 241, 0.35) 0deg, rgba(99, 102, 241, 0.08) 90deg, transparent 180deg);
   }
 
   @keyframes radar-sweep-anim {
@@ -7621,24 +7937,31 @@ const STYLES = `
     to { transform: rotate(360deg); }
   }
 
+
   /* Stats Overlay Card */
   .jv-map-stats-overlay {
     position: absolute;
     top: 16px;
     right: 16px;
     left: auto;
-    background: rgba(18, 18, 28, 0.85);
-    border: 1px solid var(--border);
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius);
-    padding: 10px;
-    width: 130px;
+    padding: 12px;
+    width: 140px;
     z-index: 5;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(12px);
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
+  }
+
+  html.light .jv-map-stats-overlay {
+    background: rgba(255, 255, 255, 0.92);
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
   }
 
   .overlay-tag {
@@ -7650,10 +7973,14 @@ const STYLES = `
   }
 
   .overlay-city {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 800;
     color: #fff;
     margin-bottom: 2px;
+  }
+
+  html.light .overlay-city {
+    color: var(--text);
   }
 
   .overlay-row {
@@ -7668,6 +7995,19 @@ const STYLES = `
 
   .overlay-row strong {
     color: var(--text-2);
+  }
+
+  html.light .overlay-row strong {
+    color: var(--text);
+  }
+
+  @keyframes stat-slide-in {
+    from { opacity: 0; transform: translateY(6px); filter: blur(2px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
+  .overlay-anim {
+    animation: stat-slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   /* India Map & Wrapper */
@@ -7699,15 +8039,16 @@ const STYLES = `
   }
 
   .india-map-paths path {
-    fill: #1f213a;
-    stroke: #1f213a;
-    stroke-width: 0.5px;
+    fill: rgba(30, 41, 59, 0.65);
+    stroke: rgba(255, 255, 255, 0.15);
+    stroke-width: 0.75px;
     transition: all 0.3s ease;
   }
 
   html.light .india-map-paths path {
-    fill: #e6e9f8;
-    stroke: #e6e9f8;
+    fill: #f1f5f9;
+    stroke: #cbd5e1;
+    stroke-width: 0.75px;
   }
 
   /* Pulsing Map Pins */
@@ -7759,14 +8100,18 @@ const STYLES = `
   }
 
   @keyframes pin-pulse-anim {
-    0% { transform: scale(0.5); opacity: 0.8; }
-    100% { transform: scale(2.2); opacity: 0; }
+    0% { transform: scale(0.5); opacity: 1; box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.8); }
+    70% { opacity: 0.5; }
+    100% { transform: scale(3.2); opacity: 0; box-shadow: 0 0 0 16px transparent; }
   }
 
   .jv-map-pin.active .pin-label {
     color: #fff;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
     border-color: var(--accent);
-    box-shadow: 0 0 10px var(--accent-glow);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    transform: translateY(-4px);
   }
 
   .jv-map-pin.active .pin-dot {
@@ -7776,7 +8121,7 @@ const STYLES = `
   }
 
   .jv-map-pin.active .pin-pulse {
-    animation: pin-pulse-anim 2.2s infinite ease-out;
+    animation: pin-pulse-anim 1.8s infinite cubic-bezier(0.25, 0, 0, 1);
   }
 
   .jv-tech-card {
@@ -7800,62 +8145,134 @@ const STYLES = `
   }
 
   .jv-tech-badge {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 8px 16px;
     font-size: 12px;
     font-weight: 700;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  html.light .jv-tech-badge {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  }
+
+  .jv-tech-badge:hover {
+    transform: translateY(-2px);
   }
 
   .jv-tech-badge.shopify {
-    border-color: #96bf48;
+    border-color: rgba(150, 191, 72, 0.3);
     color: #96bf48;
   }
 
+  .jv-tech-badge.shopify:hover {
+    border-color: #96bf48;
+    box-shadow: 0 6px 16px rgba(150, 191, 72, 0.2);
+  }
+
   .jv-tech-badge.custom-api {
-    border-color: var(--accent);
+    border-color: rgba(99, 102, 241, 0.3);
     color: var(--accent);
   }
 
-  .jv-tech-line {
+  .jv-tech-badge.custom-api:hover {
+    border-color: var(--accent);
+    box-shadow: 0 6px 16px var(--accent-glow);
+  }
+
+  .jv-tech-middle {
     flex: 1;
-    height: 2px;
-    background: rgba(255, 255, 255, 0.05);
     margin: 0 16px;
     position: relative;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .jv-tech-dot {
-    position: absolute;
-    top: -3px;
-    left: 0;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-    animation: jv-tech-dot-anim 2s infinite linear;
+  .tech-flow-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
   }
 
-  .jv-tech-dot.delay-1 { animation-delay: 0.6s; }
-  .jv-tech-dot.delay-2 { animation-delay: 1.2s; }
+  .flow-path-bg {
+    stroke: rgba(99, 102, 241, 0.25);
+    stroke-width: 2px;
+    stroke-dasharray: 4 4;
+  }
 
-  @keyframes jv-tech-dot-anim {
-    0% { left: 0%; opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { left: 100%; opacity: 0; }
+  html.light .flow-path-bg {
+    stroke: rgba(99, 102, 241, 0.15);
+  }
+
+  .flow-path-active {
+    stroke-width: 4px;
+    stroke-linecap: round;
+    stroke-dasharray: 40 180;
+    animation: flow-pulse-anim 3s infinite linear;
+  }
+
+  .flow-path-active.shopify-pulse {
+    stroke: #96bf48;
+    filter: drop-shadow(0 0 8px rgba(150, 191, 72, 0.75));
+  }
+
+  .flow-path-active.api-pulse {
+    stroke: var(--accent);
+    animation-delay: 1.5s;
+    filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.75));
+  }
+
+  @keyframes flow-pulse-anim {
+    0% { stroke-dashoffset: 220; }
+    100% { stroke-dashoffset: 0; }
   }
 
   .jv-tech-blitz {
-    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-glow) 100%);
+    background: linear-gradient(135deg, var(--accent) 0%, #818cf8 100%);
     color: #fff;
-    border-radius: var(--radius);
-    padding: 10px 16px;
+    border-radius: 12px;
+    padding: 12px 20px;
     font-size: 13px;
     font-weight: 700;
-    box-shadow: 0 0 16px var(--accent-glow);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.25);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  html.light .jv-tech-blitz {
+    background: linear-gradient(135deg, var(--accent) 0%, #6366f1 100%);
+    box-shadow: 0 4px 16px rgba(79, 70, 229, 0.25);
+  }
+
+  .jv-tech-blitz:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 28px var(--accent);
+  }
+
+  .jv-tech-blitz::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transform: rotate(45deg);
+    animation: blitz-shimmer 3s infinite linear;
+  }
+
+  @keyframes blitz-shimmer {
+    0% { transform: translate(-50%, -50%) rotate(45deg); }
+    100% { transform: translate(50%, 50%) rotate(45deg); }
   }
 
   .jv-json {
@@ -7869,6 +8286,20 @@ const STYLES = `
     line-height: 1.4;
   }
 
+  html.light .jv-json {
+    background: #f8f9fa;
+    color: #3730a3;
+  }
+
+  .json-bracket { color: #818cf8; }
+  .json-key { color: #818cf8; }
+  .json-val { color: #34d399; }
+  .json-comment { color: #475569; font-style: italic; }
+
+  html.light .json-bracket { color: #1e293b; }
+  html.light .json-key { color: #4338ca; }
+  html.light .json-val { color: #047857; }
+  html.light .json-comment { color: #64748b; }
   .jv-compliance-card {
     width: 100%;
   }
@@ -7942,8 +8373,11 @@ const STYLES = `
   /* ── Inward Inventory — WMS Dashboard ─────────────────────────── */
   .jv-inventory-card {
     width: 100%;
+    height: 100%;
+    max-height: 380px;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: 10px;
     font-family: 'Inter', sans-serif;
   }
@@ -8004,12 +8438,13 @@ const STYLES = `
     to   { box-shadow: 0 0 14px rgba(34,211,238,0.2); }
   }
 
-  /* --- Body: two-column layout --- */
   .inv-body {
     display: grid;
     grid-template-columns: 1fr 110px;
     gap: 10px;
-    min-height: 160px;
+    flex: 1;
+    min-height: 140px;
+    overflow: hidden;
   }
 
   /* --- Left: Live scan feed --- */
@@ -8034,6 +8469,12 @@ const STYLES = `
     background: rgba(0,0,0,0.25);
     border: 1px solid rgba(255,255,255,0.05);
   }
+
+  html.light .inv-feed-viewport {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.06);
+  }
+
   /* scrolling container — duplicate items so it loops */
   .inv-feed-scroll {
     display: flex;
@@ -8051,6 +8492,10 @@ const STYLES = `
     padding: 5px 8px;
     border-bottom: 1px solid rgba(255,255,255,0.04);
     flex-shrink: 0;
+  }
+
+  html.light .inv-scan-row {
+    border-bottom-color: rgba(0, 0, 0, 0.05);
   }
   /* mini barcode graphic */
   .inv-barcode {
@@ -8153,6 +8598,10 @@ const STYLES = `
     z-index: 3;
   }
 
+  html.light .inv-feed-fade {
+    background: linear-gradient(to bottom, transparent, rgba(248, 249, 250, 0.95));
+  }
+
   /* --- Right: Ring + categories --- */
   .inv-ring-panel {
     display: flex;
@@ -8250,6 +8699,10 @@ const STYLES = `
     overflow: hidden;
     flex-shrink: 0;
   }
+
+  html.light .inv-cat-bar {
+    background: rgba(0, 0, 0, 0.08);
+  }
   .inv-cat-fill {
     height: 100%;
     width: 0%;
@@ -8278,6 +8731,12 @@ const STYLES = `
     border-radius: 8px;
     overflow: hidden;
   }
+
+  html.light .inv-kpi-strip {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.06);
+  }
+
   .inv-kpi {
     display: flex;
     flex-direction: column;
@@ -8306,6 +8765,10 @@ const STYLES = `
     width: 1px;
     background: rgba(255,255,255,0.07);
     margin: 6px 0;
+  }
+
+  html.light .inv-kpi-div {
+    background: rgba(0, 0, 0, 0.06);
   }
 
 
@@ -8368,6 +8831,10 @@ const STYLES = `
     overflow: hidden;
   }
 
+  html.light .jv-live-route {
+    background: rgba(0, 0, 0, 0.015);
+  }
+
   .route-node {
     background: var(--surface-2);
     border: 1px solid var(--border);
@@ -8393,6 +8860,14 @@ const STYLES = `
     background: repeating-linear-gradient(
       to right,
       rgba(255,255,255,0.25) 0 8px,
+      transparent 8px 16px
+    );
+  }
+
+  html.light .route-path {
+    background: repeating-linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.15) 0 8px,
       transparent 8px 16px
     );
   }
@@ -9209,12 +9684,12 @@ const SelectLocationVisual = ({ theme }) => {
   const [activeIdx, setActiveIdx] = useState(0);
 
   const cities = [
-    { name: "Delhi NCR", class: "del", x: 30.5, y: 30.3, pods: "2500+", space: "19%" },
-    { name: "Bengaluru", class: "blr", x: 32.4, y: 79.8, pods: "2500+", space: "23%" },
-    { name: "Mumbai", class: "bom", x: 16.2, y: 59.6, pods: "1500+", space: "16%" },
-    { name: "Kolkata", class: "ccu", x: 69.1, y: 48.0, pods: "500+", space: "30%" },
-    { name: "Patna", class: "pat", x: 58.1, y: 44.0, pods: "300+", space: "0%" },
-    { name: "Hyderabad", class: "hyd", x: 35.4, y: 65.2, pods: "400+", space: "13%" }
+    { name: "Delhi NCR", class: "del", x: 30.5, y: 30.3, pods: "2500+", space: "19%", stateId: "dl" },
+    { name: "Bengaluru", class: "blr", x: 32.4, y: 79.8, pods: "2500+", space: "23%", stateId: "ka" },
+    { name: "Mumbai", class: "bom", x: 16.2, y: 59.6, pods: "1500+", space: "16%", stateId: "mh" },
+    { name: "Kolkata", class: "ccu", x: 69.1, y: 48.0, pods: "500+", space: "30%", stateId: "wb" },
+    { name: "Patna", class: "pat", x: 58.1, y: 44.0, pods: "300+", space: "0%", stateId: "br" },
+    { name: "Hyderabad", class: "hyd", x: 35.4, y: 65.2, pods: "400+", space: "13%", stateId: "tg" }
   ];
 
   useEffect(() => {
@@ -9234,17 +9709,16 @@ const SelectLocationVisual = ({ theme }) => {
         <div className="radar-circle rc-1"></div>
         <div className="radar-circle rc-2"></div>
         <div className="radar-circle rc-3"></div>
-        <div className="radar-sweep"></div>
       </div>
 
       <div className="jv-map-stats-overlay">
         <div className="overlay-tag">⚡ Live Status</div>
-        <div className="overlay-city">{activeRadarCity.name}</div>
-        <div className="overlay-row">
+        <div className="overlay-city overlay-anim" key={activeRadarCity.name}>{activeRadarCity.name}</div>
+        <div className="overlay-row overlay-anim" key={activeRadarCity.name + "-pods"}>
           <span>Pods Live</span>
           <strong>{activeRadarCity.pods}</strong>
         </div>
-        <div className="overlay-row">
+        <div className="overlay-row overlay-anim" key={activeRadarCity.name + "-space"}>
           <span>Space Avail.</span>
           <strong style={{ color: 'var(--accent)' }}>{activeRadarCity.space}</strong>
         </div>
@@ -9253,6 +9727,7 @@ const SelectLocationVisual = ({ theme }) => {
       <div className="jv-india-map-wrapper">
         <IndiaMapSVG
           className="jv-india-svg"
+          activeStateId={activeRadarCity.stateId}
         />
         {cities.map((c, index) => {
           const isActive = activeIdx === index;
@@ -9287,6 +9762,16 @@ export default function DarkStoreOnboarding() {
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
   const [simulationData, setSimulationData] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [syncTime, setSyncTime] = useState(new Date().toLocaleTimeString());
+  const [orderCount, setOrderCount] = useState(1425);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSyncTime(new Date().toLocaleTimeString());
+      setOrderCount((prev) => prev + Math.floor(Math.random() * 2) + 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     document.documentElement.className = theme;
@@ -10094,29 +10579,44 @@ export default function DarkStoreOnboarding() {
 
             <div className="lp-journey-steps-list">
               {[
-                { step: 1, title: "Select Stores", },
-                { step: 2, title: "Tech Integration", },
-                { step: 3, title: "Compliance & Setup", },
-                { step: 4, title: "Inward Inventory", },
-                { step: 5, title: "Go Live", }
-              ].map((j, idx) => {
-                const isActive = (journeyHoverStep !== null ? journeyHoverStep : journeyAutoStep) === idx;
+                { step: 1, title: "Select Stores", desc: "Choose the right Dark Stores & MiniPods based on your requirements." },
+                { step: 2, title: "Tech Integration", desc: "Seamlessly integrate your OMS, WMS & APIs for real-time operations." },
+                { step: 3, title: "Compliance & Setup", desc: "Complete all legal requirements to become launch-ready." },
+                { step: 4, title: "Send Inventory", desc: "Stock inventory based on our AI-powered forecast recommendations." },
+                { step: 5, title: "Go Live", desc: "Start accepting orders & deliver to customers at lightning speed." }
+              ].map((j, idx, arr) => {
+                const activeIdx = journeyHoverStep !== null ? journeyHoverStep : journeyAutoStep;
+                const isActive = activeIdx === idx;
+                const isCompleted = activeIdx > idx;
                 return (
-                  <div
-                    key={idx}
-                    className={`lp-journey-step ${isActive ? "active-step" : ""}`}
-                    onMouseEnter={() => { setJourneyHoverStep(idx); setJourneyAutoStep(idx); }}
-                    onMouseLeave={() => setJourneyHoverStep(null)}
-                  >
-                    <div className="lp-journey-step-node">
-                      <div className="lp-journey-step-num">{j.step}</div>
+                  <Fragment key={idx}>
+                    <div
+                      className={`lp-journey-step ${isActive ? "active-step" : ""} ${isCompleted ? "completed-step" : ""}`}
+                      onMouseEnter={() => { setJourneyHoverStep(idx); setJourneyAutoStep(idx); }}
+                      onMouseLeave={() => setJourneyHoverStep(null)}
+                    >
+                      <div className="lp-journey-step-node">
+                        <div className="lp-journey-step-num">{j.step}</div>
+                      </div>
+                      <div className="lp-journey-step-content">
+                        <h3 className="lp-journey-step-title">{j.title}</h3>
+                        {j.desc && <p className="lp-journey-step-desc">{j.desc}</p>}
+                        <div className="lp-journey-card-timer"></div>
+                        {isActive && (
+                          <div className="lp-journey-mobile-visual">
+                            {renderJourneyVisual(idx)}
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="lp-journey-step-content">
-                      <h3 className="lp-journey-step-title">{j.title}</h3>
-                      {j.desc && <p className="lp-journey-step-desc">{j.desc}</p>}
-                      <div className="lp-journey-card-timer"></div>
-                    </div>
-                  </div>
+                    {idx < arr.length - 1 && (
+                      <div className={`lp-step-connector ${isCompleted ? "filled" : ""}`}>
+                        <div className="lp-step-connector-track">
+                          <div className="lp-step-connector-fill" />
+                        </div>
+                      </div>
+                    )}
+                  </Fragment>
                 );
               })}
             </div>
@@ -10340,21 +10840,38 @@ export default function DarkStoreOnboarding() {
                 <div className="jv-tech-badge shopify">Shopify</div>
                 <div className="jv-tech-badge custom-api">API</div>
               </div>
-              <div className="jv-tech-line">
-                <span className="jv-tech-dot"></span>
-                <span className="jv-tech-dot delay-1"></span>
-                <span className="jv-tech-dot delay-2"></span>
+              <div className="jv-tech-middle">
+                <svg viewBox="0 0 240 120" className="tech-flow-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <filter id="flow-glow" x="-20%" y="-20%" width="140%" height="140%">
+                      <feGaussianBlur stdDeviation="2.5" result="blur" />
+                      <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  
+                  {/* Background curves */}
+                  <path d="M 10 30 C 100 30 140 60 230 60" className="flow-path-bg" />
+                  <path d="M 10 90 C 100 90 140 60 230 60" className="flow-path-bg" />
+                  
+                  {/* Active glowing flow paths */}
+                  <path d="M 10 30 C 100 30 140 60 230 60" className="flow-path-active shopify-pulse" filter="url(#flow-glow)" />
+                  <path d="M 10 90 C 100 90 140 60 230 60" className="flow-path-active api-pulse" filter="url(#flow-glow)" />
+                </svg>
               </div>
               <div className="jv-tech-right">
                 <div className="jv-tech-blitz">Blitz OMS</div>
               </div>
             </div>
             <pre className="jv-json">
-              {`{
-  "status": "connected",
-  "sync": "real-time",
-  "webhooks": "active"
-}`}
+              <span className="json-bracket">{"{"}</span>{"\n"}
+              {"  "}<span className="json-key">"status"</span>: <span className="json-val">"connected"</span>,<span className="json-comment"> // active</span>{"\n"}
+              {"  "}<span className="json-key">"sync"</span>: <span className="json-val">"real-time"</span>,{"\n"}
+              {"  "}<span className="json-key">"last_ping"</span>: <span className="json-val">"{syncTime}"</span>,{"\n"}
+              {"  "}<span className="json-key">"orders_synced"</span>: <span className="json-val">{orderCount}</span>{"\n"}
+              <span className="json-bracket">{"}"}</span>
             </pre>
           </div>
         );
@@ -11022,7 +11539,9 @@ export default function DarkStoreOnboarding() {
                     <span className="name">{selectedItem.name} ({selectedItem.l}×{selectedItem.w}×{selectedItem.h} cm)</span>
                   </span>
                 ) : (
-                  <span className="trigger-placeholder">Choose an item to preview...</span>
+                  <span className="trigger-placeholder">
+                    <span className="sparkle-icon">✨</span> Choose an item to preview...
+                  </span>
                 )}
                 <span className="arrow">{isDropdownOpen ? "▲" : "▼"}</span>
               </button>
