@@ -10530,8 +10530,8 @@ export default function DarkStoreOnboarding() {
                 <span className="lp-metric-lbl">Go Live In 7 Days</span>
               </div>
               <div className="lp-metric-item">
-                <span className="lp-metric-val">5</span>
-                <span className="lp-metric-lbl">Cities Active</span>
+                <span className="lp-metric-val">99.8%</span>
+                <span className="lp-metric-lbl">Fulfillment Accuracy</span>
               </div>
             </div>
 
@@ -10851,11 +10851,11 @@ export default function DarkStoreOnboarding() {
                       </feMerge>
                     </filter>
                   </defs>
-                  
+
                   {/* Background curves */}
                   <path d="M 10 30 C 100 30 140 60 230 60" className="flow-path-bg" />
                   <path d="M 10 90 C 100 90 140 60 230 60" className="flow-path-bg" />
-                  
+
                   {/* Active glowing flow paths */}
                   <path d="M 10 30 C 100 30 140 60 230 60" className="flow-path-active shopify-pulse" filter="url(#flow-glow)" />
                   <path d="M 10 90 C 100 90 140 60 230 60" className="flow-path-active api-pulse" filter="url(#flow-glow)" />
