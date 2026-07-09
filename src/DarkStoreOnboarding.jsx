@@ -6,6 +6,7 @@ import IndiaMapSVG from "./components/onboarding/IndiaMapSVG.jsx";
 
 const STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -4934,7 +4935,7 @@ const STYLES = `
   .lp-body {
     flex: 1;
     display: grid;
-    grid-template-columns: 1.25fr 1fr;
+    grid-template-columns: 1fr 1.35fr;
     gap: 40px;
     align-items: center;
     padding: 8px 96px 48px 96px;
@@ -4946,7 +4947,14 @@ const STYLES = `
     transform: translateY(-20px);
   }
 
-  @media (max-width: 1024px) {
+  @media (max-width: 1360px) {
+    .lp-body {
+      padding: 8px 40px 48px 40px;
+      gap: 28px;
+    }
+  }
+
+  @media (max-width: 1250px) {
     .lp-body {
       grid-template-columns: 1fr;
       gap: 60px;
@@ -5133,9 +5141,9 @@ const STYLES = `
 
   .lp-metrics {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, 120px);
     gap: 16px;
-    width: 100%;
+    width: max-content;
     margin-bottom: 28px;
     border-top: 1px solid var(--border);
     padding-top: 20px;
@@ -5144,52 +5152,100 @@ const STYLES = `
   .lp-metric-item {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 12px;
     background: rgba(255, 255, 255, 0.015);
     border: 1px solid rgba(255, 255, 255, 0.04);
-    border-radius: 12px;
-    padding: 12px 10px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 16px 14px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(12px);
     position: relative;
     overflow: hidden;
+    cursor: pointer;
+    width: 100%;
   }
 
   html.light .lp-metric-item {
     background: rgba(0, 0, 0, 0.02);
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.06);
   }
 
   .lp-metric-item:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px);
     border-color: rgba(99, 102, 241, 0.35);
-    background: rgba(99, 102, 241, 0.05);
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.08);
+    background: rgba(99, 102, 241, 0.04);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  html.light .lp-metric-item:hover {
+    border-color: rgba(99, 102, 241, 0.35);
+    background: rgba(99, 102, 241, 0.03);
+    box-shadow: 0 10px 24px rgba(99, 102, 241, 0.04);
+  }
+
+  .lp-metric-item.active {
+    transform: translateY(-4px);
+    border-color: var(--accent) !important;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.02) 100%) !important;
+    box-shadow: 0 12px 30px rgba(99, 102, 241, 0.15), 0 0 1px var(--accent) inset !important;
+  }
+
+  html.light .lp-metric-item.active {
+    border-color: var(--accent) !important;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(79, 70, 229, 0.01) 100%) !important;
+    box-shadow: 0 12px 30px rgba(79, 70, 229, 0.08) !important;
+  }
+
+  .lp-metric-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-2);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  html.light .lp-metric-icon {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.08);
+    color: #475569;
+  }
+
+  .lp-metric-item.active .lp-metric-icon {
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 12px var(--accent-glow);
+    transform: scale(1.05);
   }
 
   .lp-metric-val {
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #fff 0%, #c7d2fe 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: block;
+    text-align: center;
+    transition: color 0.3s;
   }
 
   html.light .lp-metric-val {
-    background: linear-gradient(135deg, #111827 0%, var(--accent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #475569;
   }
 
-  .lp-metric-lbl {
-    font-size: 9.5px;
-    color: var(--text-3);
-    margin-top: 4px;
-    line-height: 1.35;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+  .lp-metric-item.active .lp-metric-val {
+    color: var(--text) !important;
+  }
+
+  html.light .lp-metric-item.active .lp-metric-val {
+    color: #0f172a !important;
   }
 
   .lp-actions {
@@ -5832,18 +5888,13 @@ const STYLES = `
   /* Landing page visual polish */
   html.light .lp-metric-item {
     background: #ffffff !important;
-    border: 1px solid rgba(15, 23, 42, 0.04) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+    border: 1px solid rgba(15, 23, 42, 0.06) !important;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.02) !important;
   }
   html.light .lp-metric-item:hover {
-    border-color: rgba(79, 70, 229, 0.25) !important;
-    background: rgba(79, 70, 229, 0.02) !important;
-    box-shadow: 0 12px 30px rgba(79, 70, 229, 0.06) !important;
-  }
-  html.light .lp-metric-val {
-    background: linear-gradient(135deg, #0f172a 0%, #4f46e5 100%) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
+    border-color: rgba(99, 102, 241, 0.35) !important;
+    background: rgba(99, 102, 241, 0.02) !important;
+    box-shadow: 0 12px 30px rgba(99, 102, 241, 0.05) !important;
   }
   html.light .lp-title span.accent {
     background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
@@ -6598,6 +6649,7 @@ const STYLES = `
       order: 6 !important;
       grid-template-columns: repeat(2, 1fr) !important;
       gap: 12px !important;
+      width: 100% !important;
       padding-top: 16px !important;
       margin-bottom: 12px !important;
       border-top: 1px solid var(--border) !important;
@@ -6606,26 +6658,11 @@ const STYLES = `
     .lp-metric-item {
       padding: 14px 10px !important;
       border-radius: 12px !important;
-      background: rgba(255, 255, 255, 0.02) !important;
-      border: 1px solid rgba(255, 255, 255, 0.05) !important;
-      backdrop-filter: blur(10px) !important;
-    }
-
-    html.light .lp-metric-item {
-      background: rgba(255, 255, 255, 0.7) !important;
-      border: 1px solid rgba(15, 23, 42, 0.04) !important;
     }
 
     .lp-metric-val {
-      font-size: 18px !important;
-      font-weight: 750 !important;
-      margin-bottom: 4px !important;
-    }
-
-    .lp-metric-lbl {
-      font-size: 10px !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.03em !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
     }
 
     .lp-actions {
@@ -9282,8 +9319,1217 @@ const STYLES = `
     max-width: 600px;
     line-height: 1.5;
   }
-}
+
+  /* ============ THE DOODLE LOGO ============ */
+  :root {
+    --dur: 11s;
+    --blitz-blue: #2f6bff;
+    --blitz-blue-dk: #1f4fd6;
+    --box: #f2ede2;
+    --box-shadow: #d8d2c4;
+    --skin: #e8a06b;
+  }
+  .doodle-wrap { width: 260px; max-width: 70vw; }
+  .doodle-wrap svg { width: 100%; height: auto; display: block; overflow: hidden; }
+
+  .wordmark {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    fill: var(--text);
+    letter-spacing: .5px;
+  }
+  .tagline {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    fill: var(--text);
+  }
+
+  svg [class] { transform-box: fill-box; }
+
+  .tile { transform-origin: 50% 100%; }
+  .run .tile { animation: tileSquash var(--dur) ease-in-out infinite; }
+  @keyframes tileSquash {
+    0%,1.5% { transform: scale(1,1); }
+    3% { transform: scale(1.04,.95); }
+    5%,64.5% { transform: scale(1,1); }
+    66% { transform: scale(1.05,.94); }
+    68%,100% { transform: scale(1,1); }
+  }
+  .door { transform-origin: 50% 100%; transform: scaleY(0); }
+  .run .door { animation: door var(--dur) ease-in-out infinite; }
+  @keyframes door {
+    0%,1% { transform: scaleY(0); }
+    4%,13% { transform: scaleY(1); }
+    16%,100% { transform: scaleY(0); }
+  }
+
+  .pkg { transform: translate(88px,96px) scale(.7); opacity: 0; }
+  .run .pkg { animation: pkg var(--dur) linear infinite; }
+  @keyframes pkg {
+    0%,3.5%   { transform: translate(88px,96px) scale(.7); opacity: 0; }
+    4.5%      { transform: translate(88px,98px) scale(.85, .85); opacity: 1; }
+    5.5%      { transform: translate(98px,142px) scale(.9, 1.15); }
+    6.5%      { transform: translate(108px,148px) scale(1.15, .85); }
+    7.5%      { transform: translate(120px,136px) scale(.9, 1.15); }
+    8.5%      { transform: translate(132px,148px) scale(1.15, .85); }
+    10%       { transform: translate(202px,135px) scale(1, 1); }
+    12%       { transform: translate(268px,148px) scale(1, 1); }
+    13.5%     { transform: translate(332px,129px) scale(.9, 1.15); }
+    15%       { transform: translate(394px,148px) scale(1.18, .85); }
+    16.2%     { transform: translate(422px,112px) scale(.9, 1.18); }
+    17.5%     { transform: translate(432px,118px) scale(1.18, .82); opacity: 1; }
+    19%,45%   { transform: translate(432px,116px) scale(1, 1); opacity: 1; }
+    47%       { transform: translate(488px,85px) scale(.85, 1.18); }
+    48.8%     { transform: translate(538px,110px) scale(1.12, .88); opacity: 1; }
+    49.3%,100%{ transform: translate(538px,110px) scale(1, 1); opacity: 0; }
+  }
+
+  .tape { transform-origin: 0 50%; transform: scaleX(0); }
+  .run .tape { animation: tape var(--dur) ease-out infinite; }
+  @keyframes tape {
+    0%,20% { transform: scaleX(0); }
+    25%,100% { transform: scaleX(1); }
+  }
+  .roller { opacity: 0; transform: translate(426px,98px) rotate(0deg); }
+  .run .roller { animation: roller var(--dur) ease-in-out infinite; }
+  @keyframes roller {
+    0%,19%  { opacity: 0; transform: translate(426px,98px) rotate(0deg); }
+    20.5%   { opacity: 1; transform: translate(428px,104px) rotate(40deg); }
+    24.5%   { opacity: 1; transform: translate(458px,104px) rotate(300deg); }
+    26%,100%{ opacity: 0; transform: translate(462px,98px) rotate(340deg); }
+  }
+
+  .scan { transform: translateX(340px); }
+  .run .scan { animation: scan var(--dur) ease-in-out infinite; }
+  @keyframes scan {
+    0%,26.5% { transform: translateX(340px); }
+    29%,36% { transform: translateX(0); }
+    39%,100% { transform: translateX(340px); }
+  }
+  .beam { opacity: 0; filter: drop-shadow(0 0 6px var(--green)); }
+  .run .beam { animation: beam var(--dur) linear infinite; }
+  @keyframes beam {
+    0%,29.5% { opacity: 0; }
+    30.5% { opacity: .85; }
+    31.5% { opacity: .15; }
+    32.5% { opacity: .85; }
+    34%,100% { opacity: 0; }
+  }
+  .sweep { opacity: 0; filter: drop-shadow(0 0 4px var(--green)); }
+  .run .sweep { animation: sweep var(--dur) linear infinite; }
+  @keyframes sweep {
+    0%,30% { opacity: 0; transform: translateY(0); }
+    30.5% { opacity: .9; transform: translateY(0); }
+    33%   { opacity: .9; transform: translateY(18px); }
+    33.5%,100% { opacity: 0; transform: translateY(18px); }
+  }
+  .ping { opacity: 0; transform-origin: center; transform: scale(.2); }
+  .run .ping { animation: ping var(--dur) ease-out infinite; }
+  @keyframes ping {
+    0%,33.5% { opacity: 0; transform: scale(.2); }
+    34.5% { opacity: .9; transform: scale(1); }
+    37%  { opacity: 0; transform: scale(1.9); }
+    100% { opacity: 0; transform: scale(1.9); }
+  }
+  .check { opacity: 0; stroke-dasharray: 24; stroke-dashoffset: 24; transform-origin: center; }
+  .run .check { animation: check var(--dur) ease-out infinite; }
+  @keyframes check {
+    0%,33.8% { opacity: 0; stroke-dashoffset: 24; }
+    34.5% { opacity: 1; }
+    36%  { opacity: 1; stroke-dashoffset: 0; }
+    38.5% { opacity: 1; stroke-dashoffset: 0; }
+    41%,100% { opacity: 0; stroke-dashoffset: 0; }
+  }
+
+  .moto { transform: translate(-180px,170px); transform-origin: center bottom; }
+  .run .moto { animation: moto var(--dur) linear infinite; }
+  @keyframes moto {
+    0%,37% { transform: translate(-180px,170px) rotate(0deg); }
+    43.5% { transform: translate(600px,170px) rotate(0deg); }
+    45%,47% { transform: translate(585px,171px) rotate(-1deg); }
+    49%   { transform: translate(585px,170px) rotate(0deg); }
+    51%,52.5% { transform: translate(575px,170px) rotate(-2.5deg); }
+    54%   { transform: translate(650px,170px) rotate(3deg); }
+    58%   { transform: translate(820px,170px) rotate(1.5deg); }
+    64%,100%{ transform: translate(1020px,170px) rotate(0deg); }
+  }
+  .riderBob { transform: translateY(0); }
+  .run .riderBob { animation: riderBob 0.55s ease-in-out infinite alternate; }
+  @keyframes riderBob { from { transform: translateY(0); } to { transform: translateY(-1.8px); } }
+  .motoBox { opacity: 0; }
+  .run .motoBox { animation: motoBox var(--dur) linear infinite; }
+  @keyframes motoBox {
+    0%,48.7% { opacity: 0; }
+    49.2%,100% { opacity: 1; }
+  }
+  .speedlines { opacity: 0; }
+  .run .speedlines { animation: speedlines var(--dur) linear infinite; }
+  @keyframes speedlines {
+    0%,52% { opacity: 0; }
+    54% { opacity: .85; }
+    58% { opacity: .5; }
+    63%,100% { opacity: 0; }
+  }
+  .wheel-spoke { transform-origin: center; }
+  .run .wheel-spoke { animation: spin .5s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .run .puff-1 { animation: puff1 var(--dur) ease-out infinite; }
+  .run .puff-2 { animation: puff2 var(--dur) ease-out infinite; }
+  .run .puff-3 { animation: puff3 var(--dur) ease-out infinite; }
+  @keyframes puff1 {
+    0%,53% { opacity: 0; transform: translate(0,0) scale(0.3); }
+    54.5% { opacity: 0.75; transform: translate(-12px,-6px) scale(1); }
+    57%,100% { opacity: 0; transform: translate(-24px,-12px) scale(1.6); }
+  }
+  @keyframes puff2 {
+    0%,53.5% { opacity: 0; transform: translate(0,0) scale(0.3); }
+    55% { opacity: 0.65; transform: translate(-18px,-4px) scale(1); }
+    57.5%,100% { opacity: 0; transform: translate(-36px,-8px) scale(1.7); }
+  }
+  @keyframes puff3 {
+    0%,54% { opacity: 0; transform: translate(0,0) scale(0.3); }
+    55.5% { opacity: 0.6; transform: translate(-22px,-1px) scale(1); }
+    58%,100% { opacity: 0; transform: translate(-44px,-2px) scale(1.5); }
+  }
+
+  .run .ltr1 { animation: ltr1 var(--dur) ease-in-out infinite; }
+  .run .ltr2 { animation: ltr2 var(--dur) ease-in-out infinite; }
+  .run .ltr3 { animation: ltr3 var(--dur) ease-in-out infinite; }
+  .run .ltr4 { animation: ltr4 var(--dur) ease-in-out infinite; }
+  .run .ltr5 { animation: ltr5 var(--dur) ease-in-out infinite; }
+  @keyframes ltr1 { 0%,38.5%,41.5%,100% { transform: translateY(0) rotate(0deg); } 40% { transform: translateY(-12px) rotate(-8deg); } }
+  @keyframes ltr2 { 0%,39.5%,42.5%,100% { transform: translateY(0) rotate(0deg); } 41% { transform: translateY(-12px) rotate(6deg); } }
+  @keyframes ltr3 { 0%,40.5%,43.5%,100% { transform: translateY(0) rotate(0deg); } 42% { transform: translateY(-14px) rotate(-10deg); } }
+  @keyframes ltr4 { 0%,41.5%,44.5%,100% { transform: translateY(0) rotate(0deg); } 43% { transform: translateY(-12px) rotate(8deg); } }
+  @keyframes ltr5 { 0%,42.5%,45.5%,100% { transform: translateY(0) rotate(0deg); } 44% { transform: translateY(-12px) rotate(-6deg); } }
+
+  .plane { opacity: 0; transform: translate(52px,58px) rotate(-12deg); }
+  .run .plane { animation: plane var(--dur) linear infinite; }
+  @keyframes plane {
+    0%,65% { opacity: 0; transform: translate(52px,58px) rotate(-12deg); }
+    66%   { opacity: 1; transform: translate(70px,48px) rotate(-14deg); }
+    69%   { opacity: 1; transform: translate(210px,14px) rotate(2deg); }
+    72.5% { opacity: 1; transform: translate(410px,4px)  rotate(10deg); }
+    76%   { opacity: 1; transform: translate(620px,30px) rotate(26deg); }
+    78.5% { opacity: 1; transform: translate(790px,84px) rotate(42deg); }
+    79%,100% { opacity: 0; transform: translate(790px,84px) rotate(42deg); }
+  }
+  .trail { opacity: 0; stroke-dasharray: 100; stroke-dashoffset: 100; }
+  .run .trail { animation: trail var(--dur) linear infinite; }
+  @keyframes trail {
+    0%,65.5% { opacity: 0; stroke-dashoffset: 100; }
+    66.5% { opacity: .45; }
+    78%   { opacity: .45; stroke-dashoffset: 0; }
+    82%,100% { opacity: 0; stroke-dashoffset: 0; }
+  }
+
+  .dot { transform-origin: center; }
+  .run .dot { animation: dot 2.2s ease-in-out infinite; }
+  @keyframes dot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(.75); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .run * { animation: none !important; }
+  }
+  .doodle-wrap {
+    width: 260px;
+    max-width: 70vw;
+  }
+
+  /* --- KPI ACTIVE HIGHLIGHT STYLES --- */
+
+  .lp-kpi-animation-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* --- REPLENISHMENT ANIMATION CSS --- */
+  .replenish-card-new {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 24px;
+    padding: 24px;
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
+    backdrop-filter: blur(24px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-self: center;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 1px rgba(255,255,255,0.06) inset;
+  }
+  html.light .replenish-card-new {
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 30px 60px rgba(15, 23, 42, 0.06);
+  }
+  .replenish-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-2);
+  }
+  html.light .replenish-header {
+    color: #334155;
+  }
+  .replenish-dot-green {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulseGlow 1.5s infinite alternate;
+  }
+  @keyframes pulseGlow {
+    from { transform: scale(0.9); opacity: 0.7; }
+    to { transform: scale(1.2); opacity: 1; }
+  }
+  .replenish-badge {
+    margin-left: auto;
+    font-size: 11px;
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--green);
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+  .rep-visual-flow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255,255,255,0.03);
+    border-radius: 16px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    min-height: 0;
+  }
+  html.light .rep-visual-flow {
+    background: rgba(15, 23, 42, 0.02);
+    border-color: rgba(15, 23, 42, 0.05);
+  }
+  .rep-hub, .rep-pod {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 2;
+    width: 90px;
+  }
+  .rep-hub-icon {
+    font-size: 32px;
+    background: rgba(99, 102, 241, 0.12);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 16px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
+  }
+  .rep-pod-icon {
+    font-size: 32px;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 16px;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+    transition: all 0.3s;
+  }
+  .rep-pod.low-stock .rep-pod-icon {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.35);
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.25);
+    animation: bounceAlert 1s infinite alternate;
+  }
+  @keyframes bounceAlert {
+    from { transform: scale(1); }
+    to { transform: scale(1.06); }
+  }
+  .node-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-2);
+    text-align: center;
+  }
+  html.light .node-title {
+    color: #475569;
+  }
+  .rep-route {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+    position: relative;
+    margin: 0 -8px;
+    z-index: 1;
+  }
+  html.light .rep-route {
+    background: rgba(0, 0, 0, 0.06);
+  }
+  .rep-route-active {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    width: 0;
+    transition: width 0.3s ease;
+  }
+  .rep-route-active.in-transit {
+    width: 100%;
+    background: #f59e0b;
+    box-shadow: 0 0 8px #f59e0b;
+    transition: width 3.5s linear;
+  }
+  .rep-route-active.delivered {
+    width: 100%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+  }
+  .rep-truck {
+    font-size: 24px;
+    position: absolute;
+    top: -24px;
+    left: -12px;
+    opacity: 0;
+    transform: translateX(0);
+    transition: none;
+    z-index: 5;
+  }
+  .rep-truck.drive {
+    opacity: 1;
+    animation: driveTruck 3.5s linear forwards;
+  }
+  @keyframes driveTruck {
+    0% { transform: translateX(0); }
+    90% { transform: translateX(120px); opacity: 1; }
+    100% { transform: translateX(125px); opacity: 0; }
+  }
+  .rep-stock-gauge {
+    position: absolute;
+    bottom: -15px;
+    width: 50px;
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  html.light .rep-stock-gauge {
+    background: rgba(0, 0, 0, 0.06);
+  }
+  .rep-stock-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease-out, background-color 0.3s;
+  }
+  .rep-popup-order {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    background: var(--accent);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+    opacity: 0;
+    z-index: 10;
+    animation: orderPopup 2.5s ease-out forwards;
+    white-space: nowrap;
+  }
+  @keyframes orderPopup {
+    0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  }
+  .rep-status-banner {
+    background: rgba(255,255,255,0.01);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 10px 14px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text-2);
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  html.light .rep-status-banner {
+    background: rgba(0, 0, 0, 0.01);
+    border-color: rgba(0, 0, 0, 0.05);
+    color: #475569;
+  }
+  .rep-timeline {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    padding-top: 10px;
+  }
+  .rep-timeline::before {
+    content: '';
+    position: absolute;
+    top: 22px;
+    left: 20px;
+    right: 20px;
+    height: 2px;
+    background: rgba(255,255,255,0.04);
+    z-index: 1;
+  }
+  html.light .rep-timeline::before {
+    background: rgba(0,0,0,0.06);
+  }
+  .rep-timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    z-index: 2;
+    width: 25%;
+  }
+  .step-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--bg-elevated);
+    border: 2px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-3);
+    transition: all 0.3s;
+  }
+  html.light .step-dot {
+    background: #f1f5f9;
+    border-color: rgba(0,0,0,0.08);
+  }
+  .rep-timeline-step.active .step-dot {
+    border-color: var(--accent);
+    color: #ffffff;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+  .rep-timeline-step.active:nth-child(3) .step-dot {
+    border-color: #f59e0b;
+    background: #f59e0b;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+  }
+  .rep-timeline-step.active:nth-child(4) .step-dot {
+    border-color: var(--green);
+    background: var(--green);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+  }
+  .step-label {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+  .rep-timeline-step.active .step-label {
+    color: var(--text);
+  }
+  html.light .rep-timeline-step.active .step-label {
+    color: #0f172a;
+  }
+
+  /* --- 3D PACKAGING STUDIO STYLING --- */
+  .pkg-card-new {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 24px;
+    padding: 24px;
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
+    backdrop-filter: blur(24px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-self: center;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 1px rgba(255,255,255,0.06) inset;
+  }
+  html.light .pkg-card-new {
+    background: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 30px 60px rgba(15, 23, 42, 0.06);
+  }
+  .pkg-dot-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulseGlow 1.5s infinite alternate;
+  }
+  .pkg-badge {
+    margin-left: 3px;
+    font-size: 11px;
+    background: rgba(99, 102, 241, 0.15);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+  }
+  .pkg-viewport-new {
+    flex: 1;
+    min-height: 0;
+    perspective: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.3) 100%);
+    border: 1px solid rgba(255,255,255,0.03);
+    border-radius: 16px;
+    position: relative;
+  }
+  html.light .pkg-viewport-new {
+    background: radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.01) 0%, rgba(15, 23, 42, 0.04) 100%);
+    border-color: rgba(15, 23, 42, 0.05);
+  }
+
+  /* 3D Rotating Box */
+  .pkg-3d-scene-new {
+    width: 130px;
+    height: 130px;
+    transform-style: preserve-3d;
+    animation: autoSpinBox 16s linear infinite;
+  }
+  @keyframes autoSpinBox {
+    0% { transform: rotateY(0deg) rotateX(-18deg) rotateZ(-2deg); }
+    100% { transform: rotateY(360deg) rotateX(-18deg) rotateZ(-2deg); }
+  }
+
+  .pkg-box-new {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+  }
+
+  .box-face {
+    position: absolute;
+    box-shadow: inset 0 0 15px rgba(0,0,0,0.3);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* Themes Shading & Material Grains */
+  .box-face.theme-kraft {
+    background: linear-gradient(135deg, #d4a373 0%, #a77a4c 100%);
+    border: 1px solid #bd8f61;
+  }
+
+  /* Logos & Custom Text branding style */
+  .pkg-logo-custom {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 6px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    text-transform: uppercase;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: 0.05em;
+  }
+
+  /* Branded Tape overlay */
+  .pkg-tape {
+    font-size: 8px;
+    font-weight: 800;
+    width: 100%;
+    text-align: center;
+    height: 18px;
+    line-height: 18px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    letter-spacing: 0.1em;
+    box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+    background: #6366f1;
+    color: #ffffff;
+  }
+
+  /* Fragile Stamp Label */
+  .pkg-sticker-fragile {
+    font-size: 8px;
+    font-weight: 900;
+    padding: 2px 4.5px;
+    transform: rotate(-15deg);
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    animation: stampAppear 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    background: #ef4444;
+    color: #ffffff;
+    border: 1px dashed #ffffff;
+  }
+  @keyframes stampAppear {
+    from { transform: scale(3.5) rotate(-45deg); opacity: 0; }
+    to { transform: scale(1) rotate(-15deg); opacity: 1; }
+  }
+
+  /* Controls and customization panels */
+  .pkg-controls-new {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 16px;
+  }
+  html.light .pkg-controls-new {
+    border-top-color: rgba(0,0,0,0.06);
+  }
+  .pkg-control-group-input {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+  }
+  .pkg-brand-input {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    outline: none;
+    transition: all 0.2s;
+    flex: 1;
+    max-width: 180px;
+    text-align: right;
+  }
+  html.light .pkg-brand-input {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.08);
+    color: #0f172a;
+  }
+  .pkg-brand-input:focus {
+    border-color: var(--accent);
+  }
+
+  .pkg-control-group-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  .pkg-control-group-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .control-label {
+    font-size: 12px;
+    color: var(--text-3);
+  }
+
+  /* Direct Action Buttons */
+  .control-buttons {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+  }
+  .control-buttons button {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text-2);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+    text-align: center;
+  }
+  html.light .control-buttons button {
+    background: rgba(0,0,0,0.02);
+    border-color: rgba(0,0,0,0.08);
+    color: #334155;
+  }
+  .control-buttons button.active {
+    background: var(--accent);
+    color: #ffffff !important;
+    border-color: var(--accent);
+  }
+
+  /* Premium Sliding Switch */
+  .pkg-switch {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+  }
+  .pkg-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .pkg-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.06);
+    transition: .3s;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  html.light .pkg-switch-slider {
+    background-color: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+  .pkg-switch input:checked + .pkg-switch-slider {
+    background-color: var(--accent);
+    border-color: var(--accent);
+  }
+  .pkg-switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .pkg-switch input:checked + .pkg-switch-slider:before {
+    transform: translateX(16px);
+  }
+
+  .acc-card {
+    background: rgba(10, 10, 15, 0.7);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+    border-radius: 20px;
+    padding: 16px 20px;
+    width: 100%;
+    max-width: 480px;
+    aspect-ratio: 1 / 1;
+    box-sizing: border-box;
+    backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-self: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(16, 185, 129, 0.03);
+  }
+  html.light .acc-card {
+    background: #ffffff;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.05);
+  }
+  .acc-header-new {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 8px;
+    width: 100%;
+  }
+  html.light .acc-header-new {
+    border-bottom-color: rgba(0, 0, 0, 0.06);
+  }
+  .acc-header-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .acc-live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 8px;
+    font-weight: 800;
+    color: var(--green);
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    padding: 2px 6px;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .acc-live-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    animation: livePulse 1s infinite alternate ease-in-out;
+  }
+  @keyframes livePulse {
+    from { opacity: 0.4; }
+    to { opacity: 1; }
+  }
+
+  .acc-top-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 12px;
+    width: 100%;
+  }
+
+  /* QC Chamber */
+  .acc-chamber {
+    position: relative;
+    height: 125px;
+    border-radius: 12px;
+    background: #07070a;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+  }
+  html.light .acc-chamber {
+    background: #f8fafc;
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.03);
+  }
+  .acc-chamber-grid {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(rgba(16, 185, 129, 0.06) 1px, transparent 1px) 0 0 / 12px 12px;
+    opacity: 0.8;
+  }
+  html.light .acc-chamber-grid {
+    background: radial-gradient(rgba(16, 185, 129, 0.12) 1px, transparent 1px) 0 0 / 12px 12px;
+  }
+  .acc-laser-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0) 0%, rgba(16, 185, 129, 0.85) 50%, rgba(16, 185, 129, 0) 100%);
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+    z-index: 5;
+    pointer-events: none;
+    animation: laserScan 2.5s ease-in-out infinite;
+  }
+  @keyframes laserScan {
+    0%, 100% { top: 0%; }
+    50% { top: 100%; }
+  }
+  .acc-package-silhouette {
+    width: 60px;
+    height: 60px;
+    stroke: rgba(255, 255, 255, 0.15);
+    stroke-width: 1.5;
+    fill: rgba(255, 255, 255, 0.02);
+    transition: all 0.3s;
+  }
+  html.light .acc-package-silhouette {
+    stroke: rgba(0, 0, 0, 0.15);
+    fill: rgba(0, 0, 0, 0.01);
+  }
+  .acc-chamber.pulse .acc-package-silhouette {
+    stroke: var(--green);
+    fill: rgba(16, 185, 129, 0.08);
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.3));
+    transform: scale(1.05);
+  }
+  .acc-cam-label {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-size: 7px;
+    font-family: monospace;
+    color: rgba(255, 255, 255, 0.45);
+    z-index: 6;
+  }
+  html.light .acc-cam-label {
+    color: rgba(0, 0, 0, 0.45);
+  }
+  .acc-rec-dot {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    background: #ef4444;
+    border-radius: 50%;
+    margin-right: 4px;
+    animation: blinkRec 1s infinite alternate;
+  }
+  @keyframes blinkRec {
+    from { opacity: 0.2; }
+    to { opacity: 1; }
+  }
+
+  .acc-bracket {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-color: rgba(16, 185, 129, 0.5);
+    border-style: solid;
+    z-index: 6;
+  }
+  .acc-bracket-tl { top: 8px; left: 8px; border-width: 1px 0 0 1px; }
+  .acc-bracket-tr { top: 8px; right: 8px; border-width: 1px 1px 0 0; }
+  .acc-bracket-bl { bottom: 8px; left: 8px; border-width: 0 0 1px 1px; }
+  .acc-bracket-br { bottom: 8px; right: 8px; border-width: 0 1px 1px 0; }
+
+  /* Telemetry Panel */
+  .acc-telemetry-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 125px;
+  }
+  .acc-main-stats-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  html.light .acc-main-stats-box {
+    background: rgba(0, 0, 0, 0.015);
+    border-color: rgba(0, 0, 0, 0.05);
+  }
+  .acc-main-rate-glow {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--green);
+    letter-spacing: -0.02em;
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.25);
+  }
+  .acc-main-rate-lbl {
+    font-size: 8px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 1px;
+  }
+
+  .acc-counter-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .acc-mini-stat {
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  html.light .acc-mini-stat {
+    background: rgba(0, 0, 0, 0.01);
+    border-color: rgba(0, 0, 0, 0.04);
+  }
+  .acc-mini-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-2);
+  }
+  .acc-mini-lbl {
+    font-size: 7px;
+    color: var(--text-3);
+    text-transform: uppercase;
+  }
+
+  /* Live verification checklist */
+  .acc-checklist {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.01);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    padding: 8px 10px;
+    border-radius: 10px;
+  }
+  html.light .acc-checklist {
+    background: rgba(0, 0, 0, 0.01);
+    border-color: rgba(0, 0, 0, 0.04);
+  }
+  .acc-check-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 8px;
+    color: var(--text-3);
+    font-weight: 600;
+  }
+  .acc-check-icon {
+    font-size: 9px;
+    color: var(--green);
+    text-shadow: 0 0 4px rgba(16, 185, 129, 0.3);
+  }
+  .acc-check-item.active {
+    color: var(--text-2);
+  }
+
+  /* Live logs styling updates */
+  .acc-live-log-new {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+  }
+  .acc-log-title-new {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-3);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+  }
+  .acc-dot-green {
+    width: 6px;
+    height: 6px;
+    background-color: var(--green);
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .acc-log-row {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  html.light .acc-log-row {
+    background: rgba(0, 0, 0, 0.01);
+    border-color: rgba(0, 0, 0, 0.04);
+  }
+  .acc-log-row:hover {
+    background: rgba(99, 102, 241, 0.03);
+    border-color: rgba(99, 102, 241, 0.15);
+    transform: translateX(2px);
+  }
+  .acc-log-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .acc-log-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--green);
+    background: rgba(16, 185, 129, 0.12);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+  .acc-log-dot-pulse {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    animation: qcDotPulse 1.2s infinite alternate ease-in-out;
+  }
+  @keyframes qcDotPulse {
+    from { opacity: 0.3; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1.2); }
+  }
+  .acc-log-id {
+    font-family: monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-2);
+  }
+  .acc-log-time {
+    font-size: 10px;
+    color: var(--text-3);
+  }
+  .acc-log-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .acc-log-status-text {
+    font-size: 11px;
+    color: var(--text-2);
+    font-weight: 500;
+  }
+  html.light .acc-log-status-text {
+    color: #475569;
+  }
+  .acc-log-barcode {
+    display: flex;
+    align-items: flex-end;
+    gap: 1.5px;
+    height: 10px;
+  }
+  .acc-log-barcode div {
+    background: rgba(255, 255, 255, 0.15);
+    height: 100%;
+  }
+  html.light .acc-log-barcode div {
+    background: rgba(0, 0, 0, 0.15);
+  }
+  .acc-log-barcode .bar1 { width: 1px; }
+  .acc-log-barcode .bar2 { width: 2.5px; }
+  .acc-log-barcode .bar3 { width: 1px; }
+  .acc-log-barcode .bar4 { width: 2px; }
+  .acc-log-barcode .bar5 { width: 1.5px; }
+  .acc-log-barcode .bar6 { width: 1px; }
+  .acc-log-accuracy-badge {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 0.05em;
+  }
 `;
+
 
 const DOCUMENTS = [
   { id: "gst", name: "GST certificate", sub: "PDF format", req: true },
@@ -9402,6 +10648,36 @@ const Icon = {
   Success: () => (
     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" />
+    </svg>
+  ),
+  Truck: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1" y="3" width="15" height="13" />
+      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+      <circle cx="5.5" cy="18.5" r="2.5" />
+      <circle cx="18.5" cy="18.5" r="2.5" />
+    </svg>
+  ),
+  Package: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="16.5" y1="9.4" x2="7.5" y2="4.21" />
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+      <line x1="12" y1="22.08" x2="12" y2="12" />
+    </svg>
+  ),
+  Refresh: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 4 23 10 17 10" />
+      <polyline points="1 20 1 14 7 14" />
+      <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+    </svg>
+  ),
+  Target: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="6" />
+      <circle cx="12" cy="12" r="2" />
     </svg>
   ),
 };
@@ -9753,8 +11029,713 @@ const SelectLocationVisual = ({ theme }) => {
   );
 };
 
+
+function DoodleLogo({ tagText, onHome }) {
+  const [active, setActive] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setActive(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className={`doodle-wrap ${active ? "run" : ""}`} id="doodle" onClick={onHome} style={{ cursor: "pointer" }}>
+      <svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" role="img"
+        aria-label="Blitz MiniPods — a package is packed, scanned and handed to a delivery rider">
+        <line x1="24" y1="170" x2="776" y2="170" stroke="#23233a" strokeWidth="2" strokeLinecap="round" />
+        <g className="tile">
+          <rect x="20" y="25" width="90" height="90" rx="22" fill="#ffffff" />
+          <image href="Logo.png" x="20" y="25" width="90" height="90" style={{ clipPath: "inset(0% round 22px)" }} />
+          <rect className="door" x="84" y="97" width="20" height="18" rx="3" fill="#111117" />
+        </g>
+        <g className="ltr1"><text className="wordmark" x="132" y="78" fontSize="54">b</text></g>
+        <g className="ltr2"><text className="wordmark" x="169" y="78" fontSize="54">l</text></g>
+        <g className="ltr3"><text className="wordmark" x="187" y="78" fontSize="54">i</text></g>
+        <g className="ltr4"><text className="wordmark" x="205" y="78" fontSize="54">t</text></g>
+        <g className="ltr5"><text className="wordmark" x="228" y="78" fontSize="54">z</text></g>
+        <text className="wordmark" x="273" y="78" fontSize="30" fontWeight="600" fill="var(--accent)">MiniPods</text>
+        <circle className="dot" cx="138" cy="103" r="4" fill="var(--green)" />
+        <text className="tagline" x="150" y="108" fontSize="14">{tagText}</text>
+        <g>
+          <rect x="422" y="138" width="5" height="32" rx="1" fill="#3a3f55" />
+          <rect x="465" y="138" width="5" height="32" rx="1" fill="#3a3f55" />
+          <line x1="427" y1="156" x2="465" y2="170" stroke="#252a3a" strokeWidth="1.5" />
+          <line x1="465" y1="156" x2="427" y2="170" stroke="#252a3a" strokeWidth="1.5" />
+          <rect x="424" y="156" width="44" height="3" rx="1" fill="#252a3a" />
+          <rect x="428" y="146" width="14" height="10" rx="1" fill="#d9cdb8" />
+          <line x1="435" y1="146" x2="435" y2="156" stroke="#c2b49b" strokeWidth="1.5" />
+          <rect x="445" y="149" width="17" height="7" rx="1" fill="#c4b49b" />
+          <line x1="438" y1="134" x2="438" y2="108" stroke="#3a3f55" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1="464" y1="134" x2="464" y2="108" stroke="#3a3f55" strokeWidth="2.5" strokeLinecap="round" />
+          <rect x="436" y="108" width="30" height="3" rx="1" fill="#575e7d" />
+          <rect x="446" y="101" width="10" height="7" rx="1" fill="#1b1e2b" />
+          <rect className="screen-glow" x="447" y="102" width="8" height="5" rx="0.5" fill="#3ddc97" opacity="0.85" />
+          <rect x="450" y="108" width="2" height="3" fill="#1b1e2b" />
+          <rect x="417" y="134" width="58" height="5" rx="1.5" fill="#4e536e" />
+          <rect x="417" y="134" width="58" height="1.5" fill="#71789c" />
+        </g>
+        <g className="pkg">
+          <rect x="0" y="0" width="26" height="22" rx="3" fill="var(--box)" />
+          <rect x="0" y="14" width="26" height="8" rx="3" fill="var(--box-shadow)" />
+          <rect className="tape" x="1" y="8" width="24" height="6" fill="var(--blitz-blue)" />
+          <line x1="13" y1="0" x2="13" y2="8" stroke="var(--box-shadow)" strokeWidth="2" />
+        </g>
+        <g className="roller">
+          <circle cx="0" cy="0" r="7" fill="none" stroke="var(--blitz-blue)" strokeWidth="4" />
+          <line x1="0" y1="-7" x2="0" y2="-14" stroke="var(--blitz-blue)" strokeWidth="3" strokeLinecap="round" />
+        </g>
+        <g className="scan">
+          <g transform="translate(486,116)">
+            <polygon className="beam" points="-4,2 -46,14 -46,26 -4,10" fill="var(--green)" />
+            <rect x="-6" y="-6" width="34" height="16" rx="6" fill="#3a3f55" />
+            <rect x="-10" y="-3" width="7" height="10" rx="2" fill="#575e7d" />
+            <rect x="16" y="10" width="11" height="16" rx="4" fill="#2c3147" />
+            <circle cx="21" cy="-1" r="2.4" fill="var(--green)" />
+          </g>
+        </g>
+        <rect className="sweep" x="430" y="116" width="30" height="2.5" rx="1" fill="var(--green)" />
+        <circle className="ping" cx="446" cy="98" r="12" fill="none" stroke="var(--green)" strokeWidth="2.5" />
+        <path className="check" d="M439,98 l5,5 l10,-11" fill="none" stroke="var(--green)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+        <g className="moto">
+          <g className="speedlines" stroke="var(--muted)" strokeWidth="3" strokeLinecap="round">
+            <line x1="-72" y1="-46" x2="-96" y2="-46" />
+            <line x1="-66" y1="-30" x2="-98" y2="-30" />
+            <line x1="-72" y1="-14" x2="-92" y2="-14" />
+          </g>
+          <circle className="dust puff-1" cx="-52" cy="-18" r="5" fill="#ffffff" opacity="0" />
+          <circle className="dust puff-2" cx="-58" cy="-24" r="7" fill="#ffffff" opacity="0" />
+          <circle className="dust puff-3" cx="-64" cy="-28" r="4" fill="#ffffff" opacity="0" />
+          <g>
+            <circle cx="-38" cy="-13" r="13" fill="#1b1e2b" stroke="#3a3f55" strokeWidth="3" />
+            <g className="wheel-spoke"><line x1="-38" y1="-20" x2="-38" y2="-6" stroke="#575e7d" strokeWidth="2.5" /></g>
+            <circle cx="-38" cy="-13" r="3.5" fill="#575e7d" />
+          </g>
+          <g>
+            <circle cx="40" cy="-13" r="13" fill="#1b1e2b" stroke="#3a3f55" strokeWidth="3" />
+            <g className="wheel-spoke"><line x1="40" y1="-20" x2="40" y2="-6" stroke="#575e7d" strokeWidth="2.5" /></g>
+            <circle cx="40" cy="-13" r="3.5" fill="#575e7d" />
+          </g>
+          <path d="M-48,-16 Q-54,-34 -32,-38 L-14,-38 L-14,-28 L-36,-24 Q-44,-22 -48,-16 Z" fill="var(--blitz-blue)" />
+          <rect x="-18" y="-32" width="40" height="9" rx="4.5" fill="var(--blitz-blue-dk)" />
+          <path d="M22,-34 Q36,-38 39,-58 L46,-58 Q44,-34 33,-20 L22,-20 Z" fill="var(--blitz-blue)" />
+          <line x1="38" y1="-24" x2="40" y2="-13" stroke="#1b1e2b" strokeWidth="4" strokeLinecap="round" />
+          <line x1="44" y1="-58" x2="54" y2="-64" stroke="#1b1e2b" strokeWidth="5" strokeLinecap="round" />
+          <rect x="-56" y="-42" width="30" height="5" rx="2.5" fill="#1b1e2b" />
+          <line x1="-52" y1="-38" x2="-46" y2="-26" stroke="#1b1e2b" strokeWidth="4" strokeLinecap="round" />
+          <g className="motoBox">
+            <g transform="translate(-53,-64)">
+              <rect x="0" y="0" width="26" height="22" rx="3" fill="var(--box)" />
+              <rect x="0" y="14" width="26" height="8" rx="3" fill="var(--box-shadow)" />
+              <rect x="1" y="8" width="24" height="6" fill="var(--blitz-blue)" />
+            </g>
+          </g>
+          <g className="riderBob">
+            <path d="M-16,-38 Q-15,-62 0,-66 L8,-63 Q12,-50 2,-38 Z" fill="#f5f6fa" />
+            <path d="M-10,-38 L-3,-30 L10,-28" fill="none" stroke="#2c3147" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M4,-60 L46,-61" fill="none" stroke="#f5f6fa" strokeWidth="7" strokeLinecap="round" />
+            <circle cx="6" cy="-76" r="9" fill="var(--skin)" />
+            <path d="M-5,-77 a11,11 0 0 1 22,0 l0,3 l-22,0 Z" fill="var(--blitz-blue)" />
+            <rect x="10" y="-78" width="8" height="4" rx="2" fill="#1b1e2b" />
+          </g>
+        </g>
+        <path className="trail" d="M70,60 Q240,-8 430,8 Q620,24 790,86" pathLength="100"
+          fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" />
+        <g className="plane">
+          <polygon points="0,10 30,0 8,22" fill="#ffffff" />
+          <polygon points="8,22 30,0 14,13" fill="var(--accent)" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
+function ReplenishmentAnimation() {
+  // Data points: day, actual/predicted, value, status
+  const weeklyData = [
+    { day: "Mon", val: 120, type: "actual", label: "Actual: 120 units" },
+    { day: "Tue", val: 145, type: "actual", label: "Actual: 145 units" },
+    { day: "Wed", val: 130, type: "actual", label: "Actual: 130 units" },
+    { day: "Thu", val: 165, type: "actual", label: "Actual: 165 units" },
+    { day: "Fri (Today)", val: 190, type: "actual", label: "Today: 190 units" },
+    { day: "Sat (Forecast)", val: 270, type: "predicted", label: "Forecast: 270 units (+42% spike)", event: "Promo Event" },
+    { day: "Sun (Forecast)", val: 240, type: "predicted", label: "Forecast: 240 units", event: "Weekend Surge" },
+    { day: "Mon (Forecast)", val: 185, type: "predicted", label: "Forecast: 185 units" },
+  ];
+
+  // SVG dimensions
+  const width = 400;
+  const height = 180;
+  const padding = { top: 20, right: 20, bottom: 30, left: 40 };
+
+  // Calculate coordinates
+  const getCoordinates = (index, val) => {
+    const x = padding.left + (index * (width - padding.left - padding.right)) / (weeklyData.length - 1);
+    // scale val from 100 to 300 to height
+    const y = height - padding.bottom - ((val - 100) / 200) * (height - padding.top - padding.bottom);
+    return { x, y };
+  };
+
+  const points = weeklyData.map((d, i) => getCoordinates(i, d.val));
+
+  // Build SVG path
+  const buildPath = (pts) => {
+    return pts.reduce((acc, p, i) => {
+      return i === 0 ? `M ${p.x} ${p.y}` : `${acc} L ${p.x} ${p.y}`;
+    }, "");
+  };
+
+  // Divide historical (0-4) and forecast (4-7) path points
+  const histPoints = points.slice(0, 5);
+  const forePoints = points.slice(4);
+
+  // Smooth continuous animation progress
+  const [progress, setProgress] = useState(4); // default to "Today" (index 4)
+
+  useEffect(() => {
+    let animationFrameId;
+    let lastTime = performance.now();
+    const durationPerSegment = 2000; // 2 seconds to move from one day to the next
+
+    const animate = (time) => {
+      const delta = time - lastTime;
+      lastTime = time;
+
+      setProgress((prev) => {
+        const next = prev + delta / durationPerSegment;
+        return next >= weeklyData.length - 1 ? 0 : next;
+      });
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, []);
+
+  const getInterpolatedPoint = (p) => {
+    const idx = Math.min(Math.floor(p), weeklyData.length - 2);
+    const nextIdx = idx + 1;
+    const t = p - Math.floor(p);
+
+    const startPt = points[idx];
+    const endPt = points[nextIdx];
+
+    return {
+      x: startPt.x + (endPt.x - startPt.x) * t,
+      y: startPt.y + (endPt.y - startPt.y) * t,
+      activeIndex: Math.round(p) % weeklyData.length
+    };
+  };
+
+  const { x: dotX, y: dotY, activeIndex } = getInterpolatedPoint(progress);
+  const activeData = weeklyData[activeIndex];
+
+  return (
+    <div className="lp-kpi-animation-container replenishment-anim">
+      <div className="replenish-card-new" style={{ display: "flex", flexDirection: "column", gap: "12px", height: "100%" }}>
+        {/* Header */}
+        <div className="replenish-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <span className="replenish-dot-green"></span>
+            <span style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-2)" }}>Forecast Analysis</span>
+          </div>
+          <span className="replenish-badge" style={{ background: "rgba(99,102,241,0.15)", color: "var(--accent)", border: "1px solid rgba(99,102,241,0.2)" }}>
+            AI Engine Active
+          </span>
+        </div>
+
+        {/* Forecast Summary Metrics */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", width: "100%" }}>
+          <div style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.04)", borderRadius: "12px", padding: "10px 12px", display: "flex", flexDirection: "column", gap: "4px" }}>
+            <span style={{ fontSize: "10px", color: "var(--text-3)", textTransform: "uppercase" }}>Forecast Accuracy</span>
+            <span style={{ fontSize: "18px", fontWeight: 700, color: "var(--green)" }}>98.40%</span>
+          </div>
+          <div style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.04)", borderRadius: "12px", padding: "10px 12px", display: "flex", flexDirection: "column", gap: "4px" }}>
+            <span style={{ fontSize: "10px", color: "var(--text-3)", textTransform: "uppercase" }}>Peak Demand Trend</span>
+            <span style={{ fontSize: "18px", fontWeight: 700, color: "var(--accent)" }}>+42.15%</span>
+          </div>
+        </div>
+
+        {/* Chart Viewport */}
+        <div className="rep-visual-flow" style={{ flex: 1, minHeight: 0, padding: "10px", display: "flex", flexDirection: "column", justifyContent: "center", position: "relative" }}>
+          {/* SVG Line Chart */}
+          <svg viewBox={`0 0 ${width} ${height}`} style={{ width: "100%", height: "100%", overflow: "visible" }}>
+            {/* Grid Lines */}
+            {[100, 200, 300].map((v, i) => {
+              const y = height - padding.bottom - ((v - 100) / 200) * (height - padding.top - padding.bottom);
+              return (
+                <g key={i}>
+                  <line x1={padding.left} y1={y} x2={width - padding.right} y2={y} stroke="rgba(255, 255, 255, 0.05)" strokeWidth="1" strokeDasharray="3 3" />
+                  <text x={padding.left - 8} y={y + 4} fill="var(--text-3)" fontSize="8" textAnchor="end">{v}</text>
+                </g>
+              );
+            })}
+
+            {/* X Axis Labels */}
+            {weeklyData.map((d, i) => {
+              const p = points[i];
+              return (
+                <text key={i} x={p.x} y={height - 10} fill={i === activeIndex ? "var(--accent)" : "var(--text-3)"} fontSize="8" textAnchor="middle" fontWeight={i === activeIndex ? "bold" : "normal"}>
+                  {d.day.split(" ")[0]}
+                </text>
+              );
+            })}
+
+            {/* Confidence Shaded Region for Forecast Area */}
+            {forePoints.length > 0 && (
+              <path
+                d={`M ${forePoints[0].x} ${forePoints[0].y - 20} 
+                   L ${forePoints[1].x} ${forePoints[1].y - 30} 
+                   L ${forePoints[2].x} ${forePoints[2].y - 25} 
+                   L ${forePoints[3].x} ${forePoints[3].y - 20} 
+                   L ${forePoints[3].x} ${forePoints[3].y + 20} 
+                   L ${forePoints[2].x} ${forePoints[2].y + 25} 
+                   L ${forePoints[1].x} ${forePoints[1].y + 30} 
+                   L ${forePoints[0].x} ${forePoints[0].y + 20} Z`}
+                fill="rgba(99, 102, 241, 0.06)"
+                stroke="none"
+              />
+            )}
+
+            {/* Historical Curve */}
+            <path d={buildPath(histPoints)} fill="none" stroke="var(--green)" strokeWidth="2.5" strokeLinecap="round" />
+
+            {/* Predictive Curve (Dashed) */}
+            <path d={buildPath(forePoints)} fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeDasharray="4 4" strokeLinecap="round" />
+
+            {/* Vertical Today Separator */}
+            <line x1={points[4].x} y1={padding.top} x2={points[4].x} y2={height - padding.bottom} stroke="rgba(255, 255, 255, 0.25)" strokeWidth="1.5" strokeDasharray="2 2" />
+            <text x={points[4].x} y={padding.top - 4} fill="rgba(255, 255, 255, 0.4)" fontSize="7" textAnchor="middle">TODAY</text>
+
+            {/* Glowing Active Scan/Hover Line */}
+            {progress !== null && (
+              <g>
+                <line x1={dotX} y1={padding.top} x2={dotX} y2={height - padding.bottom} stroke="var(--accent)" strokeWidth="1.5" opacity="0.6" />
+                <circle cx={dotX} cy={dotY} r="5" fill="var(--accent)" stroke="#ffffff" strokeWidth="1.5" />
+              </g>
+            )}
+          </svg>
+
+          {/* Active Data Tooltip Box (floating overlay) */}
+          <div style={{
+            position: "absolute",
+            bottom: "12px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "rgba(10, 10, 15, 0.95)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: "8px",
+            padding: "6px 12px",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "2px",
+            boxShadow: "0 8px 16px rgba(0,0,0,0.3)",
+            pointerEvents: "none"
+          }}>
+            <span style={{ fontSize: "10px", color: activeData.type === "actual" ? "var(--green)" : "var(--accent)", fontWeight: 700 }}>
+              {activeData.day.toUpperCase()}
+            </span>
+            <span style={{ fontSize: "11px", color: "#ffffff", fontWeight: 500 }}>
+              {activeData.label}
+            </span>
+            {activeData.event && (
+              <span style={{ fontSize: "8px", background: "rgba(99, 102, 241, 0.2)", color: "var(--accent)", padding: "1px 5px", borderRadius: "4px", marginTop: "2px" }}>
+                🎯 {activeData.event}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Insight / Recommendation logs */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px", width: "100%" }}>
+          <span style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-3)", textTransform: "uppercase" }}>AI Recommendations</span>
+          <div style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.04)", borderRadius: "10px", padding: "8px 12px", display: "flex", alignItems: "center", gap: "10px" }}>
+            <span style={{ fontSize: "16px" }}>📈</span>
+            <span style={{ fontSize: "11px", color: "var(--text-2)" }}>Spike detected for <strong>Sat / Sun</strong>. Pre-filling inventory +42%.</span>
+          </div>
+          <div style={{ background: "rgba(255, 255, 255, 0.02)", border: "1px solid rgba(255, 255, 255, 0.04)", borderRadius: "10px", padding: "8px 12px", display: "flex", alignItems: "center", gap: "10px" }}>
+            <span style={{ fontSize: "16px" }}>⚡</span>
+            <span style={{ fontSize: "11px", color: "var(--text-2)" }}>Auto-route optimization queued for <strong>HSR Pod</strong> restock.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+function PackagingAnimation() {
+  const [brandText, setBrandText] = useState("YOUR BRAND");
+  const [boxShape, setBoxShape] = useState("cube"); // cube, flat, tall
+  const [hasSticker, setHasSticker] = useState(true);
+  const [logoPulse, setLogoPulse] = useState(false);
+
+  const handleBrandTextChange = (e) => {
+    const text = e.target.value.substring(0, 15);
+    setBrandText(text);
+    setLogoPulse(true);
+    setTimeout(() => setLogoPulse(false), 800);
+  };
+
+  const getBoxDimensions = () => {
+    switch (boxShape) {
+      case "flat":
+        return { w: 150, h: 70, d: 110 };
+      case "tall":
+        return { w: 100, h: 150, d: 100 };
+      case "cube":
+      default:
+        return { w: 120, h: 120, d: 120 };
+    }
+  };
+
+  const { w, h, d } = getBoxDimensions();
+
+  const getLogoStyle = () => {
+    return {
+      color: "#ffffff",
+      background: "#6366f1",
+      border: "1px solid #6366f1",
+      boxShadow: logoPulse ? "0 0 16px rgba(99, 102, 241, 0.85)" : "0 4px 10px rgba(0, 0, 0, 0.25)",
+    };
+  };
+
+  const faceStyle = (face) => {
+    const base = {
+      position: "absolute",
+      background: "linear-gradient(135deg, #d4a373 0%, #a77a4c 100%)",
+      border: "1px solid #bd8f61",
+      boxShadow: "inset 0 0 15px rgba(0,0,0,0.3)",
+      transition: "all 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+    };
+
+    switch (face) {
+      case "front":
+        return {
+          ...base,
+          width: `${w}px`,
+          height: `${h}px`,
+          transform: `rotateY(0deg) translateZ(${d / 2}px)`,
+          left: `calc(50% - ${w / 2}px)`,
+          top: `calc(50% - ${h / 2}px)`,
+        };
+      case "back":
+        return {
+          ...base,
+          width: `${w}px`,
+          height: `${h}px`,
+          transform: `rotateY(180deg) translateZ(${d / 2}px)`,
+          left: `calc(50% - ${w / 2}px)`,
+          top: `calc(50% - ${h / 2}px)`,
+        };
+      case "right":
+        return {
+          ...base,
+          width: `${d}px`,
+          height: `${h}px`,
+          transform: `rotateY(90deg) translateZ(${w / 2}px)`,
+          left: `calc(50% - ${d / 2}px)`,
+          top: `calc(50% - ${h / 2}px)`,
+        };
+      case "left":
+        return {
+          ...base,
+          width: `${d}px`,
+          height: `${h}px`,
+          transform: `rotateY(-90deg) translateZ(${w / 2}px)`,
+          left: `calc(50% - ${d / 2}px)`,
+          top: `calc(50% - ${h / 2}px)`,
+        };
+      case "top":
+        return {
+          ...base,
+          width: `${w}px`,
+          height: `${d}px`,
+          transform: `rotateX(90deg) translateZ(${h / 2}px)`,
+          left: `calc(50% - ${w / 2}px)`,
+          top: `calc(50% - ${d / 2}px)`,
+        };
+      case "bottom":
+        return {
+          ...base,
+          width: `${w}px`,
+          height: `${d}px`,
+          transform: `rotateX(-90deg) translateZ(${h / 2}px)`,
+          left: `calc(50% - ${w / 2}px)`,
+          top: `calc(50% - ${d / 2}px)`,
+        };
+      default:
+        return base;
+    }
+  };
+
+  return (
+    <div className="lp-kpi-animation-container packaging-anim">
+      <div className="pkg-card-new" style={{ maxWidth: "480px", padding: "24px", gap: "16px", width: "100%", aspectRatio: "1 / 1", boxSizing: "border-box" }}>
+        <div className="pkg-header">
+          <span>3D Packaging Preview</span>
+          <span className="pkg-badge">Real-Time</span>
+        </div>
+
+        {/* Viewport */}
+        <div className="pkg-viewport-new" style={{ flex: 1, minHeight: 0 }}>
+          {/* 3D Scene */}
+          <div className="pkg-3d-scene-new">
+            <div className="pkg-box-new">
+              {/* Front Face */}
+              <div style={faceStyle("front")}>
+                <div className="pkg-logo-custom" style={getLogoStyle()}>
+                  {brandText || "YOUR BRAND"}
+                </div>
+                {hasSticker && (
+                  <div className="pkg-sticker-fragile">
+                    FRAGILE
+                  </div>
+                )}
+              </div>
+
+              {/* Back Face */}
+              <div style={faceStyle("back")}>
+                <div className="pkg-logo-custom" style={getLogoStyle()}>
+                  {brandText || "YOUR BRAND"}
+                </div>
+              </div>
+
+              {/* Sides */}
+              <div style={faceStyle("right")}></div>
+              <div style={faceStyle("left")}></div>
+
+              {/* Top Face */}
+              <div style={faceStyle("top")}>
+                <div className="pkg-tape">
+                  ⚡ SECURED BY BLITZ ⚡
+                </div>
+              </div>
+
+              {/* Bottom Face */}
+              <div style={faceStyle("bottom")}></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Configuration Panel */}
+        <div className="pkg-controls-new">
+          {/* Brand Name Input */}
+          <div className="pkg-control-group-input">
+            <span className="control-label">Brand Label:</span>
+            <input
+              type="text"
+              className="pkg-brand-input"
+              value={brandText}
+              onChange={handleBrandTextChange}
+              placeholder="YOUR BRAND"
+            />
+          </div>
+
+          {/* Box Shape Option Column */}
+          <div className="pkg-control-group-column">
+            <span className="control-label">Box Shape:</span>
+            <div className="control-buttons">
+              <button className={boxShape === "cube" ? "active" : ""} onClick={() => setBoxShape("cube")}>Cube</button>
+              <button className={boxShape === "flat" ? "active" : ""} onClick={() => setBoxShape("flat")}>Slim</button>
+              <button className={boxShape === "tall" ? "active" : ""} onClick={() => setBoxShape("tall")}>Tall</button>
+            </div>
+          </div>
+
+          {/* Fragile Sticker Toggle Row */}
+          <div className="pkg-control-group-row">
+            <span className="control-label">Fragile Warning Tag:</span>
+            <label className="pkg-switch">
+              <input type="checkbox" checked={hasSticker} onChange={(e) => setHasSticker(e.target.checked)} />
+              <span className="pkg-switch-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+function AccuracyAnimation() {
+  const [successCount, setSuccessCount] = useState(998);
+  const [totalCount, setTotalCount] = useState(1000);
+  const [pulse, setPulse] = useState(false);
+  const [scannedItems, setScannedItems] = useState([
+    { id: "A-928", time: "Just Now", status: "Verified & Packed", accuracy: "100%" },
+    { id: "B-412", time: "1 min ago", status: "Barcode Matched", accuracy: "100%" },
+    { id: "A-801", time: "2 min ago", status: "Weight Checked", accuracy: "100%" },
+    { id: "B-589", time: "3 min ago", status: "Dimensions Validated", accuracy: "100%" },
+  ]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPulse(true);
+      setTimeout(() => setPulse(false), 800);
+
+      // Randomly increment orders
+      const newOrders = Math.floor(Math.random() * 2) + 1;
+      setTotalCount((t) => t + newOrders);
+      // Main 99.8% accuracy check
+      setSuccessCount((s) => {
+        const shouldBeSuccess = Math.random() < 0.998 ? newOrders : newOrders - 1;
+        return s + Math.max(0, shouldBeSuccess);
+      });
+
+      // Add scanned items log
+      const itemIDs = ["A-" + Math.floor(100 + Math.random() * 900), "B-" + Math.floor(100 + Math.random() * 900)];
+      const verifications = ["Verified & Packed", "Barcode Matched", "Weight Checked", "Dimensions Validated"];
+
+      setScannedItems((prev) => [
+        {
+          id: itemIDs[Math.floor(Math.random() * itemIDs.length)],
+          time: "Just Now",
+          status: verifications[Math.floor(Math.random() * verifications.length)],
+          accuracy: "100%",
+        },
+        ...prev.map((item) => ({
+          ...item,
+          time: item.time === "Just Now" ? "1 min ago" : item.time === "1 min ago" ? "2 min ago" : item.time === "2 min ago" ? "3 min ago" : "4 min ago",
+        })),
+      ].slice(0, 3));
+    }, 2500);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const rate = totalCount > 0 ? ((successCount / totalCount) * 100).toFixed(2) : "99.80";
+
+  return (
+    <div className="lp-kpi-animation-container accuracy-anim">
+      <div className="acc-card">
+        {/* Header */}
+        <div className="acc-header-new">
+          <span className="acc-header-title">Fulfillment Quality Control</span>
+          <span className="acc-live-pill">
+            <span className="acc-live-dot"></span> QC Live
+          </span>
+        </div>
+
+        {/* Top Grid: Chamber & Telemetry */}
+        <div className="acc-top-grid">
+          {/* Chamber Viewport */}
+          <div className={`acc-chamber ${pulse ? "pulse" : ""}`}>
+            <div className="acc-chamber-grid" />
+            
+            {/* Hologram package SVG outline */}
+            <svg viewBox="0 0 100 100" style={{ width: "65px", height: "65px", position: "relative", zIndex: 2 }}>
+              {/* Simple box wireframe perspective silhouette */}
+              <path 
+                className="acc-package-silhouette" 
+                d="M20,40 L50,25 L80,40 L50,55 Z M20,40 L20,70 L50,85 L50,55 Z M80,40 L80,70 L50,85" 
+                strokeLinejoin="round"
+              />
+              {/* Scanning crosshair cursor */}
+              <path 
+                d="M50,15 L50,20 M50,80 L50,85 M15,50 L20,50 M80,50 L85,50" 
+                stroke={pulse ? "var(--green)" : "rgba(255, 255, 255, 0.15)"} 
+                strokeWidth="1" 
+              />
+            </svg>
+
+            {/* Laser scanning line */}
+            <div className="acc-laser-line" />
+
+            {/* Brackets */}
+            <div className="acc-bracket acc-bracket-tl" />
+            <div className="acc-bracket acc-bracket-tr" />
+            <div className="acc-bracket acc-bracket-bl" />
+            <div className="acc-bracket acc-bracket-br" />
+
+            {/* Cam Label */}
+            <span className="acc-cam-label">
+              <span className="acc-rec-dot" />CAM_02_QC
+            </span>
+          </div>
+
+          {/* Telemetry panel */}
+          <div className="acc-telemetry-panel">
+            <div className="acc-main-stats-box">
+              <span className="acc-main-rate-glow">{rate}%</span>
+              <span className="acc-main-rate-lbl">Fulfillment Rate</span>
+            </div>
+
+            <div className="acc-counter-row">
+              <div className="acc-mini-stat">
+                <span className="acc-mini-num">{totalCount}</span>
+                <span className="acc-mini-lbl">Checked</span>
+              </div>
+              <div className="acc-mini-stat">
+                <span className="acc-mini-num" style={{ color: "var(--green)" }}>{successCount}</span>
+                <span className="acc-mini-lbl">Errors: 0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Middle Checklist: Active Sensors */}
+        <div className="acc-checklist">
+          <div className={`acc-check-item ${pulse ? "" : "active"}`}>
+            <span className="acc-check-icon"><Icon.Check /></span>
+            <span>BARCODE SCAN</span>
+          </div>
+          <div className={`acc-check-item ${pulse ? "active" : "active"}`}>
+            <span className="acc-check-icon"><Icon.Check /></span>
+            <span>WEIGHT: OK</span>
+          </div>
+          <div className={`acc-check-item ${pulse ? "active" : ""}`}>
+            <span className="acc-check-icon"><Icon.Check /></span>
+            <span>SIZE CHECK</span>
+          </div>
+        </div>
+
+        {/* Bottom Stream: Live QC Logs */}
+        <div className="acc-live-log-new" style={{ marginTop: "4px" }}>
+          <div className="acc-log-title-new" style={{ margin: "6px 0 8px 0" }}>
+            <span className="acc-dot-green"></span> Live QC Scan Stream:
+          </div>
+          {scannedItems.slice(0, 3).map((item, index) => (
+            <div key={index} className="acc-log-row">
+              <div className="acc-log-top">
+                <span className="acc-log-status-pill">
+                  <span className="acc-log-dot-pulse"></span> QC PASSED
+                </span>
+                <span className="acc-log-id">ITEM #{item.id}</span>
+                <span className="acc-log-time">{item.time}</span>
+              </div>
+              <div className="acc-log-body">
+                <span className="acc-log-status-text">{item.status}</span>
+                <div className="acc-log-barcode" title="Interactive QC Barcode">
+                  <div className="bar1"></div>
+                  <div className="bar2"></div>
+                  <div className="bar3"></div>
+                  <div className="bar4"></div>
+                  <div className="bar5"></div>
+                  <div className="bar6"></div>
+                </div>
+                <span className="acc-log-accuracy-badge">ACC: {item.accuracy}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function DarkStoreOnboarding() {
   const [step, setStep] = useState(0);
+  const [activeKPI, setActiveKPI] = useState("replenishment");
+  const [kpiUserInteracted, setKpiUserInteracted] = useState(false);
+
+  // Auto rotate KPIs if no user interaction — each stays 10 seconds
+  useEffect(() => {
+    if (kpiUserInteracted) return;
+    const kpis = ["replenishment", "movement", "packaging", "accuracy"];
+    const timer = setTimeout(() => {
+      setActiveKPI((prev) => {
+        const nextIdx = (kpis.indexOf(prev) + 1) % kpis.length;
+        return kpis[nextIdx];
+      });
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, [kpiUserInteracted, activeKPI]);
   const [specialistOrigin, setSpecialistOrigin] = useState(0);
   const [forecastTab, setForecastTab] = useState("sku"); // 'sku', 'city', 'restock'
   const [journeyHoverStep, setJourneyHoverStep] = useState(null);
@@ -10447,13 +12428,7 @@ export default function DarkStoreOnboarding() {
     return (
       <div className="standalone-wrap">
         <header className="standalone-header">
-          <div className="standalone-brand" onClick={() => setStep(0)} style={{ cursor: "pointer" }}>
-            <img src="/Logo.png" alt="Logo" className="standalone-logo" />
-            <div>
-              <div className="standalone-brand-name">Blitz MiniPods</div>
-              <div className="standalone-brand-tag">Talk to a specialist</div>
-            </div>
-          </div>
+          <DoodleLogo tagText="Talk to a specialist" onHome={() => setStep(0)} />
           {renderHeaderActions("standalone-actions-wrap")}
         </header>
 
@@ -10489,13 +12464,7 @@ export default function DarkStoreOnboarding() {
       <div className="lp-wrap">
         {/* Header */}
         <header className="lp-header">
-          <div className="lp-brand" onClick={() => setStep(0)} style={{ cursor: "pointer" }}>
-            <img src="/Logo.png" alt="Logo" className="lp-brand-logo" />
-            <div className="lp-brand-text">
-              <span className="lp-brand-name">Blitz MiniPods</span>
-              <span className="lp-brand-tag">One Stop Solution for Quick Commerce</span>
-            </div>
-          </div>
+          <DoodleLogo tagText="One Stop Solution for Quick Commerce" onHome={() => setStep(0)} />
           {renderHeaderActions("lp-actions-wrap")}
         </header>
 
@@ -10509,7 +12478,7 @@ export default function DarkStoreOnboarding() {
             <h1 className="lp-title">
               Your Brand.<br />
               <span className="accent">Every City.</span><br />
-              Zero Infrastructure.
+              60 Mins Delivery.
             </h1>
             <p className="lp-desc">
               Launch 60-minute to same-day delivery across India without investing in warehouses, operations teams, or infrastructure.
@@ -10517,21 +12486,41 @@ export default function DarkStoreOnboarding() {
 
             {/* Metrics */}
             <div className="lp-metrics">
-              <div className="lp-metric-item">
-                <span className="lp-metric-val">17</span>
-                <span className="lp-metric-lbl">MiniPods Live</span>
+              <div
+                className={`lp-metric-item ${activeKPI === "replenishment" ? "active" : ""}`}
+                onClick={() => { setActiveKPI("replenishment"); setKpiUserInteracted(true); }}
+              >
+                <div className="lp-metric-icon">
+                  <Icon.Refresh />
+                </div>
+                <span className="lp-metric-val">Smart<br />Forecast<br />Intelligence</span>
               </div>
-              <div className="lp-metric-item">
-                <span className="lp-metric-val">99.5%</span>
-                <span className="lp-metric-lbl">Inventory Accuracy</span>
+              <div
+                className={`lp-metric-item ${activeKPI === "movement" ? "active" : ""}`}
+                onClick={() => { setActiveKPI("movement"); setKpiUserInteracted(true); }}
+              >
+                <div className="lp-metric-icon">
+                  <Icon.Truck />
+                </div>
+                <span className="lp-metric-val">Inter Dark-<br />Stock<br />Replenishment</span>
               </div>
-              <div className="lp-metric-item">
-                <span className="lp-metric-val">7 days</span>
-                <span className="lp-metric-lbl">Go Live In 7 Days</span>
+              <div
+                className={`lp-metric-item ${activeKPI === "packaging" ? "active" : ""}`}
+                onClick={() => { setActiveKPI("packaging"); setKpiUserInteracted(true); }}
+              >
+                <div className="lp-metric-icon">
+                  <Icon.Package />
+                </div>
+                <span className="lp-metric-val">Custom<br />Branded<br />Packaging</span>
               </div>
-              <div className="lp-metric-item">
-                <span className="lp-metric-val">99.8%</span>
-                <span className="lp-metric-lbl">Fulfillment Accuracy</span>
+              <div
+                className={`lp-metric-item ${activeKPI === "accuracy" ? "active" : ""}`}
+                onClick={() => { setActiveKPI("accuracy"); setKpiUserInteracted(true); }}
+              >
+                <div className="lp-metric-icon">
+                  <Icon.Target />
+                </div>
+                <span className="lp-metric-val">99.8%<br />Fulfillment<br />Accuracy</span>
               </div>
             </div>
 
@@ -10547,9 +12536,12 @@ export default function DarkStoreOnboarding() {
 
           </div>
 
-          {/* Right Column - Bengaluru 3D Folding Map Animation */}
+          {/* Right Column - KPI Animations */}
           <div className="lp-graphic-container">
-            <Bengaluru3DMap />
+            {activeKPI === "replenishment" && <ReplenishmentAnimation />}
+            {activeKPI === "packaging" && <PackagingAnimation />}
+            {activeKPI === "movement" && <Bengaluru3DMap />}
+            {activeKPI === "accuracy" && <AccuracyAnimation />}
           </div>
         </div>
 

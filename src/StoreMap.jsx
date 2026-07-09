@@ -30,6 +30,8 @@ function createStoreIcon(store, inCart) {
 }
 
 
+
+
 const MUMBAI_WEST_COAST = [
   { lat: 18.90, lng: 72.805 },
   { lat: 18.92, lng: 72.820 },
@@ -224,7 +226,7 @@ const STORE_CUSTOM_OFFSETS = {
     [-0.02, -0.02],
     [-0.01, -0.03]
   ],
-  "Borivali DS": [
+  "Kandivali DS": [
     [0.04, -0.03],
     [0.03, 0.03],
     [-0.02, 0.04],
@@ -232,7 +234,15 @@ const STORE_CUSTOM_OFFSETS = {
     [-0.03, -0.03],
     [-0.01, -0.04]
   ],
-  "Santacruz DS": [
+  "Khar DS": [
+    [0.03, -0.03],
+    [0.03, 0.03],
+    [-0.01, 0.04],
+    [-0.04, 0.01],
+    [-0.03, -0.03],
+    [-0.01, -0.04]
+  ],
+  "Thane DS": [
     [0.03, -0.03],
     [0.03, 0.03],
     [-0.01, 0.04],

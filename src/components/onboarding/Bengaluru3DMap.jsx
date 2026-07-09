@@ -5,6 +5,7 @@ const CITIES = [
   {
     name: "Bengaluru",
     center: [12.9716, 77.6120],
+    zoom: 11.5,
     points: [
       [12.9569, 77.6970], // Marathahalli
       [12.8900, 77.5720], // Konanakunte
@@ -14,30 +15,6 @@ const CITIES = [
       [13.0485, 77.4950], // Nagasandra
       [13.0354, 77.5988], // Hebbal
       [12.9710, 77.6015], // Shanthala Nagar
-    ]
-  },
-  {
-    name: "Mumbai",
-    center: [19.0760, 72.8777],
-    points: [
-      [19.0596, 72.8295], // Bandra
-      [18.9220, 72.8347], // Colaba
-      [19.1176, 72.9060], // Powai
-      [18.9696, 72.8128], // Tardeo
-      [19.0269, 72.8553], // Dadar
-      [19.1680, 72.8720], // Dindoshi
-    ]
-  },
-  {
-    name: "Delhi",
-    center: [28.6139, 77.2090],
-    points: [
-      [28.6304, 77.2177], // Connaught Place
-      [28.5457, 77.2732], // Nehru Place
-      [28.5244, 77.1855], // Saket
-      [28.6921, 77.1511], // Pitampura
-      [28.5900, 77.3100], // Mayur Vihar
-      [28.6291, 77.1292], // Mayapuri
     ]
   }
 ];
@@ -143,15 +120,13 @@ export default function Bengaluru3DMap() {
         localMaps[p.id] = map;
       });
 
-      // Custom HUD radar markers (exactly 2 concentric circles with breathing + rotations)
+      // Custom HUD store markers (using store.svg with pop-up & floating animations)
       const radarIcon = L.divIcon({
         className: "custom-radar-icon",
         html: `
           <div class="hud-node">
-            <div class="hud-glow"></div>
-            <div class="hud-outer"></div>
-            <div class="hud-inner"></div>
-            <div class="hud-core"></div>
+            <div class="hud-store-pulse"></div>
+            <img class="hud-store-svg" src="/store.svg" alt="Store Logo" />
           </div>
         `,
         iconSize: [80, 80],
@@ -170,11 +145,29 @@ export default function Bengaluru3DMap() {
         [12.9710, 77.6015], // Shanthala Nagar
       ];
 
-      // Add markers to ALL map instances.
+      // Add markers and flow lines to ALL map instances.
       Object.values(localMaps).forEach((map) => {
         pointsLatLngs.forEach((latlng) => {
           L.marker(latlng, { icon: radarIcon }).addTo(map);
         });
+
+        // Add interstore inventory flow lines
+        const hubLatLng = pointsLatLngs[pointsLatLngs.length - 1];
+        for (let i = 0; i < pointsLatLngs.length; i++) {
+          const nextLatLng = pointsLatLngs[(i + 1) % pointsLatLngs.length];
+          L.polyline([pointsLatLngs[i], nextLatLng], {
+            className: "interstore-flow-line",
+            color: "#6366f1",
+            weight: 1.2,
+          }).addTo(map);
+        }
+        for (let i = 0; i < pointsLatLngs.length - 1; i++) {
+          L.polyline([pointsLatLngs[i], hubLatLng], {
+            className: "interstore-flow-line-radial",
+            color: "#2563eb",
+            weight: 0.9,
+          }).addTo(map);
+        }
       });
 
       mapsRef.current = localMaps;
@@ -212,10 +205,10 @@ export default function Bengaluru3DMap() {
     if (state === "init") return;
     const city = CITIES[cityIndex];
 
-    // Clear old markers from all maps
+    // Clear old markers and flow lines from all maps
     Object.values(mapsRef.current).forEach((map) => {
       map.eachLayer((layer) => {
-        if (layer instanceof L.Marker) {
+        if (layer instanceof L.Marker || layer instanceof L.Polyline) {
           map.removeLayer(layer);
         }
       });
@@ -224,7 +217,7 @@ export default function Bengaluru3DMap() {
     const mcMap = mapsRef.current["mc"];
     if (!mcMap) return;
 
-    const zoomLevel = 11.5;
+    const zoomLevel = city.zoom || 11.5;
     const centerLatLng = L.latLng(city.center[0], city.center[1]);
     const centerPoint = mcMap.project(centerLatLng, zoomLevel);
 
@@ -244,10 +237,8 @@ export default function Bengaluru3DMap() {
       className: "custom-radar-icon",
       html: `
         <div class="hud-node">
-          <div class="hud-glow"></div>
-          <div class="hud-outer"></div>
-          <div class="hud-inner"></div>
-          <div class="hud-core"></div>
+          <div class="hud-store-pulse"></div>
+          <img class="hud-store-svg" src="/store.svg" alt="Store Logo" />
         </div>
       `,
       iconSize: [80, 80],
@@ -266,15 +257,181 @@ export default function Bengaluru3DMap() {
 
       map.setView(targetLatLng, zoomLevel, { animate: false });
 
-      // Add new markers to this map panel
+      // Add new markers and interstore inventory flow lines to this map panel
       city.points.forEach((latlng) => {
         L.marker(latlng, { icon: radarIcon }).addTo(map);
       });
+
+      const hubLatLng = city.points[city.points.length - 1];
+      for (let i = 0; i < city.points.length; i++) {
+        const nextLatLng = city.points[(i + 1) % city.points.length];
+        L.polyline([city.points[i], nextLatLng], {
+          className: "interstore-flow-line",
+          color: "#6366f1",
+          weight: 1.2,
+        }).addTo(map);
+      }
+      for (let i = 0; i < city.points.length - 1; i++) {
+        L.polyline([city.points[i], hubLatLng], {
+          className: "interstore-flow-line-radial",
+          color: "#2563eb",
+          weight: 0.9,
+        }).addTo(map);
+      }
 
       // Force instant tile reload
       map.invalidateSize();
     });
   }, [cityIndex]);
+
+  // Vehicles moving animation loop
+  useEffect(() => {
+    if (state !== "unfolded" || !mapsRef.current) return;
+
+    const city = CITIES[cityIndex];
+    if (!city || !city.points || city.points.length < 2) return;
+
+    const points = city.points;
+    const numPoints = points.length;
+
+    const truckIcon = L.divIcon({
+      className: 'hud-truck-marker',
+      html: `
+        <div class="hud-truck">
+          <svg width="40" height="40" viewBox="0 0 40 40">
+            <ellipse cx="20" cy="26" rx="14" ry="4" fill="rgba(99, 102, 241, 0.45)" filter="blur(2px)" />
+            <g transform="translate(2, 6)">
+              <!-- Cargo box -->
+              <rect x="2" y="6" width="20" height="14" rx="1.5" fill="#e2e8f0" />
+              <path d="M 2,6 L 22,6 L 20,3 L 4,3 Z" fill="#ffffff" />
+              <path d="M 22,6 L 22,20 L 24,18 L 24,8 Z" fill="#cbd5e1" />
+              <!-- Brand logo on truck -->
+              <image href="/Logo.png" x="7" y="8" width="10" height="10" />
+              <!-- Cab -->
+              <path d="M 22,10 L 28,10 L 32,14 L 32,20 L 22,20 Z" fill="var(--accent)" />
+              <path d="M 28,10 L 30,10 L 34,14 L 34,20 L 32,20 L 28,10 Z" fill="#818cf8" opacity="0.85" />
+              <!-- Windows -->
+              <path d="M 25,12 L 28,12 L 30,14 L 30,16 L 25,16 Z" fill="#0f172a" />
+              <!-- Wheels -->
+              <circle cx="7" cy="20" r="3" fill="#0f172a" />
+              <circle cx="7" cy="20" r="1" fill="#94a3b8" />
+              <circle cx="16" cy="20" r="3" fill="#0f172a" />
+              <circle cx="16" cy="20" r="1" fill="#94a3b8" />
+              <circle cx="26" cy="20" r="3" fill="#0f172a" />
+              <circle cx="26" cy="20" r="1" fill="#94a3b8" />
+            </g>
+          </svg>
+        </div>
+      `,
+      iconSize: [40, 40],
+      iconAnchor: [20, 20],
+    });
+
+    const scooterIcon = L.divIcon({
+      className: 'hud-scooter-marker',
+      html: `
+        <div class="hud-scooter">
+          <svg width="34" height="34" viewBox="0 0 34 34">
+            <ellipse cx="17" cy="24" rx="10" ry="3.5" fill="rgba(16, 185, 129, 0.4)" filter="blur(1.5px)" />
+            <g transform="translate(2, 4)">
+              <path d="M 6,18 L 12,18 L 18,14 L 26,14 L 28,18 L 22,20 L 6,20 Z" fill="#2f6bff" />
+              <!-- Scooter delivery box with brand logo -->
+              <rect x="2" y="6" width="10" height="10" rx="1.5" fill="#f8fafc" stroke="#334155" strokeWidth="1" />
+              <image href="/Logo.png" x="3" y="7" width="8" height="8" />
+              <rect x="3" y="10" width="8" height="2" fill="#2f6bff" opacity="0.1" />
+              <line x1="26" y1="14" x2="25" y2="6" stroke="#1e293b" strokeWidth="2.5" strokeLinecap="round" />
+              <circle cx="25" cy="5" r="1.5" fill="#f5f6fa" />
+              <circle cx="9" cy="19" r="3.5" fill="#0f172a" />
+              <circle cx="9" cy="19" r="1.2" fill="#94a3b8" />
+              <circle cx="23" cy="19" r="3.5" fill="#0f172a" />
+              <circle cx="23" cy="19" r="1.2" fill="#94a3b8" />
+            </g>
+          </svg>
+        </div>
+      `,
+      iconSize: [34, 34],
+      iconAnchor: [17, 17],
+    });
+
+    const mapInstances = Object.values(mapsRef.current);
+
+    // Create one vehicle (alternating Truck / Scooter) starting at each store node
+    const vehiclesList = [];
+    const skipIndices = [3, 7]; // Skip 2 stores to prevent layout crowding
+    for (let i = 0; i < numPoints; i++) {
+      if (skipIndices.includes(i)) continue;
+      const isTruck = i % 2 === 0;
+      const iconToUse = isTruck ? truckIcon : scooterIcon;
+      const startPoint = points[i];
+
+      const markers = mapInstances.map(map => L.marker(startPoint, { icon: iconToUse }).addTo(map));
+      vehiclesList.push({
+        index: i,
+        isTruck,
+        markers,
+      });
+    }
+
+    let animationFrameId;
+    let startTime = null;
+    const loopDuration = 18000; // 18 seconds to complete full loop
+
+    const animate = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = timestamp - startTime;
+
+      const baseProgress = (elapsed % loopDuration) / loopDuration;
+
+      vehiclesList.forEach((vehicle) => {
+        // Offset progress so vehicle starts exactly at its starting point (index / numPoints)
+        const progress = (baseProgress + vehicle.index / numPoints) % 1.0;
+
+        const rawSegment = progress * numPoints;
+        const segmentIndex = Math.floor(rawSegment) % numPoints;
+        const segmentProgress = rawSegment - Math.floor(rawSegment);
+
+        const startLatLng = points[segmentIndex];
+        const endLatLng = points[(segmentIndex + 1) % numPoints];
+
+        const lat = startLatLng[0] + (endLatLng[0] - startLatLng[0]) * segmentProgress;
+        const lng = startLatLng[1] + (endLatLng[1] - startLatLng[1]) * segmentProgress;
+
+        const dy = endLatLng[0] - startLatLng[0];
+        const dx = endLatLng[1] - startLatLng[1];
+        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+        vehicle.markers.forEach((marker) => {
+          marker.setLatLng([lat, lng]);
+          const el = marker.getElement();
+          if (el) {
+            const classToFind = vehicle.isTruck ? '.hud-truck' : '.hud-scooter';
+            const vehicleDiv = el.querySelector(classToFind);
+            if (vehicleDiv) {
+              vehicleDiv.style.transform = `rotate(${-angle}deg) scale(0.8)`;
+            }
+          }
+        });
+      });
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      // Clean up markers
+      mapInstances.forEach((map) => {
+        vehiclesList.forEach((vehicle) => {
+          vehicle.markers.forEach((marker) => {
+            if (map.hasLayer(marker)) {
+              map.removeLayer(marker);
+            }
+          });
+        });
+      });
+    };
+  }, [cityIndex, state]);
 
 
   // Global mousemove parallax tilt logic with cleanup
@@ -569,10 +726,10 @@ export default function Bengaluru3DMap() {
         }
 
         /* Disable marker animations unless the map is completely unfolded */
-        .bengaluru-3d-map-wrapper:not(.unfolded-state) .hud-outer {
-          animation: none !important;
-        }
-        .bengaluru-3d-map-wrapper:not(.unfolded-state) .hud-inner {
+        .bengaluru-3d-map-wrapper:not(.unfolded-state) .hud-store-pulse,
+        .bengaluru-3d-map-wrapper:not(.unfolded-state) .hud-store-svg,
+        .bengaluru-3d-map-wrapper:not(.unfolded-state) .interstore-flow-line,
+        .bengaluru-3d-map-wrapper:not(.unfolded-state) .interstore-flow-line-radial {
           animation: none !important;
         }
 
@@ -676,7 +833,7 @@ export default function Bengaluru3DMap() {
           transition: opacity 0.2s ease 0s;
         }
 
-        /* ─── 2 CONCENTRIC HUD MARKERS ─── */
+        /* ─── HUD STORE MARKERS ─── */
         .bengaluru-3d-map-wrapper .hud-node {
           position: relative;
           width: 80px;
@@ -687,77 +844,119 @@ export default function Bengaluru3DMap() {
           pointer-events: none;
         }
 
-        /* Glowing Blue Aura */
-        .bengaluru-3d-map-wrapper .hud-glow {
+        /* Ground Anchor Pulse Glow */
+        .bengaluru-3d-map-wrapper .hud-store-pulse {
           position: absolute;
-          width: 60px;
-          height: 60px;
-          background: radial-gradient(circle, rgba(29, 114, 232, 0.42) 0%, rgba(29, 114, 232, 0) 70%);
+          width: 20px;
+          height: 7px;
           border-radius: 50%;
+          background: radial-gradient(ellipse, rgba(29, 114, 232, 0.6) 0%, rgba(29, 114, 232, 0) 75%);
+          top: 40px;
+          left: 50%;
+          transform: translate(-50%, -50%) scale(1);
           pointer-events: none;
-          filter: blur(2px);
+          z-index: 1;
+          opacity: 0;
+          transition: opacity 0.5s ease;
         }
 
-        /* Outer Circle (Dashed, Rotating/Crawling + Breathing) */
-        .bengaluru-3d-map-wrapper .hud-outer {
-          position: absolute;
-          width: 56px;
-          height: 56px;
-          border: 1px dashed rgba(29, 114, 232, 0.65);
-          border-radius: 50%;
-          animation: 
-            hudPulseOuter 3s ease-in-out infinite,
-            hudRotate 8s linear infinite;
-          box-shadow: 0 0 8px rgba(29, 114, 232, 0.2);
+        .bengaluru-3d-map-wrapper.unfolded-state .hud-store-pulse {
+          opacity: 1;
+          animation: ground-pulse 3s ease-in-out infinite;
         }
 
-        /* Inner Circle (Solid, Breathing) */
-        .bengaluru-3d-map-wrapper .hud-inner {
-          position: absolute;
-          width: 28px;
-          height: 28px;
-          border: 1.2px solid rgba(29, 114, 232, 0.85);
-          border-radius: 50%;
-          animation: hudPulseInner 3s ease-in-out infinite;
-          box-shadow: 0 0 6px rgba(29, 114, 232, 0.3);
-        }
-
-        /* Central Core Dot */
-        .bengaluru-3d-map-wrapper .hud-core {
-          position: absolute;
-          width: 9px;
-          height: 9px;
-          background: #0055ff;
-          border: 1.5px solid #ffffff;
-          border-radius: 50%;
-          box-shadow: 0 0 10px #1d72e8;
-        }
-
-        /* Keyframe Animations */
-        @keyframes hudRotate {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-
-        @keyframes hudPulseOuter {
+        @keyframes ground-pulse {
           0%, 100% {
-            transform: scale(0.9);
-            opacity: 0.55;
+            transform: translate(-50%, -50%) scale(0.85);
+            opacity: 0.5;
           }
           50% {
-            transform: scale(1.08);
+            transform: translate(-50%, -50%) scale(1.3);
             opacity: 0.9;
           }
         }
 
-        @keyframes hudPulseInner {
+        /* Store SVG Icon - pop up and float bobbing */
+        .bengaluru-3d-map-wrapper:not(.unfolded-state) .hud-store-svg {
+          transform: translate(-50%, 15px) scale(0);
+          opacity: 0;
+          transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        .bengaluru-3d-map-wrapper.unfolded-state .hud-store-svg {
+          position: absolute;
+          width: 44px;
+          height: 44px;
+          bottom: 40px;
+          left: 50%;
+          transform-origin: bottom center;
+          opacity: 0;
+          animation: 
+            store-pop-up 0.9s cubic-bezier(0.34, 1.6, 0.64, 1) forwards, 
+            store-float-loop 3s ease-in-out infinite 0.9s;
+          filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.35));
+        }
+
+        @keyframes store-pop-up {
+          0% {
+            transform: translate(-50%, 15px) scale(0);
+            opacity: 0;
+          }
+          100% {
+            transform: translate(-50%, 0px) scale(1);
+            opacity: 1;
+          }
+        }
+
+        @keyframes store-float-loop {
           0%, 100% {
-            transform: scale(0.85);
-            opacity: 0.65;
+            transform: translate(-50%, 0px) scale(1);
           }
           50% {
-            transform: scale(1.15);
-            opacity: 0.95;
+            transform: translate(-50%, -6px) scale(1);
+          }
+        }
+
+        /* Interstore Inventory Movement Flow Lines */
+        .bengaluru-3d-map-wrapper:not(.unfolded-state) .interstore-flow-line,
+        .bengaluru-3d-map-wrapper:not(.unfolded-state) .interstore-flow-line-radial {
+          opacity: 0 !important;
+          transition: opacity 0.4s ease;
+        }
+
+        .bengaluru-3d-map-wrapper.unfolded-state .interstore-flow-line {
+          opacity: 0.55 !important;
+          transition: opacity 0.8s ease 0.6s;
+        }
+
+        .bengaluru-3d-map-wrapper.unfolded-state .interstore-flow-line-radial {
+          opacity: 0.45 !important;
+          transition: opacity 0.8s ease 0.8s;
+        }
+
+        .bengaluru-3d-map-wrapper .interstore-flow-line {
+          stroke-dasharray: 6, 12;
+          animation: interstore-flow-dash-forward 2.2s linear infinite;
+          filter: drop-shadow(0 0 3px rgba(99, 102, 241, 0.65)) blur(0.3px);
+          stroke-linecap: round;
+        }
+
+        .bengaluru-3d-map-wrapper .interstore-flow-line-radial {
+          stroke-dasharray: 4, 10;
+          animation: interstore-flow-dash-backward 1.6s linear infinite;
+          filter: drop-shadow(0 0 2px rgba(37, 99, 235, 0.55)) blur(0.3px);
+          stroke-linecap: round;
+        }
+
+        @keyframes interstore-flow-dash-forward {
+          to {
+            stroke-dashoffset: -36;
+          }
+        }
+
+        @keyframes interstore-flow-dash-backward {
+          to {
+            stroke-dashoffset: 28;
           }
         }
 
@@ -822,6 +1021,23 @@ export default function Bengaluru3DMap() {
             margin-top: -220px;
             margin-bottom: -220px;
           }
+        }
+
+        /* ─── 3D MOVING TRUCK & MOTORCYCLE MARKERS ─── */
+        .hud-truck-marker,
+        .hud-scooter-marker {
+          background: none !important;
+          border: none !important;
+          pointer-events: none !important;
+          z-index: 1000 !important;
+          transition: none !important;
+        }
+
+        .hud-truck,
+        .hud-scooter {
+          transform-style: preserve-3d;
+          backface-visibility: hidden;
+          will-change: transform;
         }
       `}</style>
 

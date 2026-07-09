@@ -390,8 +390,9 @@ const CITY_STORES = {
   ],
   Mumbai: [
     { name: "LP (Worli) DS", area: "LP (Worli)", shelves: 618, freeShelves: 108, storage: "Ambient", lat: 18.993685, lng: 72.822337, address: "LP (Worli)" },
-    { name: "Borivali DS", area: "Borivali", shelves: 360, freeShelves: 147, storage: "Ambient", lat: 19.218826, lng: 72.834278, address: "Borivali" },
-    { name: "Santacruz DS", area: "Santacruz", shelves: 360, freeShelves: 150, storage: "Ambient", lat: 19.079012, lng: 72.830876, address: "Santacruz" },
+    { name: "Kandivali DS", area: "Kandivali", shelves: 360, freeShelves: 147, storage: "Ambient", lat: 19.2056, lng: 72.8438, address: "Kandivali" },
+    { name: "Khar DS", area: "Khar", shelves: 360, freeShelves: 150, storage: "Ambient", lat: 19.0689, lng: 72.8402, address: "Khar" },
+    { name: "Thane DS", area: "Thane", shelves: 480, freeShelves: 240, storage: "Ambient", lat: 19.2183, lng: 72.9781, address: "Thane" },
   ],
   Delhi: [
     { name: "Rohini DS", area: "Rohini", shelves: 696, freeShelves: 198, storage: "Ambient", lat: 28.721581, lng: 77.10492, address: "Rohini" },
