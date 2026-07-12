@@ -135,7 +135,7 @@ export default function StoreSelection({
       if (inCart) {
         onRemoveFromCart(store.id);
       } else {
-        alert("Please select at least 1 MiniPod to add to your cart.");
+        alert("Please select at least 1 MiniPod to add to your plan.");
       }
       return;
     }
@@ -328,7 +328,7 @@ export default function StoreSelection({
                     </div>
                     <button type="button" className="ss-add-btn" onClick={() => handleAdd(store)}>
                       <Icon.Cart />
-                      {inCart ? `Update — ${draft} MiniPod${draft !== 1 ? "s" : ""}` : `Book ${draft > 0 ? draft + " " : ""}MiniPod${draft !== 1 ? "s" : ""}`}
+                      {inCart ? `Update — ${draft} MiniPod${draft !== 1 ? "s" : ""}` : `Reserve ${draft > 0 ? draft + " " : ""}MiniPod${draft !== 1 ? "s" : ""}`}
                     </button>
                   </div>
                 )}
@@ -352,7 +352,7 @@ export default function StoreSelection({
             <span><span className="ss-legend-dot amber" /> 1–10 MiniPods available</span>
             <span><span className="ss-legend-dot red" /> No MiniPods available</span>
           </div>
-          <p className="ss-map-hint">Tap a marker for store details, or open grid view to book MiniPods.</p>
+          <p className="ss-map-hint">Tap a marker for store details, or open grid view to reserve MiniPods.</p>
         </div>
       )}
 

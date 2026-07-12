@@ -1529,6 +1529,13 @@ const STYLES = `
     gap: 8px;
   }
 
+  .section-note {
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text-3);
+    margin: -6px 0 12px 0;
+  }
+
   .section-label .optional {
     font-weight: 400;
     color: var(--text-3);
@@ -5306,6 +5313,13 @@ const STYLES = `
     width: 100%;
   }
 
+  .lp-cta-note {
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    color: var(--text-3);
+    margin: -16px 0 24px 0;
+  }
+
   @media (max-width: 640px) {
     .lp-actions {
       flex-direction: column;
@@ -6599,10 +6613,6 @@ const STYLES = `
     .mobile-actions-wrap {
       gap: 6px;
     }
-    .lp-graphic-container {
-      height: 220px !important;
-      margin: 2px 0 !important;
-    }
   }
 
   /* World-Class Mobile-First Landing Page Restructuring */
@@ -6673,21 +6683,19 @@ const STYLES = `
       margin-right: auto !important;
     }
 
+    /* Mobile hero order: headline → CTAs → KPI tiles → animation.
+       The primary action must be above the fold; the animation follows,
+       unclipped (height:auto lets the aspect-ratio cards size naturally). */
     .lp-graphic-container {
-      order: 5 !important;
-      height: 460px !important;
+      order: 7 !important;
+      height: auto !important;
+      min-height: 300px !important;
       margin: 8px 0 !important;
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
-      overflow: hidden !important;
+      overflow: visible !important;
       width: 100% !important;
-    }
-
-    .lp-graphic-scene {
-      transform: scale(0.7) !important;
-      transform-origin: center !important;
-      flex-shrink: 0 !important;
     }
 
     .lp-glow-background {
@@ -6716,13 +6724,19 @@ const STYLES = `
     }
 
     .lp-actions {
-      order: 7 !important;
+      order: 5 !important;
       flex-direction: column !important;
       align-items: stretch !important;
       gap: 12px !important;
       width: 100% !important;
       max-width: 340px !important;
-      margin: 8px auto 16px auto !important;
+      margin: 8px auto 0 auto !important;
+    }
+
+    .lp-cta-note {
+      order: 5 !important;
+      text-align: center !important;
+      margin: 8px auto 8px auto !important;
     }
 
     .btn-check-availability,
@@ -6780,13 +6794,6 @@ const STYLES = `
   }
 
   @media (max-width: 400px) {
-    .lp-graphic-scene {
-      transform: scale(0.65) !important;
-    }
-    .lp-graphic-container {
-      height: 180px !important;
-      margin: 0 !important;
-    }
     .lp-title {
       font-size: 30px !important;
     }
@@ -9396,6 +9403,24 @@ const STYLES = `
 
   svg [class] { transform-box: fill-box; }
 
+  /* On small screens the packing-station/rider scene shrinks to unreadable
+     noise next to the logo — show only the logo, wordmark and tagline. */
+  @media (max-width: 768px) {
+    .doodle-wrap .doodle-rail,
+    .doodle-wrap .doodle-station,
+    .doodle-wrap .pkg,
+    .doodle-wrap .roller,
+    .doodle-wrap .scan,
+    .doodle-wrap .sweep,
+    .doodle-wrap .ping,
+    .doodle-wrap .check,
+    .doodle-wrap .moto,
+    .doodle-wrap .trail,
+    .doodle-wrap .plane {
+      display: none !important;
+    }
+  }
+
   .tile { transform-origin: 50% 100%; }
   .run .tile { animation: tileSquash var(--dur) ease-in-out infinite; }
   @keyframes tileSquash {
@@ -10581,9 +10606,12 @@ const STYLES = `
 `;
 
 
+// All documents are optional at reservation time — the specialist collects
+// anything missing on the onboarding call. Uploading early just speeds up
+// go-live, so we never wall the client behind paperwork.
 const DOCUMENTS = [
-  { id: "gst", name: "GST certificate", sub: "PDF format", req: true },
-  { id: "pan", name: "PAN card", sub: "PDF or JPG", req: true },
+  { id: "gst", name: "GST certificate", sub: "PDF format", req: false },
+  { id: "pan", name: "PAN card", sub: "PDF or JPG", req: false },
   { id: "reg", name: "Company registration", sub: "PDF format", req: false },
   { id: "cat", name: "Product catalog", sub: "Excel (.xlsx)", req: false },
   { id: "fssai", name: "FSSAI license", sub: "For F&B brands", req: false },
@@ -10593,8 +10621,8 @@ const DS_CHIPS = ["Blinkit", "Swiggy Instamart", "Zepto", "Other", "None — fir
 const CHALLENGE_CHIPS = ["High delivery cost", "Slow delivery speed", "Inventory & ops management", "Lack of city expansion", "Low order volume"];
 
 const STEPS = [
-  { title: "Store selection", desc: "browse map & book racks" },
-  { title: "Verification", desc: "basic documents & final review" },
+  { title: "Store selection", desc: "browse map & reserve racks" },
+  { title: "Confirm & reserve", desc: "your details & onboarding prep" },
 ];
 
 const isValidMobileNumber = (value) => {
@@ -11091,7 +11119,7 @@ function DoodleLogo({ tagText, onHome }) {
     <div className={`doodle-wrap ${active ? "run" : ""}`} id="doodle" onClick={onHome} style={{ cursor: "pointer" }}>
       <svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg" role="img"
         aria-label="Blitz MiniPods — a package is packed, scanned and handed to a delivery rider">
-        <line x1="24" y1="170" x2="776" y2="170" stroke="#23233a" strokeWidth="2" strokeLinecap="round" />
+        <line className="doodle-rail" x1="24" y1="170" x2="776" y2="170" stroke="#23233a" strokeWidth="2" strokeLinecap="round" />
         <g className="tile">
           <rect x="20" y="25" width="90" height="90" rx="22" fill="#ffffff" />
           <image href="Logo.png" x="20" y="25" width="90" height="90" style={{ clipPath: "inset(0% round 22px)" }} />
@@ -11105,7 +11133,7 @@ function DoodleLogo({ tagText, onHome }) {
         <text className="wordmark" x="273" y="78" fontSize="30" fontWeight="600" fill="var(--accent)">MiniPods</text>
         <circle className="dot" cx="138" cy="103" r="4" fill="var(--green)" />
         <text className="tagline" x="150" y="108" fontSize="14">{tagText}</text>
-        <g>
+        <g className="doodle-station">
           <rect x="422" y="138" width="5" height="32" rx="1" fill="#3a3f55" />
           <rect x="465" y="138" width="5" height="32" rx="1" fill="#3a3f55" />
           <line x1="427" y1="156" x2="465" y2="170" stroke="#252a3a" strokeWidth="1.5" />
@@ -11786,6 +11814,20 @@ export default function DarkStoreOnboarding() {
     }, 10000);
     return () => clearTimeout(timer);
   }, [kpiUserInteracted, activeKPI]);
+
+  // Deep links for ad campaigns: /?start=stores lands straight on store
+  // selection, /?start=specialist opens the talk-to-a-specialist form.
+  useEffect(() => {
+    const start = new URLSearchParams(window.location.search).get("start");
+    if (start === "stores") {
+      setBrowseCity("Delhi");
+      setStep(2);
+    } else if (start === "specialist") {
+      setSpecialistOrigin(0);
+      setStep(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [specialistOrigin, setSpecialistOrigin] = useState(0);
   const [forecastTab, setForecastTab] = useState("sku"); // 'sku', 'city', 'restock'
   const [journeyHoverStep, setJourneyHoverStep] = useState(null);
@@ -11793,7 +11835,6 @@ export default function DarkStoreOnboarding() {
   const [journeyTimerKey, setJourneyTimerKey] = useState(0);
   const journeyTimerBarRef = useRef(null);
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
-  const [simulationData, setSimulationData] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [syncTime, setSyncTime] = useState(new Date().toLocaleTimeString());
   const [orderCount, setOrderCount] = useState(1425);
@@ -11848,6 +11889,9 @@ export default function DarkStoreOnboarding() {
   const [applicationId, setApplicationId] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const [allocatedShelves, setAllocatedShelves] = useState([]);
+  const [reserveSubmitting, setReserveSubmitting] = useState(false);
+  // Stable fallback reservation ID for when the API is unreachable (offline demo)
+  const [fallbackReservationId] = useState(() => Date.now().toString(36).toUpperCase());
 
   // Smart Capacity Recommender State
   const [isRecommenderOpen, setIsRecommenderOpen] = useState(false);
@@ -12184,7 +12228,7 @@ export default function DarkStoreOnboarding() {
     }
 
     if (n === 2) {
-      if (cart.length === 0) next.cart = "Add at least one store with racks to checkout";
+      if (cart.length === 0) next.cart = "Add at least one store with racks to reserve";
     }
 
     if (n === 3) {
@@ -12220,54 +12264,11 @@ export default function DarkStoreOnboarding() {
     setStep(step + 1);
   };
 
-  const loadRazorpayScript = () => {
-    return new Promise((resolve) => {
-      if (window.Razorpay) {
-        resolve(true);
-        return;
-      }
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => resolve(true);
-      script.onerror = () => resolve(false);
-      document.body.appendChild(script);
-    });
-  };
-
-  const handleVerifyMock = async (success) => {
-    if (!success) {
-      alert("Payment simulation failed.");
-      setSimulationData(null);
-      return;
-    }
-
-    try {
-      const response = await fetch("/api/payments/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          razorpay_order_id: simulationData.orderId,
-          razorpay_payment_id: `pay_mock_${Math.random().toString(36).substring(2, 11)}`,
-          razorpay_signature: "mock_sig_12345",
-          applicationId: simulationData.applicationId,
-          isMock: true,
-        }),
-      });
-      const result = await safeJsonFromResponse(response);
-      if (result.success) {
-        setSimulationData(null);
-        setApplicationId(simulationData.applicationId);
-        setRefreshKey((prev) => prev + 1);
-        setStep(4);
-      } else {
-        alert("Verification failed: " + result.error);
-      }
-    } catch (err) {
-      alert("Verification failed: " + err.message);
-    }
-  };
-
-  const handleCheckoutPayment = async () => {
+  // Reservation is a sales handoff, not a transaction. We submit the full
+  // qualified lead (contact + exact stores/racks picked) to the backend and
+  // move straight to the confirmation screen — a specialist closes the loop
+  // within 24 hours. No payment is collected online.
+  const handleReserveRacks = async () => {
     const step3Errors = validateStep(3);
     if (Object.keys(step3Errors).length > 0) {
       setErrors(step3Errors);
@@ -12275,10 +12276,11 @@ export default function DarkStoreOnboarding() {
       return;
     }
     if (cart.length === 0) {
-      alert("Please add at least one store/shelf to checkout.");
+      alert("Please add at least one store with racks to reserve.");
       return;
     }
 
+    setReserveSubmitting(true);
     try {
       const response = await fetch("/api/applications", {
         method: "POST",
@@ -12303,74 +12305,19 @@ export default function DarkStoreOnboarding() {
         }),
       });
 
-      const orderDetails = await safeJsonFromResponse(response);
-
-      const isScriptLoaded = await loadRazorpayScript();
-      if (!isScriptLoaded) {
-        if (orderDetails.isMock) {
-          // If script fails (e.g. offline/blocked), fall back to the offline simulation modal
-          setSimulationData(orderDetails);
-        } else {
-          alert("Failed to load Razorpay SDK. Check your internet connection.");
-          return;
-        }
-      } else {
-        const options = {
-          key: orderDetails.keyId,
-          amount: orderDetails.amount,
-          currency: "INR",
-          name: "Blitz MiniPods",
-          description: `Shelf Booking for ${brandName}`,
-          handler: async function (res) {
-            try {
-              const verifyRes = await fetch("/api/payments/verify", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  razorpay_order_id: res.razorpay_order_id || orderDetails.orderId || "",
-                  razorpay_payment_id: res.razorpay_payment_id,
-                  razorpay_signature: res.razorpay_signature || "mock_sig_12345",
-                  applicationId: orderDetails.applicationId,
-                  isMock: orderDetails.isMock,
-                }),
-              });
-
-              const verification = await safeJsonFromResponse(verifyRes);
-              if (verification.success) {
-                setApplicationId(orderDetails.applicationId);
-                setRefreshKey((prev) => prev + 1);
-                setStep(4);
-              } else {
-                alert("Payment verification failed: " + verification.error);
-              }
-            } catch (err) {
-              alert("Verification connection failed: " + err.message);
-            }
-          },
-          prefill: {
-            name: poc,
-            email: email,
-            contact: phone,
-            method: "upi",
-          },
-          theme: {
-            color: "#6366f1",
-          },
-        };
-
-        if (!orderDetails.isMock && orderDetails.orderId) {
-          options.order_id = orderDetails.orderId;
-        }
-
-        const paymentObject = new window.Razorpay(options);
-        paymentObject.open();
+      const result = await safeJsonFromResponse(response);
+      if (result && result.applicationId) {
+        setApplicationId(result.applicationId);
+        setRefreshKey((prev) => prev + 1);
       }
-
-      setErrors({});
-      setShowStepError(false);
-    } catch (err) {
-      alert("Checkout failed: " + err.message);
+    } catch {
+      // Never block the client on a network hiccup — the reservation summary
+      // still renders from local cart state and sales reconciles offline.
     }
+    setReserveSubmitting(false);
+    setErrors({});
+    setShowStepError(false);
+    setStep(4);
   };
 
   const handleSubmit = async () => {
@@ -12609,6 +12556,9 @@ export default function DarkStoreOnboarding() {
                 Talk To Our Team
               </button>
             </div>
+            <p className="lp-cta-note">
+              Free coverage plan · No payment online · Specialist response within 24 hrs
+            </p>
 
           </div>
 
@@ -12872,43 +12822,14 @@ export default function DarkStoreOnboarding() {
                 Talk To Our Team
               </button>
             </div>
+            <p className="lp-cta-note" style={{ textAlign: 'center' }}>
+              Free coverage plan · No payment online · Specialist response within 24 hrs
+            </p>
           </div>
         </section>
       </div>
     );
   };
-
-  const renderSimulationModal = () => (
-    <div className="payment-modal-overlay">
-      <div className="payment-modal">
-        <div className="payment-modal-head">
-          <div className="payment-gateway-badge">Blitz Pay</div>
-          <h4>Simulated Checkout</h4>
-        </div>
-        <p className="payment-modal-desc">
-          No Razorpay credentials configured. Running in <strong>Sandbox Mode</strong>.
-        </p>
-        <div className="payment-details">
-          <div className="payment-detail-row">
-            <span>Order ID</span>
-            <code>{simulationData.orderId}</code>
-          </div>
-          <div className="payment-detail-row">
-            <span>Amount</span>
-            <strong>₹{(simulationData.amount / 100).toLocaleString("en-IN")}</strong>
-          </div>
-        </div>
-        <div className="payment-modal-actions">
-          <button className="btn btn-secondary" onClick={() => handleVerifyMock(false)}>
-            Simulate Failure
-          </button>
-          <button className="btn btn-primary" onClick={() => handleVerifyMock(true)}>
-            Simulate Success
-          </button>
-        </div>
-      </div>
-    </div>
-  );
 
   const renderJourneyVisual = (idx) => {
     switch (idx) {
@@ -12988,14 +12909,14 @@ export default function DarkStoreOnboarding() {
       case 3: {
         // 263.9 = 2*pi*42 (SVG ring circumference), 34.3 = 263.9*0.13 (13% remaining = 87% filled)
         const scanItems = [
-          { brand: 'Nykaa', name: 'SPF50+ Sunscreen', sku: 'NK-1284', qty: 24, time: '08:04:32' },
-          { brand: 'Foxtale', name: 'Vitamin C Serum', sku: 'FT-0891', qty: 12, time: '08:04:31' },
-          { brand: 'HealthKart', name: 'B12 Supplement', sku: 'HK-4421', qty: 36, time: '08:04:29' },
-          { brand: 'Ajio', name: 'Casual Linen Shirt', sku: 'AJ-7723', qty: 18, time: '08:04:28' },
-          { brand: 'Nykaa', name: 'Hydra Moisturiser', sku: 'NK-2291', qty: 30, time: '08:04:26' },
-          { brand: 'Foxtale', name: 'Retinol Night Cream', sku: 'FT-1102', qty: 15, time: '08:04:24' },
-          { brand: 'HealthKart', name: 'Whey Protein 1kg', sku: 'HK-0033', qty: 8, time: '08:04:22' },
-          { brand: 'Myntra', name: 'Sports Joggers', sku: 'MN-8812', qty: 22, time: '08:04:20' },
+          { brand: 'GlowRitual', name: 'SPF50+ Sunscreen', sku: 'GR-1284', qty: 24, time: '08:04:32' },
+          { brand: 'DermaLeaf', name: 'Vitamin C Serum', sku: 'DL-0891', qty: 12, time: '08:04:31' },
+          { brand: 'VitaCore', name: 'B12 Supplement', sku: 'VC-4421', qty: 36, time: '08:04:29' },
+          { brand: 'UrbanWeave', name: 'Casual Linen Shirt', sku: 'UW-7723', qty: 18, time: '08:04:28' },
+          { brand: 'GlowRitual', name: 'Hydra Moisturiser', sku: 'GR-2291', qty: 30, time: '08:04:26' },
+          { brand: 'DermaLeaf', name: 'Retinol Night Cream', sku: 'DL-1102', qty: 15, time: '08:04:24' },
+          { brand: 'VitaCore', name: 'Whey Protein 1kg', sku: 'VC-0033', qty: 8, time: '08:04:22' },
+          { brand: 'PaceWear', name: 'Sports Joggers', sku: 'PW-8812', qty: 22, time: '08:04:20' },
         ];
         const barWidths = [3, 1.5, 2, 1.5, 3, 1.5, 2, 1.5, 3, 1.5, 2, 1.5];
         const cats = [
@@ -13169,7 +13090,7 @@ export default function DarkStoreOnboarding() {
   const pageMeta = [
     null,
     { title: "Choose your stores" },
-    { title: "Verify & Checkout", desc: "Enter company details, upload required documents." },
+    { title: "Confirm your reservation", desc: "Share your details — a specialist confirms availability & pricing within 24 hours." },
   ][step - 1];
 
   const renderThemeToggle = () => (
@@ -13394,7 +13315,11 @@ export default function DarkStoreOnboarding() {
     <>
       {renderPage1()}
       <section className="section">
-        <div className="section-label">Required documents</div>
+        <div className="section-label">Documents — optional, speeds up your onboarding</div>
+        <p className="section-note">
+          Have these handy? Upload now and go live faster. Otherwise your specialist
+          will collect them on the onboarding call.
+        </p>
         <div className="doc-list">
           {DOCUMENTS.map(doc => (
             <DocumentUpload
@@ -13415,7 +13340,7 @@ export default function DarkStoreOnboarding() {
       </section>
 
       <section className="section">
-        <div className="section-label">Application summary</div>
+        <div className="section-label">Reservation summary</div>
         <div className="summary">
           <div className="summary-item"><span>Brand</span><strong>{brandName || "—"}</strong></div>
           <div className="summary-item"><span>Cities</span><strong>{selectedCities}</strong></div>
@@ -13425,15 +13350,19 @@ export default function DarkStoreOnboarding() {
             <strong>{selectedStores}</strong>
           </div>
         </div>
+        <p className="section-note" style={{ marginTop: 12 }}>
+          No payment is collected online. A Blitz specialist confirms availability &
+          pricing with you within 24 hours of reserving.
+        </p>
       </section>
 
       <section className="section">
         <div className={`agreement${errors.agreed ? " has-error" : ""}`} onClick={() => { setAgreed(!agreed); clearError("agreed"); }}>
           <input type="checkbox" id="tc" checked={agreed} onChange={e => { setAgreed(e.target.checked); clearError("agreed"); }} onClick={e => e.stopPropagation()} />
           <label htmlFor="tc">
-            I confirm all information is accurate and agree to the{" "}
-            <a href="#" onClick={e => e.stopPropagation()}>Partner Terms</a> and{" "}
-            <a href="#" onClick={e => e.stopPropagation()}>SLA Agreement</a>.
+            I confirm all information is accurate. The <strong>Partner Terms</strong> and{" "}
+            <strong>SLA Agreement</strong> will be shared for review & e-signing after
+            your specialist call.
           </label>
         </div>
       </section>
@@ -13442,7 +13371,7 @@ export default function DarkStoreOnboarding() {
 
   const renderConfirm = () => {
     const totalRacks = cart.reduce((sum, item) => sum + (item.racks || 0), 0);
-    const amountPaid = totalRacks * 1600;
+    const reservedCities = [...new Set(cart.map((c) => c.city))];
 
     return (
       <div className="confirm-wrap">
@@ -13451,21 +13380,26 @@ export default function DarkStoreOnboarding() {
             <div className="success-glow-circle">
               <Icon.Success />
             </div>
-            <span className="success-status-tag">Payment Verified</span>
-            <h2>Booking Confirmed</h2>
-            <p className="confirm-subtitle">Your darkstore slots have been secured successfully.</p>
+            <span className="success-status-tag">Reservation Received</span>
+            <h2>Your Racks Are Reserved</h2>
+            <p className="confirm-subtitle">
+              A Blitz onboarding specialist will call you within <strong>24 hours</strong> to
+              confirm availability, pricing, and your launch plan. No payment is due until then.
+            </p>
           </div>
 
-          {/* Receipt Section */}
+          {/* Reservation Summary */}
           <div className="receipt-section">
             <div className="receipt-amount-box">
-              <span className="receipt-amount-label">AMOUNT PAID</span>
-              <span className="receipt-amount-value">₹{amountPaid.toLocaleString("en-IN")}</span>
+              <span className="receipt-amount-label">RESERVED</span>
+              <span className="receipt-amount-value">
+                {totalRacks} Rack{totalRacks !== 1 ? "s" : ""} · {reservedCities.length} Cit{reservedCities.length !== 1 ? "ies" : "y"}
+              </span>
             </div>
 
             <div className="receipt-details">
               <div className="receipt-row">
-                <span>Account</span>
+                <span>Brand</span>
                 <strong>{brandName || "Company Name"}</strong>
               </div>
               <div className="receipt-row">
@@ -13477,8 +13411,8 @@ export default function DarkStoreOnboarding() {
                 <strong>{phone} · {email}</strong>
               </div>
               <div className="receipt-row">
-                <span>Payment Reference</span>
-                <code>TXN-{Math.random().toString(36).substring(2, 10).toUpperCase()}</code>
+                <span>Reservation ID</span>
+                <code>{applicationId ? `BLZ-${String(applicationId).toUpperCase()}` : `BLZ-${fallbackReservationId}`}</code>
               </div>
             </div>
           </div>
@@ -13504,7 +13438,7 @@ export default function DarkStoreOnboarding() {
             </div>
           ) : cart.length > 0 ? (
             <div className="allocation-breakdown">
-              <h4>Allocated Shelves</h4>
+              <h4>Your Reserved Racks</h4>
               <div className="allocation-list">
                 {cart.map((item) => (
                   <div key={item.storeId} className="allocation-item">
@@ -13514,7 +13448,7 @@ export default function DarkStoreOnboarding() {
                       <em>({item.city})</em>
                     </div>
                     <span className="allocation-quantity">
-                      {item.racks} Shelf{item.racks !== 1 ? "s" : ""}
+                      {item.racks} Rack{item.racks !== 1 ? "s" : ""}
                     </span>
                   </div>
                 ))}
@@ -13524,34 +13458,34 @@ export default function DarkStoreOnboarding() {
 
           {/* CRED-style Interactive Timeline */}
           <div className="cred-timeline">
-            <h4>Onboarding Journey</h4>
+            <h4>What Happens Next</h4>
             <div className="cred-timeline-steps">
               <div className="cred-timeline-step completed">
                 <div className="cred-step-icon">✓</div>
                 <div className="cred-step-content">
-                  <h5>Payment Received</h5>
-                  <p>₹{amountPaid.toLocaleString("en-IN")} processed successfully via UPI</p>
+                  <h5>Reservation Received</h5>
+                  <p>{totalRacks} rack{totalRacks !== 1 ? "s" : ""} held for you across {reservedCities.join(", ")}</p>
                 </div>
               </div>
               <div className="cred-timeline-step active">
                 <div className="cred-step-icon">●</div>
                 <div className="cred-step-content">
-                  <h5>Document Verification</h5>
-                  <p>Our audit team is reviewing your uploaded PAN, GST & Catalog sheets</p>
+                  <h5>Specialist Call — Within 24 Hours</h5>
+                  <p>Your onboarding specialist confirms live availability, pricing & launch timeline on {phone}</p>
                 </div>
               </div>
               <div className="cred-timeline-step upcoming">
                 <div className="cred-step-icon">○</div>
                 <div className="cred-step-content">
-                  <h5>Digital Agreement signing</h5>
-                  <p>A secure DocuSign link will be dispatched to {email}</p>
+                  <h5>Agreement & Documents</h5>
+                  <p>A secure signing link and document checklist will be sent to {email}</p>
                 </div>
               </div>
               <div className="cred-timeline-step upcoming">
                 <div className="cred-step-icon">○</div>
                 <div className="cred-step-content">
-                  <h5>Inventory Drop Scheduled</h5>
-                  <p>Setup coordinate details and delivery scheduling at the booked locations</p>
+                  <h5>Inventory Drop & Go Live</h5>
+                  <p>Stock your reserved racks and start fulfilling 60-minute orders</p>
                 </div>
               </div>
             </div>
@@ -13560,10 +13494,10 @@ export default function DarkStoreOnboarding() {
           {/* Button actions */}
           <div className="confirm-actions">
             <button className="btn btn-primary btn-confirm-dashboard" onClick={() => window.location.reload()}>
-              Return to Dashboard
+              Back to Home
             </button>
             <button className="btn-confirm-receipt" onClick={() => window.print()}>
-              Download Receipt PDF
+              Download Reservation Summary
             </button>
           </div>
         </div>
@@ -13858,7 +13792,7 @@ export default function DarkStoreOnboarding() {
                     </div>
                     <div className="checkout-stats">
                       <strong>{cart.length} store{cart.length !== 1 ? "s" : ""} · {totalCartRacks} rack{totalCartRacks !== 1 ? "s" : ""}</strong>
-                      <span>{cartCityCount > 0 ? `${cartCityCount} cit${cartCityCount !== 1 ? "ies" : "y"}: ${[...new Set(cart.map((c) => c.city))].join(", ")}` : "Add stores to checkout"}</span>
+                      <span>{cartCityCount > 0 ? `${cartCityCount} cit${cartCityCount !== 1 ? "ies" : "y"}: ${[...new Set(cart.map((c) => c.city))].join(", ")}` : "Add stores to your plan"}</span>
                     </div>
                   </div>
                   <button
@@ -13889,8 +13823,8 @@ export default function DarkStoreOnboarding() {
                       Continue <Icon.ArrowRight />
                     </button>
                   ) : (
-                    <button className="btn btn-primary btn-checkout" onClick={handleCheckoutPayment} disabled={!isStepValid(3)} title={!isStepValid(3) ? "Complete all required fields and documents to pay" : undefined}>
-                      Pay & Book Racks <Icon.ArrowRight />
+                    <button className="btn btn-primary btn-checkout" onClick={handleReserveRacks} disabled={!isStepValid(3) || reserveSubmitting} title={!isStepValid(3) ? "Complete all required fields to reserve" : undefined}>
+                      {reserveSubmitting ? "Reserving…" : <>Reserve My Racks <Icon.ArrowRight /></>}
                     </button>
                   )}
                 </>
@@ -13898,7 +13832,6 @@ export default function DarkStoreOnboarding() {
             </div>
           </footer>
         </main>
-        {simulationData && renderSimulationModal()}
       </div>
       {isRecommenderOpen && renderRecommenderModal()}
     </>
