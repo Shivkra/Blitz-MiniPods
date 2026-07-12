@@ -9327,6 +9327,184 @@ const STYLES = `
     -webkit-text-fill-color: transparent;
   }
 
+  /* 3. Money Math Section */
+  .lp-money-card {
+    display: grid;
+    grid-template-columns: minmax(260px, 380px) 1fr;
+    gap: 40px;
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 36px 40px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    backdrop-filter: blur(20px);
+  }
+  html.light .lp-money-card {
+    background: #ffffff;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.06);
+  }
+
+  .lp-money-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  .lp-money-control-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 10px;
+    font-size: 13.5px;
+    color: var(--text-2);
+  }
+  .lp-money-control-head strong {
+    font-size: 17px;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lp-money-control input[type="range"] {
+    width: 100%;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  .lp-money-gmv {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 14px 16px;
+    border: 1px dashed var(--border);
+    border-radius: 12px;
+    font-size: 13px;
+    color: var(--text-3);
+  }
+  .lp-money-gmv strong {
+    font-size: 18px;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lp-money-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    justify-content: center;
+  }
+
+  .lp-money-bar-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .lp-money-bar-label span {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .lp-money-bar-label em {
+    font-style: normal;
+    font-size: 12px;
+    color: var(--text-3);
+    text-align: right;
+  }
+
+  .lp-money-bar-track {
+    height: 26px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  html.light .lp-money-bar-track {
+    background: rgba(15, 23, 42, 0.04);
+  }
+
+  .lp-money-bar-fill {
+    height: 100%;
+    border-radius: 7px;
+    transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .lp-money-bar-fill.mp {
+    background: linear-gradient(90deg, rgba(244, 114, 114, 0.75), rgba(244, 114, 114, 0.45));
+  }
+  .lp-money-bar-fill.blitz {
+    background: linear-gradient(90deg, var(--accent), #34d399);
+  }
+
+  .lp-money-bar-value {
+    margin-top: 6px;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .lp-money-bar-value span {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-3);
+    margin-left: 4px;
+  }
+  .lp-money-bar-value.blitz {
+    color: #34d399;
+  }
+  html.light .lp-money-bar-value.blitz {
+    color: #059669;
+  }
+
+  .lp-money-delta {
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: rgba(52, 211, 153, 0.08);
+    border: 1px solid rgba(52, 211, 153, 0.25);
+    font-size: 14px;
+    color: var(--text-2);
+  }
+  .lp-money-delta strong {
+    color: #34d399;
+    font-variant-numeric: tabular-nums;
+  }
+  html.light .lp-money-delta strong {
+    color: #059669;
+  }
+
+  .lp-money-foot {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .lp-money-cta {
+    white-space: nowrap;
+  }
+  .lp-money-note {
+    flex: 1;
+    min-width: 220px;
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: var(--text-3);
+  }
+
+  @media (max-width: 900px) {
+    .lp-money-card {
+      grid-template-columns: 1fr;
+      gap: 28px;
+      padding: 24px 20px;
+    }
+    .lp-money-bar-label {
+      flex-direction: column;
+      gap: 2px;
+    }
+    .lp-money-bar-label em {
+      text-align: left;
+    }
+  }
+
   /* 8. Final CTA Section */
   .lp-final-cta-section {
     padding-bottom: 140px;
@@ -11792,6 +11970,118 @@ function AccuracyAnimation() {
   );
 }
 
+// ── MONEY MATH — the landing hook. D2C founders think in margin, not
+// infrastructure. Two sliders, one honest comparison: what a marketplace
+// takes vs what you keep selling from your own site fulfilled by Blitz.
+// Assumptions are illustrative and stated in the UI; exact pricing is
+// confirmed on the specialist call.
+function MoneyMathSection({ onTalk }) {
+  const [aov, setAov] = useState(600);
+  const [orders, setOrders] = useState(100);
+
+  const MARKETPLACE_TAKE = 0.30;   // commission + fees + mandatory ads
+  const RACK_RENT = 1600;          // ₹ / rack / month (illustrative)
+  const ORDERS_PER_RACK = 60;      // orders/day one rack supports
+  const FULFILMENT_FEE = 45;       // ₹ / order last-mile (illustrative)
+
+  const monthlyGmv = aov * orders * 30;
+  const mpKeep = monthlyGmv * (1 - MARKETPLACE_TAKE);
+  const racks = Math.max(1, Math.ceil(orders / ORDERS_PER_RACK));
+  const blitzCost = racks * RACK_RENT + orders * 30 * FULFILMENT_FEE;
+  const blitzKeep = Math.max(0, monthlyGmv - blitzCost);
+  const delta = blitzKeep - mpKeep;
+
+  const fmt = (n) => `₹${Math.round(n).toLocaleString("en-IN")}`;
+  const mpPct = monthlyGmv ? Math.max(4, (mpKeep / monthlyGmv) * 100) : 0;
+  const blitzPct = monthlyGmv ? Math.max(4, (blitzKeep / monthlyGmv) * 100) : 0;
+
+  return (
+    <section className="lp-section lp-money-section">
+      <div className="lp-section-header">
+        <h2 className="lp-section-title">Same Orders. Very Different Payout.</h2>
+        <p className="lp-section-subtitle">
+          Drag to your numbers and see what a marketplace takes — versus what you keep
+          selling from your own site, fulfilled by Blitz.
+        </p>
+      </div>
+
+      <div className="lp-money-card">
+        <div className="lp-money-controls">
+          <div className="lp-money-control">
+            <div className="lp-money-control-head">
+              <span>Average order value</span>
+              <strong>{fmt(aov)}</strong>
+            </div>
+            <input
+              type="range" min="200" max="2000" step="50" value={aov}
+              onChange={(e) => setAov(Number(e.target.value))}
+              aria-label="Average order value"
+            />
+          </div>
+
+          <div className="lp-money-control">
+            <div className="lp-money-control-head">
+              <span>Orders per day</span>
+              <strong>{orders}</strong>
+            </div>
+            <input
+              type="range" min="10" max="500" step="10" value={orders}
+              onChange={(e) => setOrders(Number(e.target.value))}
+              aria-label="Orders per day"
+            />
+          </div>
+
+          <div className="lp-money-gmv">
+            <span>Monthly sales</span>
+            <strong>{fmt(monthlyGmv)}</strong>
+          </div>
+        </div>
+
+        <div className="lp-money-bars">
+          <div className="lp-money-bar-row">
+            <div className="lp-money-bar-label">
+              <span>Selling on a marketplace</span>
+              <em>~30% gone to commissions, fees & ads</em>
+            </div>
+            <div className="lp-money-bar-track">
+              <div className="lp-money-bar-fill mp" style={{ width: `${mpPct}%` }} />
+            </div>
+            <div className="lp-money-bar-value">{fmt(mpKeep)} <span>you keep</span></div>
+          </div>
+
+          <div className="lp-money-bar-row">
+            <div className="lp-money-bar-label">
+              <span>Your site + Blitz MiniPods</span>
+              <em>{racks} rack{racks !== 1 ? "s" : ""} rent + last-mile per order, 0% commission</em>
+            </div>
+            <div className="lp-money-bar-track">
+              <div className="lp-money-bar-fill blitz" style={{ width: `${blitzPct}%` }} />
+            </div>
+            <div className="lp-money-bar-value blitz">{fmt(blitzKeep)} <span>you keep</span></div>
+          </div>
+
+          {delta > 0 && (
+            <div className="lp-money-delta">
+              ≈ <strong>{fmt(delta)}</strong> more in your pocket every month — and the
+              customer data stays yours.
+            </div>
+          )}
+
+          <div className="lp-money-foot">
+            <button className="btn-talk-specialist lp-money-cta" onClick={onTalk}>
+              Get exact pricing on a 15-min call
+            </button>
+            <p className="lp-money-note">
+              Illustrative economics. Exact rack rent & fulfilment pricing are confirmed
+              on your specialist call.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function DarkStoreOnboarding() {
   const [step, setStep] = useState(0);
   const [activeKPI, setActiveKPI] = useState("replenishment");
@@ -12502,7 +12792,9 @@ export default function DarkStoreOnboarding() {
               60 Mins Delivery.
             </h1>
             <p className="lp-desc">
-              Launch 60-minute to same-day delivery across India without investing in warehouses, operations teams, or infrastructure.
+              Book racks in our dark stores, plug into our last-mile fleet, and launch
+              60-minute delivery across India — zero warehouses, zero commissions,
+              and every customer relationship stays yours.
             </p>
 
             {/* Metrics */}
@@ -12568,16 +12860,99 @@ export default function DarkStoreOnboarding() {
 
         {/* 2. TRUST SECTION */}
         <section className="lp-trust-section">
-          <h2 className="lp-trust-title">Trusted By Brands Already Growing With Blitz</h2>
+          <h2 className="lp-trust-title">Built For The Next Wave Of D2C Brands</h2>
           <div className="lp-trust-logos">
-            <span className="lp-trust-chip">Nykaa</span>
-            <span className="lp-trust-chip">Foxtale</span>
-            <span className="lp-trust-chip">HealthKart</span>
-            <span className="lp-trust-chip">Ajio</span>
-            <span className="lp-trust-chip">Myntra</span>
-            <span className="lp-trust-chip">Durlabh Darshan</span>
+            <span className="lp-trust-chip">Beauty & Skincare</span>
+            <span className="lp-trust-chip">Health & Nutrition</span>
+            <span className="lp-trust-chip">Fashion & Apparel</span>
+            <span className="lp-trust-chip">Food & Beverage</span>
+            <span className="lp-trust-chip">Home & Wellness</span>
+            <span className="lp-trust-chip">Electronics</span>
           </div>
         </section>
+
+        {/* 3. MONEY MATH — the economics hook */}
+        <MoneyMathSection onTalk={() => { setSpecialistOrigin(0); setStep(1); }} />
+
+
+        {/* 4. MARKETPLACE VS MINIPODS */}
+        <section className="lp-section">
+          <div className="lp-section-header">
+            <h2 className="lp-section-title">Why Build Your Brand On Someone Else's Shelf?</h2>
+            <p className="lp-section-subtitle">Take control of your quick commerce fulfillment, margins, and customer data.</p>
+          </div>
+          <div className="lp-compare-table-container">
+            <table className="lp-compare-table">
+              <thead>
+                <tr>
+                  <th className="lp-compare-th">Fulfillment Dimension</th>
+                  <th className="lp-compare-th">Marketplace Model</th>
+                  <th className="lp-compare-th lp-compare-highlight">Blitz MiniPods</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Listing Fees</td>
+                  <td className="lp-compare-td">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> ₹25,000 listing fees</span>
+                  </td>
+                  <td className="lp-compare-td lp-compare-highlight">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> No listing fees</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Storage Model</td>
+                  <td className="lp-compare-td">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> High storage charges &amp; trial periods</span>
+                  </td>
+                  <td className="lp-compare-td lp-compare-highlight">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> Shelf-based pricing</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Delisting Risk</td>
+                  <td className="lp-compare-td">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> Constant risk of sudden delisting</span>
+                  </td>
+                  <td className="lp-compare-td lp-compare-highlight">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> No delisting risk</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Distribution &amp; Cities</td>
+                  <td className="lp-compare-td">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> Restricted by platform algorithm</span>
+                  </td>
+                  <td className="lp-compare-td lp-compare-highlight">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> Choose your own active cities</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Customer Ownership</td>
+                  <td className="lp-compare-td">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> Customers owned by marketplace</span>
+                  </td>
+                  <td className="lp-compare-td lp-compare-highlight">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> Own your customer database</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Marketing Control</td>
+                  <td className="lp-compare-td">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> Heavy paid advertising required</span>
+                  </td>
+                  <td className="lp-compare-td lp-compare-highlight">
+                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> Direct demand generation</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <hr className="lp-divider" />
+
+        <hr className="lp-divider" />
 
         {/* 5. QUICK COMMERCE JOURNEY */}
         <section className="lp-section">
@@ -12723,82 +13098,6 @@ export default function DarkStoreOnboarding() {
           </div>
         </section>
 
-        <hr className="lp-divider" />
-
-        {/* 4. MARKETPLACE VS MINIPODS */}
-        <section className="lp-section">
-          <div className="lp-section-header">
-            <h2 className="lp-section-title">Why Build Your Brand On Someone Else's Shelf?</h2>
-            <p className="lp-section-subtitle">Take control of your quick commerce fulfillment, margins, and customer data.</p>
-          </div>
-          <div className="lp-compare-table-container">
-            <table className="lp-compare-table">
-              <thead>
-                <tr>
-                  <th className="lp-compare-th">Fulfillment Dimension</th>
-                  <th className="lp-compare-th">Marketplace Model</th>
-                  <th className="lp-compare-th lp-compare-highlight">Blitz MiniPods</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Listing Fees</td>
-                  <td className="lp-compare-td">
-                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> ₹25,000 listing fees</span>
-                  </td>
-                  <td className="lp-compare-td lp-compare-highlight">
-                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> No listing fees</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Storage Model</td>
-                  <td className="lp-compare-td">
-                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> High storage charges &amp; trial periods</span>
-                  </td>
-                  <td className="lp-compare-td lp-compare-highlight">
-                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> Shelf-based pricing</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Delisting Risk</td>
-                  <td className="lp-compare-td">
-                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> Constant risk of sudden delisting</span>
-                  </td>
-                  <td className="lp-compare-td lp-compare-highlight">
-                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> No delisting risk</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Distribution &amp; Cities</td>
-                  <td className="lp-compare-td">
-                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> Restricted by platform algorithm</span>
-                  </td>
-                  <td className="lp-compare-td lp-compare-highlight">
-                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> Choose your own active cities</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Customer Ownership</td>
-                  <td className="lp-compare-td">
-                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> Customers owned by marketplace</span>
-                  </td>
-                  <td className="lp-compare-td lp-compare-highlight">
-                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> Own your customer database</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="lp-compare-td" style={{ fontWeight: 600 }}>Marketing Control</td>
-                  <td className="lp-compare-td">
-                    <span className="lp-compare-item-wrap"><i className="lp-compare-cross">✖</i> Heavy paid advertising required</span>
-                  </td>
-                  <td className="lp-compare-td lp-compare-highlight">
-                    <span className="lp-compare-item-wrap"><i className="lp-compare-check">✔</i> Direct demand generation</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
 
         <hr className="lp-divider" />
 
