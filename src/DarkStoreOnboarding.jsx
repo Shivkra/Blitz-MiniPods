@@ -5199,7 +5199,7 @@ const STYLES = `
   }
 
   /* While the SVG ring is animating, hide the native CSS border to avoid double lines */
-  .lp-metric-item.active:not(.no-auto) {
+  .lp-metric-item.active {
     border-color: transparent !important;
     box-shadow: 0 12px 30px rgba(99, 102, 241, 0.15) !important;
   }
@@ -5210,7 +5210,7 @@ const STYLES = `
     box-shadow: 0 12px 30px rgba(79, 70, 229, 0.08) !important;
   }
 
-  html.light .lp-metric-item.active:not(.no-auto) {
+  html.light .lp-metric-item.active {
     border-color: transparent !important;
     box-shadow: 0 12px 30px rgba(79, 70, 229, 0.08) !important;
   }
@@ -5274,11 +5274,6 @@ const STYLES = `
   @keyframes kpi-card-ring-fill {
     from { stroke-dashoffset: 1000; }
     to   { stroke-dashoffset: 0; }
-  }
-
-  /* hide ring when user manually selected — no auto-rotate */
-  .lp-metric-item.no-auto .lp-metric-ring-fill {
-    display: none;
   }
 
   .lp-metric-val {
@@ -11800,11 +11795,11 @@ function AccuracyAnimation() {
 export default function DarkStoreOnboarding() {
   const [step, setStep] = useState(0);
   const [activeKPI, setActiveKPI] = useState("replenishment");
-  const [kpiUserInteracted, setKpiUserInteracted] = useState(false);
 
-  // Auto rotate KPIs if no user interaction — each stays 10 seconds
+  // Auto rotate KPIs — each stays 10 seconds. Clicking a tile jumps to it,
+  // and because this effect re-arms on every activeKPI change, the countdown
+  // restarts and the carousel keeps cycling from the clicked tile.
   useEffect(() => {
-    if (kpiUserInteracted) return;
     const kpis = ["replenishment", "movement", "packaging", "accuracy"];
     const timer = setTimeout(() => {
       setActiveKPI((prev) => {
@@ -11813,7 +11808,7 @@ export default function DarkStoreOnboarding() {
       });
     }, 10000);
     return () => clearTimeout(timer);
-  }, [kpiUserInteracted, activeKPI]);
+  }, [activeKPI]);
 
   // Deep links for ad campaigns: /?start=stores lands straight on store
   // selection, /?start=specialist opens the talk-to-a-specialist form.
@@ -12522,8 +12517,8 @@ export default function DarkStoreOnboarding() {
                 return (
                   <div
                     key={key}
-                    className={`lp-metric-item${isActive ? " active" : ""}${kpiUserInteracted ? " no-auto" : ""}`}
-                    onClick={() => { setActiveKPI(key); setKpiUserInteracted(true); }}
+                    className={`lp-metric-item${isActive ? " active" : ""}`}
+                    onClick={() => setActiveKPI(key)}
                   >
                     {/* Card-border timer ring — traces the outer edge of the tile */}
                     <svg
