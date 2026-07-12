@@ -5191,9 +5191,20 @@ const STYLES = `
     box-shadow: 0 12px 30px rgba(99, 102, 241, 0.15), 0 0 1px var(--accent) inset !important;
   }
 
+  /* While the SVG ring is animating, hide the native CSS border to avoid double lines */
+  .lp-metric-item.active:not(.no-auto) {
+    border-color: transparent !important;
+    box-shadow: 0 12px 30px rgba(99, 102, 241, 0.15) !important;
+  }
+
   html.light .lp-metric-item.active {
     border-color: var(--accent) !important;
     background: linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(79, 70, 229, 0.01) 100%) !important;
+    box-shadow: 0 12px 30px rgba(79, 70, 229, 0.08) !important;
+  }
+
+  html.light .lp-metric-item.active:not(.no-auto) {
+    border-color: transparent !important;
     box-shadow: 0 12px 30px rgba(79, 70, 229, 0.08) !important;
   }
 
@@ -5222,6 +5233,45 @@ const STYLES = `
     color: #ffffff !important;
     box-shadow: 0 0 12px var(--accent-glow);
     transform: scale(1.05);
+  }
+
+  /* ── KPI card-border progress ring ── */
+  .lp-metric-ring-svg {
+    position: absolute;
+    inset: -1px;
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    pointer-events: none;
+    overflow: visible;
+    border-radius: inherit;
+    z-index: 2;
+  }
+
+  /* pathLength=1000 makes dasharray/offset unit-independent */
+  .lp-metric-ring-fill {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .lp-metric-item.active .lp-metric-ring-fill {
+    opacity: 1;
+    animation: kpi-card-ring-fill 10s linear forwards;
+  }
+
+  @keyframes kpi-card-ring-fill {
+    from { stroke-dashoffset: 1000; }
+    to   { stroke-dashoffset: 0; }
+  }
+
+  /* hide ring when user manually selected — no auto-rotate */
+  .lp-metric-item.no-auto .lp-metric-ring-fill {
+    display: none;
   }
 
   .lp-metric-val {
@@ -7881,11 +7931,11 @@ const STYLES = `
     width: 0%;
   }
 
-  .lp-journey-step.active-step .lp-journey-card-timer {
-    animation: active-timer-anim 5s linear forwards;
+  @keyframes active-timer-anim-a {
+    from { width: 0%; }
+    to { width: 100%; }
   }
-
-  @keyframes active-timer-anim {
+  @keyframes active-timer-anim-b {
     from { width: 0%; }
     to { width: 100%; }
   }
@@ -11740,6 +11790,8 @@ export default function DarkStoreOnboarding() {
   const [forecastTab, setForecastTab] = useState("sku"); // 'sku', 'city', 'restock'
   const [journeyHoverStep, setJourneyHoverStep] = useState(null);
   const [journeyAutoStep, setJourneyAutoStep] = useState(0);
+  const [journeyTimerKey, setJourneyTimerKey] = useState(0);
+  const journeyTimerBarRef = useRef(null);
   const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
   const [simulationData, setSimulationData] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -11759,10 +11811,37 @@ export default function DarkStoreOnboarding() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  // Restart the timer bar animation imperatively whenever step or key changes
   useEffect(() => {
-    if (journeyHoverStep !== null) return;
+    const bar = journeyTimerBarRef.current;
+    if (!bar) return;
+    // Cancel any running animation
+    bar.getAnimations().forEach((a) => a.cancel());
+    // Reset width instantly
+    bar.style.width = '0%';
+    // Force reflow so the reset is visible
+    void bar.offsetWidth;
+    // Alternate between two keyframe names to force browser restart
+    const animName = journeyTimerKey % 2 === 0 ? 'active-timer-anim-a' : 'active-timer-anim-b';
+    bar.style.animation = `${animName} 5s linear forwards`;
+  }, [journeyAutoStep, journeyTimerKey]);
+
+  useEffect(() => {
+    if (journeyHoverStep !== null) {
+      // Pause the timer bar while hovering
+      const bar = journeyTimerBarRef.current;
+      if (bar) bar.style.animationPlayState = 'paused';
+      return;
+    }
+    // Resume the timer bar
+    const bar = journeyTimerBarRef.current;
+    if (bar) bar.style.animationPlayState = 'running';
     const interval = setInterval(() => {
-      setJourneyAutoStep((prev) => (prev + 1) % 5);
+      setJourneyAutoStep((prev) => {
+        const next = (prev + 1) % 5;
+        setJourneyTimerKey((k) => k + 1);
+        return next;
+      });
     }, 5000);
     return () => clearInterval(interval);
   }, [journeyHoverStep]);
@@ -12486,42 +12565,39 @@ export default function DarkStoreOnboarding() {
 
             {/* Metrics */}
             <div className="lp-metrics">
-              <div
-                className={`lp-metric-item ${activeKPI === "replenishment" ? "active" : ""}`}
-                onClick={() => { setActiveKPI("replenishment"); setKpiUserInteracted(true); }}
-              >
-                <div className="lp-metric-icon">
-                  <Icon.Refresh />
-                </div>
-                <span className="lp-metric-val">Smart<br />Forecast<br />Intelligence</span>
-              </div>
-              <div
-                className={`lp-metric-item ${activeKPI === "movement" ? "active" : ""}`}
-                onClick={() => { setActiveKPI("movement"); setKpiUserInteracted(true); }}
-              >
-                <div className="lp-metric-icon">
-                  <Icon.Truck />
-                </div>
-                <span className="lp-metric-val">Inter Dark-<br />Stock<br />Replenishment</span>
-              </div>
-              <div
-                className={`lp-metric-item ${activeKPI === "packaging" ? "active" : ""}`}
-                onClick={() => { setActiveKPI("packaging"); setKpiUserInteracted(true); }}
-              >
-                <div className="lp-metric-icon">
-                  <Icon.Package />
-                </div>
-                <span className="lp-metric-val">Custom<br />Branded<br />Packaging</span>
-              </div>
-              <div
-                className={`lp-metric-item ${activeKPI === "accuracy" ? "active" : ""}`}
-                onClick={() => { setActiveKPI("accuracy"); setKpiUserInteracted(true); }}
-              >
-                <div className="lp-metric-icon">
-                  <Icon.Target />
-                </div>
-                <span className="lp-metric-val">99.8%<br />Fulfillment<br />Accuracy</span>
-              </div>
+              {[
+                { key: "replenishment", icon: <Icon.Refresh />, label: <>Smart<br />Forecast<br />Intelligence</> },
+                { key: "movement",      icon: <Icon.Truck />,   label: <>Inter Dark-<br />Stock<br />Replenishment</> },
+                { key: "packaging",     icon: <Icon.Package />, label: <>Custom<br />Branded<br />Packaging</> },
+                { key: "accuracy",      icon: <Icon.Target />,  label: <>99.8%<br />Fulfillment<br />Accuracy</> },
+              ].map(({ key, icon, label }) => {
+                const isActive = activeKPI === key;
+                return (
+                  <div
+                    key={key}
+                    className={`lp-metric-item${isActive ? " active" : ""}${kpiUserInteracted ? " no-auto" : ""}`}
+                    onClick={() => { setActiveKPI(key); setKpiUserInteracted(true); }}
+                  >
+                    {/* Card-border timer ring — traces the outer edge of the tile */}
+                    <svg
+                      key={isActive ? `ring-${key}-active` : `ring-${key}-idle`}
+                      className="lp-metric-ring-svg"
+                      viewBox="0 0 100 100"
+                      preserveAspectRatio="none"
+                    >
+                      <rect
+                        className="lp-metric-ring-fill"
+                        x="1" y="1" width="98" height="98" rx="14" ry="14"
+                        pathLength="1000"
+                      />
+                    </svg>
+                    <div className="lp-metric-icon">
+                      {icon}
+                    </div>
+                    <span className="lp-metric-val">{label}</span>
+                  </div>
+                );
+              })}
             </div>
 
             {/* Call to Actions */}
@@ -12584,8 +12660,20 @@ export default function DarkStoreOnboarding() {
                   <Fragment key={idx}>
                     <div
                       className={`lp-journey-step ${isActive ? "active-step" : ""} ${isCompleted ? "completed-step" : ""}`}
-                      onMouseEnter={() => { setJourneyHoverStep(idx); setJourneyAutoStep(idx); }}
-                      onMouseLeave={() => setJourneyHoverStep(null)}
+                      onMouseEnter={() => {
+                        setJourneyHoverStep(idx);
+                        setJourneyAutoStep(idx);
+                        setJourneyTimerKey((k) => k + 1);
+                      }}
+                      onMouseLeave={() => {
+                        setJourneyHoverStep(null);
+                        setJourneyTimerKey((k) => k + 1);
+                      }}
+                      onClick={() => {
+                        setJourneyAutoStep(idx);
+                        setJourneyHoverStep(null);
+                        setJourneyTimerKey((k) => k + 1);
+                      }}
                     >
                       <div className="lp-journey-step-node">
                         <div className="lp-journey-step-num">{j.step}</div>
@@ -12593,7 +12681,9 @@ export default function DarkStoreOnboarding() {
                       <div className="lp-journey-step-content">
                         <h3 className="lp-journey-step-title">{j.title}</h3>
                         {j.desc && <p className="lp-journey-step-desc">{j.desc}</p>}
-                        <div className="lp-journey-card-timer"></div>
+                        {isActive && (
+                          <div ref={journeyTimerBarRef} className="lp-journey-card-timer"></div>
+                        )}
                         {isActive && (
                           <div className="lp-journey-mobile-visual">
                             {renderJourneyVisual(idx)}
