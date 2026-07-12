@@ -11868,20 +11868,20 @@ function AccuracyAnimation() {
           {/* Chamber Viewport */}
           <div className={`acc-chamber ${pulse ? "pulse" : ""}`}>
             <div className="acc-chamber-grid" />
-            
+
             {/* Hologram package SVG outline */}
             <svg viewBox="0 0 100 100" style={{ width: "65px", height: "65px", position: "relative", zIndex: 2 }}>
               {/* Simple box wireframe perspective silhouette */}
-              <path 
-                className="acc-package-silhouette" 
-                d="M20,40 L50,25 L80,40 L50,55 Z M20,40 L20,70 L50,85 L50,55 Z M80,40 L80,70 L50,85" 
+              <path
+                className="acc-package-silhouette"
+                d="M20,40 L50,25 L80,40 L50,55 Z M20,40 L20,70 L50,85 L50,55 Z M80,40 L80,70 L50,85"
                 strokeLinejoin="round"
               />
               {/* Scanning crosshair cursor */}
-              <path 
-                d="M50,15 L50,20 M50,80 L50,85 M15,50 L20,50 M80,50 L85,50" 
-                stroke={pulse ? "var(--green)" : "rgba(255, 255, 255, 0.15)"} 
-                strokeWidth="1" 
+              <path
+                d="M50,15 L50,20 M50,80 L50,85 M15,50 L20,50 M80,50 L85,50"
+                stroke={pulse ? "var(--green)" : "rgba(255, 255, 255, 0.15)"}
+                strokeWidth="1"
               />
             </svg>
 
@@ -12801,9 +12801,9 @@ export default function DarkStoreOnboarding() {
             <div className="lp-metrics">
               {[
                 { key: "replenishment", icon: <Icon.Refresh />, label: <>Smart<br />Forecast<br />Intelligence</> },
-                { key: "movement",      icon: <Icon.Truck />,   label: <>Inter Dark-<br />Stock<br />Replenishment</> },
-                { key: "packaging",     icon: <Icon.Package />, label: <>Custom<br />Branded<br />Packaging</> },
-                { key: "accuracy",      icon: <Icon.Target />,  label: <>99.8%<br />Fulfillment<br />Accuracy</> },
+                { key: "movement", icon: <Icon.Truck />, label: <>Inter Dark-<br />Stock<br />Replenishment</> },
+                { key: "packaging", icon: <Icon.Package />, label: <>Custom<br />Branded<br />Packaging</> },
+                { key: "accuracy", icon: <Icon.Target />, label: <>99.8%<br />Fulfillment<br />Accuracy</> },
               ].map(({ key, icon, label }) => {
                 const isActive = activeKPI === key;
                 return (
@@ -12844,7 +12844,7 @@ export default function DarkStoreOnboarding() {
               </button>
             </div>
             <p className="lp-cta-note">
-              Free coverage plan · No payment online · Specialist response within 24 hrs
+              Reserve your racks right here · No payment online · Specialist confirms within 24 hrs
             </p>
 
           </div>
@@ -13117,7 +13117,7 @@ export default function DarkStoreOnboarding() {
               </button>
             </div>
             <p className="lp-cta-note" style={{ textAlign: 'center' }}>
-              Free coverage plan · No payment online · Specialist response within 24 hrs
+              Reserve your racks right here · No payment online · Specialist confirms within 24 hrs
             </p>
           </div>
         </section>
