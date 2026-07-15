@@ -10782,6 +10782,108 @@ const STYLES = `
     color: var(--green);
     letter-spacing: 0.05em;
   }
+
+  /* ═══════════ MOBILE OVERRIDES (≤768px) ═══════════
+     Kept last so they win the cascade over the desktop rules above. */
+  @media (max-width: 768px) {
+    /* Fluid display type — the fixed desktop sizes wrapped into 4+
+       cramped lines on a 375px screen. */
+    .lp-section-title {
+      font-size: clamp(24px, 7.5vw, 30px);
+      line-height: 1.25;
+      text-wrap: balance;
+    }
+    .lp-section-subtitle { font-size: 14.5px; }
+    .lp-section-header { margin-bottom: 36px; }
+
+    .lp-final-cta-title {
+      font-size: clamp(26px, 8vw, 32px);
+      text-wrap: balance;
+    }
+    .lp-final-cta-desc { font-size: 15px; }
+    .lp-final-cta-card { padding: 36px 20px; gap: 16px; }
+    .lp-final-cta-section { padding-bottom: 80px; }
+    .lp-launch-visual { padding: 10px 12px !important; }
+
+    /* Tighter trust-chip strip */
+    .lp-trust-section { padding: 40px 20px; }
+    .lp-trust-logos { gap: 10px; margin-bottom: 0; }
+    .lp-trust-chip { padding: 7px 14px; font-size: 13px; }
+
+    /* Hero KPI animations: the forced square made content-heavy cards
+       (live QC stream) spill over the metric tiles below — let the
+       content set the height instead. */
+    .acc-card, .pkg-card-new, .replenish-card-new {
+      aspect-ratio: auto;
+      min-height: 0;
+    }
+
+    /* Comparison table → stacked per-dimension cards. Three columns
+       can't fit 375px, which pushed the Blitz column off-screen. */
+    .lp-compare-table { min-width: 0; }
+    .lp-compare-table thead { display: none; }
+    .lp-compare-table,
+    .lp-compare-table tbody,
+    .lp-compare-table tr,
+    .lp-compare-table td { display: block; width: 100%; }
+    .lp-compare-table tr {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .lp-compare-table tr:last-child { border-bottom: none; }
+    .lp-compare-td { padding: 0; border-bottom: none; }
+    .lp-compare-td:first-child {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-3);
+      margin-bottom: 10px;
+    }
+    .lp-compare-td:nth-child(2) { margin-bottom: 8px; }
+    .lp-compare-td:nth-child(2)::before,
+    .lp-compare-td:nth-child(3)::before {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+    .lp-compare-td:nth-child(2)::before { content: "Marketplace"; color: var(--text-3); }
+    .lp-compare-td:nth-child(3)::before { content: "Blitz MiniPods"; color: var(--accent); }
+    .lp-compare-highlight {
+      background: rgba(99, 102, 241, 0.06);
+      border-left: none;
+      border-right: none;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    /* City pill row scrolls horizontally — hide the chunky scrollbar
+       (the row stays swipeable). */
+    .ss-city-pills {
+      scrollbar-width: none;
+    }
+    .ss-city-pills::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  @media (max-width: 480px) {
+    /* Specialist form footer: side-by-side buttons wrapped the CTA
+       label — stack them full-width, primary action on top. */
+    .standalone-form-foot {
+      flex-direction: column-reverse;
+      align-items: stretch;
+    }
+    .standalone-form-foot .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
 `;
 
 
@@ -11430,7 +11532,7 @@ function LaunchNetworkVisual() {
         backgroundSize: "20px 20px"
       }} />
 
-      <svg width="440" height="180" viewBox="0 0 440 180" style={{ overflow: "visible", position: "relative", zIndex: 1 }}>
+      <svg viewBox="0 0 440 180" style={{ width: "100%", maxWidth: "440px", height: "auto", overflow: "visible", position: "relative", zIndex: 1 }}>
         {/* Connection Lines from Brand to MiniPods */}
         <path d="M 220 30 L 110 90" stroke="rgba(99, 102, 241, 0.2)" strokeWidth="1.5" strokeDasharray="3 3" />
         <path d="M 220 30 L 220 100" stroke="rgba(99, 102, 241, 0.2)" strokeWidth="1.5" strokeDasharray="3 3" />
@@ -13097,8 +13199,6 @@ export default function DarkStoreOnboarding() {
             </table>
           </div>
         </section>
-
-        <hr className="lp-divider" />
 
         <hr className="lp-divider" />
 
