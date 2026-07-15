@@ -3345,6 +3345,11 @@ const STYLES = `
     background: rgba(239, 68, 68, 0.05);
   }
 
+  .doc-item-wrapper.error .doc-item {
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    background: rgba(239, 68, 68, 0.05);
+  }
+
   .doc-item-wrapper.review .doc-item {
     border-color: rgba(245, 158, 11, 0.3) !important;
     background: var(--amber-soft);
@@ -5001,6 +5006,7 @@ const STYLES = `
     display: flex;
     align-items: center;
     gap: 8px;
+    margin-top: 7px;
     margin-bottom: 12px;
   }
 
@@ -6649,7 +6655,7 @@ const STYLES = `
 
     .lp-badge {
       order: 1 !important;
-      margin: 0 auto 8px auto !important;
+      margin: 12px auto 8px auto !important;
     }
 
     .lp-title {
@@ -6682,7 +6688,7 @@ const STYLES = `
        The primary action must be above the fold; the animation follows,
        unclipped (height:auto lets the aspect-ratio cards size naturally). */
     .lp-graphic-container {
-      order: 7 !important;
+      order: 6 !important;
       height: auto !important;
       min-height: 300px !important;
       margin: 8px 0 !important;
@@ -6699,7 +6705,7 @@ const STYLES = `
     }
 
     .lp-metrics {
-      order: 6 !important;
+      order: 7 !important;
       grid-template-columns: repeat(2, 1fr) !important;
       gap: 12px !important;
       width: 100% !important;
@@ -7184,13 +7190,13 @@ const STYLES = `
 
   /* 2. Trust Section */
   .lp-trust-section {
-    padding: 40px 96px 80px 96px;
+    padding: 80px 96px 80px 96px;
     border-bottom: 1px solid var(--border);
   }
 
   @media (max-width: 768px) {
     .lp-trust-section {
-      padding: 30px 24px 60px 24px;
+      padding: 60px 24px 60px 24px;
     }
   }
 
@@ -9514,13 +9520,13 @@ const STYLES = `
     background: radial-gradient(circle at center top, rgba(99, 102, 241, 0.1) 0%, rgba(255, 255, 255, 0.01) 80%);
     border: 1px solid var(--border);
     border-radius: var(--radius-xl);
-    padding: 80px 40px;
+    padding: 48px 40px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 32px;
-    max-width: 1000px;
+    gap: 20px;
+    max-width: 800px;
     margin: 0 auto;
     width: 100%;
     box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
@@ -10779,13 +10785,12 @@ const STYLES = `
 `;
 
 
-// All documents are optional at reservation time — the specialist collects
-// anything missing on the onboarding call. Uploading early just speeds up
-// go-live, so we never wall the client behind paperwork.
+// GST, PAN & Company registration are mandatory at reservation time;
+// other documents are optional. Uploading them early speeds up onboarding.
 const DOCUMENTS = [
-  { id: "gst", name: "GST certificate", sub: "PDF format", req: false },
-  { id: "pan", name: "PAN card", sub: "PDF or JPG", req: false },
-  { id: "reg", name: "Company registration", sub: "PDF format", req: false },
+  { id: "gst", name: "GST certificate", sub: "PDF format", req: true },
+  { id: "pan", name: "PAN card", sub: "PDF or JPG", req: true },
+  { id: "reg", name: "Company registration", sub: "PDF format", req: true },
   { id: "cat", name: "Product catalog", sub: "Excel (.xlsx)", req: false },
   { id: "fssai", name: "FSSAI license", sub: "For F&B brands", req: false },
 ];
@@ -11399,6 +11404,151 @@ function DoodleLogo({ tagText, onHome }) {
   );
 }
 
+function LaunchNetworkVisual() {
+  return (
+    <div className="lp-launch-visual" style={{
+      width: "100%",
+      maxWidth: "460px",
+      background: "rgba(255, 255, 255, 0.015)",
+      border: "1px solid var(--border)",
+      borderRadius: "16px",
+      padding: "10px 24px",
+      marginBottom: "8px",
+      boxShadow: "inset 0 0 24px rgba(99, 102, 241, 0.05)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      position: "relative",
+      overflow: "hidden"
+    }}>
+      {/* Background Grid Lines for Technical Look */}
+      <div style={{
+        position: "absolute",
+        inset: 0,
+        opacity: 0.05,
+        backgroundImage: "linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px)",
+        backgroundSize: "20px 20px"
+      }} />
+
+      <svg width="440" height="180" viewBox="0 0 440 180" style={{ overflow: "visible", position: "relative", zIndex: 1 }}>
+        {/* Connection Lines from Brand to MiniPods */}
+        <path d="M 220 30 L 110 90" stroke="rgba(99, 102, 241, 0.2)" strokeWidth="1.5" strokeDasharray="3 3" />
+        <path d="M 220 30 L 220 100" stroke="rgba(99, 102, 241, 0.2)" strokeWidth="1.5" strokeDasharray="3 3" />
+        <path d="M 220 30 L 330 90" stroke="rgba(99, 102, 241, 0.2)" strokeWidth="1.5" strokeDasharray="3 3" />
+
+        {/* Connection Lines from MiniPods to Customers */}
+        <path d="M 110 90 L 50 140" stroke="rgba(16, 185, 129, 0.15)" strokeWidth="1" />
+        <path d="M 110 90 L 110 145" stroke="rgba(16, 185, 129, 0.15)" strokeWidth="1" />
+        <path d="M 110 90 L 170 140" stroke="rgba(16, 185, 129, 0.15)" strokeWidth="1" />
+
+        <path d="M 220 100 L 180 150" stroke="rgba(16, 185, 129, 0.15)" strokeWidth="1" />
+        <path d="M 220 100 L 260 150" stroke="rgba(16, 185, 129, 0.15)" strokeWidth="1" />
+
+        <path d="M 330 90 L 270 140" stroke="rgba(16, 185, 129, 0.15)" strokeWidth="1" />
+        <path d="M 330 90 L 330 145" stroke="rgba(16, 185, 129, 0.15)" strokeWidth="1" />
+        <path d="M 330 90 L 390 140" stroke="rgba(16, 185, 129, 0.15)" strokeWidth="1" />
+
+        {/* Animated Packages (Store -> MiniPod) */}
+        <circle r="4" fill="var(--accent)">
+          <animateMotion dur="2.2s" repeatCount="indefinite" path="M 220 30 L 110 90" />
+        </circle>
+        <circle r="4" fill="var(--accent)">
+          <animateMotion dur="1.8s" repeatCount="indefinite" path="M 220 30 L 220 100" />
+        </circle>
+        <circle r="4" fill="var(--accent)">
+          <animateMotion dur="2.5s" repeatCount="indefinite" path="M 220 30 L 330 90" />
+        </circle>
+
+        {/* Animated Deliveries (MiniPod -> Customers) */}
+        <circle r="3" fill="#10b981">
+          <animateMotion dur="1.2s" begin="0.2s" repeatCount="indefinite" path="M 110 90 L 50 140" />
+        </circle>
+        <circle r="3" fill="#10b981">
+          <animateMotion dur="1.5s" begin="0s" repeatCount="indefinite" path="M 110 90 L 110 145" />
+        </circle>
+        <circle r="3" fill="#10b981">
+          <animateMotion dur="1.4s" begin="0.5s" repeatCount="indefinite" path="M 110 90 L 170 140" />
+        </circle>
+
+        <circle r="3" fill="#10b981">
+          <animateMotion dur="1.3s" begin="0.1s" repeatCount="indefinite" path="M 220 100 L 180 150" />
+        </circle>
+        <circle r="3" fill="#10b981">
+          <animateMotion dur="1.6s" begin="0.3s" repeatCount="indefinite" path="M 220 100 L 260 150" />
+        </circle>
+
+        <circle r="3" fill="#10b981">
+          <animateMotion dur="1.1s" begin="0s" repeatCount="indefinite" path="M 330 90 L 270 140" />
+        </circle>
+        <circle r="3" fill="#10b981">
+          <animateMotion dur="1.4s" begin="0.4s" repeatCount="indefinite" path="M 330 90 L 330 145" />
+        </circle>
+        <circle r="3" fill="#10b981">
+          <animateMotion dur="1.2s" begin="0.2s" repeatCount="indefinite" path="M 330 90 L 390 140" />
+        </circle>
+
+        {/* Customer Nodes (Fading Pulse Indicators) */}
+        {[
+          { x: 50, y: 140 }, { x: 110, y: 145 }, { x: 170, y: 140 },
+          { x: 180, y: 150 }, { x: 260, y: 150 },
+          { x: 270, y: 140 }, { x: 330, y: 145 }, { x: 390, y: 140 }
+        ].map((c, i) => (
+          <g key={i}>
+            <circle cx={c.x} cy={c.y} r="6" fill="#10b981" opacity="0.3">
+              <animate attributeName="r" values="4;9;4" dur="2s" begin={`${i * 0.2}s`} repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.4;0;0.4" dur="2s" begin={`${i * 0.2}s`} repeatCount="indefinite" />
+            </circle>
+            <circle cx={c.x} cy={c.y} r="3" fill="#10b981" />
+          </g>
+        ))}
+
+        {/* MiniPod Nodes */}
+        {[
+          { x: 110, y: 90, label: "Delhi" },
+          { x: 220, y: 100, label: "Bengaluru" },
+          { x: 330, y: 90, label: "Mumbai" }
+        ].map((p, i) => (
+          <g key={i}>
+            <circle cx={p.x} cy={p.y} r="18" fill="rgba(16, 185, 129, 0.08)" stroke="#10b981" strokeWidth="1.5">
+              <animate attributeName="stroke-width" values="1.5;3;1.5" dur="3s" begin={`${i * 0.5}s`} repeatCount="indefinite" />
+            </circle>
+            <text x={p.x} y={p.y + 3} textAnchor="middle" fill="#fff" fontSize="8" fontWeight="600">{p.label}</text>
+          </g>
+        ))}
+
+        {/* Brand Node (Center Origin) */}
+        <g>
+          <circle cx="220" cy="30" r="26" fill="rgba(99, 102, 241, 0.12)" stroke="var(--accent)" strokeWidth="2">
+            <animate attributeName="r" values="26;28;26" dur="2.5s" repeatCount="indefinite" />
+          </circle>
+          <text x="220" y="30" textAnchor="middle" fill="#fff" fontSize="8" fontWeight="700" letterSpacing="0.05em">YOUR SITE</text>
+          <text x="220" y="39" textAnchor="middle" fill="var(--accent)" fontSize="6" fontWeight="800">D2C BRAND</text>
+        </g>
+      </svg>
+
+      {/* Floating 60-min Badge Overlay */}
+      <div style={{
+        position: "absolute",
+        bottom: "12px",
+        right: "12px",
+        background: "rgba(16, 185, 129, 0.15)",
+        border: "1px solid rgba(16, 185, 129, 0.3)",
+        borderRadius: "100px",
+        padding: "4px 10px",
+        fontSize: "10px",
+        fontWeight: "700",
+        color: "#10b981",
+        letterSpacing: "0.05em",
+        textTransform: "uppercase",
+        zIndex: 2,
+        boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
+      }}>
+        ⚡ Live Delivery &lt; 60 mins
+      </div>
+    </div>
+  );
+}
+
 function ReplenishmentAnimation() {
   // Data points: day, actual/predicted, value, status
   const weeklyData = [
@@ -12000,7 +12150,7 @@ function MoneyMathSection({ onTalk }) {
       <div className="lp-section-header">
         <h2 className="lp-section-title">Same Orders. Very Different Payout.</h2>
         <p className="lp-section-subtitle">
-          Drag to your numbers and see what a marketplace takes — versus what you keep
+          Drag to your numbers & see what a marketplace takes - versus what you keep
           selling from your own site, fulfilled by Blitz.
         </p>
       </div>
@@ -12062,14 +12212,14 @@ function MoneyMathSection({ onTalk }) {
 
           {delta > 0 && (
             <div className="lp-money-delta">
-              ≈ <strong>{fmt(delta)}</strong> more in your pocket every month — and the
-              customer data stays yours.
+              ~ <strong>{fmt(delta)}</strong> more in your pocket every month & your
+              customer data stays with you.
             </div>
           )}
 
           <div className="lp-money-foot">
             <button className="btn-talk-specialist lp-money-cta" onClick={onTalk}>
-              Get exact pricing on a 15-min call
+              Talk to a specialist
             </button>
             <p className="lp-money-note">
               Illustrative economics. Exact rack rent & fulfilment pricing are confirmed
@@ -12792,9 +12942,9 @@ export default function DarkStoreOnboarding() {
               60 Mins Delivery.
             </h1>
             <p className="lp-desc">
-              Book racks in our dark stores, plug into our last-mile fleet, and launch
-              60-minute delivery across India — zero warehouses, zero commissions,
-              and every customer relationship stays yours.
+              Book racks in our dark stores, plug into our last-mile fleet and launch
+              60-minute delivery across India - zero warehouses, zero commissions
+              & every customer relationship stays yours.
             </p>
 
             {/* Metrics */}
@@ -12843,9 +12993,7 @@ export default function DarkStoreOnboarding() {
                 Talk To Our Team
               </button>
             </div>
-            <p className="lp-cta-note">
-              Reserve your racks right here · No payment online · Specialist confirms within 24 hrs
-            </p>
+
 
           </div>
 
@@ -13104,9 +13252,10 @@ export default function DarkStoreOnboarding() {
         {/* 8. FINAL CTA SECTION */}
         <section className="lp-section lp-final-cta-section">
           <div className="lp-final-cta-card">
+            <LaunchNetworkVisual />
             <h2 className="lp-final-cta-title">Ready To Launch Quick Commerce?</h2>
             <p className="lp-final-cta-desc">
-              Go live in days without warehouses, operations teams, or marketplace dependency.
+              Go live in days with your own 60-minute delivery channel. Zero commissions, full margin, and 100% customer ownership.
             </p>
             <div className="lp-actions" style={{ margin: 0, justifyContent: 'center' }}>
               <button className="btn-check-availability" onClick={() => { setStep(2); setBrowseCity("Delhi"); }}>
@@ -13116,9 +13265,6 @@ export default function DarkStoreOnboarding() {
                 Talk To Our Team
               </button>
             </div>
-            <p className="lp-cta-note" style={{ textAlign: 'center' }}>
-              Reserve your racks right here · No payment online · Specialist confirms within 24 hrs
-            </p>
           </div>
         </section>
       </div>
@@ -13384,7 +13530,7 @@ export default function DarkStoreOnboarding() {
   const pageMeta = [
     null,
     { title: "Choose your stores" },
-    { title: "Confirm your reservation", desc: "Share your details — a specialist confirms availability & pricing within 24 hours." },
+    { title: "Confirm your reservation", desc: "Share your details; a specialist will contact you within 24 hours." },
   ][step - 1];
 
   const renderThemeToggle = () => (
@@ -13435,12 +13581,8 @@ export default function DarkStoreOnboarding() {
   const renderMobileHeader = () => (
     <header className="mobile-header">
       <div className="mobile-header-top">
-        <div className="mobile-brand" onClick={() => setStep(0)} style={{ cursor: "pointer" }}>
-          <img src="/Logo.png" />
-          <div className="mobile-brand-text">
-            <strong>Blitz MiniPods</strong>
-            <span>Client onboarding</span>
-          </div>
+        <div style={{ flexShrink: 0, maxWidth: "200px" }}>
+          <DoodleLogo tagText="Client onboarding" onHome={() => setStep(0)} />
         </div>
         {renderHeaderActions("mobile-actions-wrap")}
       </div>
@@ -13477,15 +13619,8 @@ export default function DarkStoreOnboarding() {
 
     return (
       <aside className="sidebar">
-        <div className="brand" onClick={() => setStep(0)} style={{ cursor: "pointer" }}>
-          <div className="brand-mark">
-            <img src="/Logo.png" alt="Company Logo" style={{ width: 40, height: 40, borderRadius: 8 }} />
-          </div>
-
-          <div>
-            <div className="brand-name">Blitz MiniPods</div>
-            <div className="brand-tag">Client onboarding</div>
-          </div>
+        <div style={{ cursor: "pointer", borderBottom: "1px solid var(--border)", paddingBottom: "20px", marginBottom: "24px" }}>
+          <DoodleLogo tagText="Client onboarding" onHome={() => setStep(0)} />
         </div>
 
         <div className="sidebar-body">
@@ -13609,10 +13744,9 @@ export default function DarkStoreOnboarding() {
     <>
       {renderPage1()}
       <section className="section">
-        <div className="section-label">Documents — optional, speeds up your onboarding</div>
+        <div className="section-label">Documents</div>
         <p className="section-note">
-          Have these handy? Upload now and go live faster. Otherwise your specialist
-          will collect them on the onboarding call.
+          Please upload your Company details to complete your reservation.
         </p>
         <div className="doc-list">
           {DOCUMENTS.map(doc => (
@@ -13645,8 +13779,7 @@ export default function DarkStoreOnboarding() {
           </div>
         </div>
         <p className="section-note" style={{ marginTop: 12 }}>
-          No payment is collected online. A Blitz specialist confirms availability &
-          pricing with you within 24 hours of reserving.
+          No payment is collected online. A Blitz specialist will contact you within 24 hours.
         </p>
       </section>
 
@@ -13678,7 +13811,7 @@ export default function DarkStoreOnboarding() {
             <h2>Your Racks Are Reserved</h2>
             <p className="confirm-subtitle">
               A Blitz onboarding specialist will call you within <strong>24 hours</strong> to
-              confirm availability, pricing, and your launch plan. No payment is due until then.
+              confirm availability & your launch plan. No payment is due until then.
             </p>
           </div>
 
